@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "e2e": "playwright test",
+    "e2e:visual": "playwright test --config playwright.visual.config.ts",
+    "e2e:a11y": "playwright test --config playwright.a11y.config.ts"
   },
   "dependencies": {
     "@workspace/ui": "workspace:*",
@@ -16,6 +19,7 @@
     "react-dom": "19.3.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.1",
     "@playwright/test": "1.65.1",
     "@tailwindcss/vite": "4.3.5",
     "@types/node": "26.6.11",
