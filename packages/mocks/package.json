@@ -11,9 +11,9 @@
   },
   "dependencies": {
     "@workspace/contracts": "workspace:*",
-    "msw": "3.0.8"
+    "msw": "catalog:"
   },
   "devDependencies": {
-    "typescript": "7.0.2"
+    "typescript": "catalog:"
   }
 }

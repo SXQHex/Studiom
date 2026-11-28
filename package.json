@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@size-limit/file": "14.3.0",
-    "@types/node": "26.6.11",
+    "@types/node": "catalog:",
     "dependency-cruiser": "18.9.0",
     "knip": "6.48.0",
     "oxfmt": "0.80.0",
@@ -31,7 +31,7 @@
     "oxlint-tsgolint": "7.0.2009",
     "size-limit": "14.3.0",
     "turbo": "2.11.13",
-    "typescript": "7.0.2"
+    "typescript": "catalog:"
   },
   "packageManager": "pnpm@12.23.0+sha512.02da94ffaf133f46074322afe552f90d40b5f71ae259aefbccdacc5085b1d617e98d65e0131f5748b9b67445978ee5055d7d59a473f1eef0d504854fefcd5975",
   "engines": {

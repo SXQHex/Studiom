@@ -23,3 +23,12 @@ permissions:
     skills: false
   "@tanstack/router-plugin":
     skills: false
+catalog:
+  "@types/node": 26.6.11
+  "@types/react": 19.3.3
+  "@types/react-dom": 19.3.0
+  msw: 3.0.8
+  react: 19.3.1
+  react-aria-components: 1.22.1
+  react-dom: 19.3.1
+  typescript: 7.0.2
