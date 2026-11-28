@@ -4,14 +4,19 @@
   "type": "module",
   "private": true,
   "exports": {
-    "./browser": "./src/browser.ts"
+    "./browser": "./src/browser.ts",
+    "./node": "./src/node.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
+    "@faker-js/faker": "catalog:",
+    "@internationalized/date": "catalog:",
+    "@msw/data": "catalog:",
     "@workspace/contracts": "workspace:*",
-    "msw": "catalog:"
+    "msw": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "typescript": "catalog:"
