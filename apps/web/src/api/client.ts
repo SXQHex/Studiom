@@ -6,11 +6,19 @@ export class ApiRequestError extends Error {
   readonly status: number
   readonly code: z.infer<typeof apiError>["code"]
 
-  constructor(status: number, code: z.infer<typeof apiError>["code"]) {
-    super(`API ${status}: ${code}`)
+  /** The business rule behind a `conflict`. */
+  readonly reason: z.infer<typeof apiError>["reason"]
+
+  constructor(
+    status: number,
+    code: z.infer<typeof apiError>["code"],
+    reason?: z.infer<typeof apiError>["reason"]
+  ) {
+    super(`API ${status}: ${reason ?? code}`)
     this.name = "ApiRequestError"
     this.status = status
     this.code = code
+    this.reason = reason
   }
 }
 
@@ -40,7 +48,8 @@ export async function callOperation<
     const error = apiError.safeParse(body)
     throw new ApiRequestError(
       response.status,
-      error.success ? error.data.code : "internal"
+      error.success ? error.data.code : "internal",
+      error.success ? error.data.reason : undefined
     )
   }
   return op.response.parse(body)

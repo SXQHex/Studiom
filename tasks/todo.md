@@ -131,15 +131,15 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 
 ### T15: `domain/sessions`: görünümler ve sorgular
 
-- [ ] Seans sorguları: merkeze, kişiye ve eğitmene göre.
+- [x] Seans sorguları: merkeze, kişiye ve eğitmene göre.
 - [ ] Görünümler: `SessionCard`, `SessionList` ve role göre eylem yuvaları olan seans detayı.
-- [ ] Düzenleme kapsamlı tekrar modeli: yalnız bu / bu ve sonrakiler / tümü.
+- [x] Düzenleme kapsamlı tekrar modeli: yalnız bu / bu ve sonrakiler / tümü.
 
 **Bağımlılık:** T10 · **Boyut:** M
 
 ### T16: `domain/bookings`: rezervasyon, iptal ve yoklama
 
-- [ ] Rezervasyon, iptal, bekleme listesine girme (yetenekle açılır), "Kura katıl", yer seçimi, rol dengesi.
+- [x] Rezervasyon, iptal, bekleme listesine girme (yetenekle açılır), "Kura katıl", yer seçimi, rol dengesi.
 - [ ] "X aldı" kaydını tutan yoklama bileşeni.
 
 **Bağımlılık:** T15 · **Boyut:** M

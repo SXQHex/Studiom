@@ -126,6 +126,7 @@ export const peopleList = defineOperation("people_list_v1", {
       .enum(["member", "instructor", "center", "organization"])
       .optional(),
     query: z.string().optional(),
+    accountStatus: z.enum(["active", "invited", "none"]).optional(),
     ...pageRequest.shape,
   }),
   response: listResponse(person),

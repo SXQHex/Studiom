@@ -16,6 +16,9 @@ export const timeZone = z.string().refine((value) => timeZones.has(value), {
   message: "Expected an IANA time zone name",
 })
 
+/** A wall-clock time such as `18:30`, read in a center's time zone. */
+export const localTime = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/)
+
 export const locale = z.enum(["tr", "en"])
 export type Locale = z.infer<typeof locale>
 

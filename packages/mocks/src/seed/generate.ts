@@ -22,6 +22,8 @@ import type {
   Organization,
   Room,
 } from "@workspace/contracts/organization"
+import type { AuditEvent } from "@workspace/contracts/audit"
+import type { ExceptionEvent } from "@workspace/contracts/exception"
 import type { Binding, Lead, Person } from "@workspace/contracts/person"
 import type { Plan } from "@workspace/contracts/plan"
 import type { Money } from "@workspace/contracts/primitives"
@@ -55,6 +57,9 @@ export interface Dataset {
   debts: Debt[]
   sessions: Session[]
   bookings: Booking[]
+  /** Filled by actions during the session; the seed starts without any. */
+  exceptions: ExceptionEvent[]
+  audit: AuditEvent[]
 }
 
 export interface GenerateOptions {
@@ -98,6 +103,8 @@ export function generateDataset({
     debts: [],
     sessions: [],
     bookings: [],
+    exceptions: [],
+    audit: [],
   }
 
   const counters = new Map<string, number>()
@@ -541,12 +548,18 @@ export function generateDataset({
           level: slot.level,
           options: {
             enrollment: discipline.enrollment,
-            roleBalance: discipline.roleBalance,
+            roleCapacity: discipline.roleBalance
+              ? halves(room.reformers ?? room.capacity)
+              : null,
             seatSelection: discipline.seatSelection,
             levelPrerequisite:
               slot.level === "advanced" ? "intermediate" : null,
           },
           seriesId,
+          sales:
+            discipline.enrollment === "series" && offset === 2
+              ? "closed"
+              : "open",
           status: "scheduled",
           cancelReason: null,
         })
@@ -577,12 +590,26 @@ export function generateDataset({
       packagesByCenter.set(pkg.centerId, list)
     }
     const used = new Map<string, number>()
+    // How many credits each limited package spends in the seed. Most keep some, so
+    // members can still book; a few are used up.
+    const budget = new Map(
+      data.packages.map((pkg) => {
+        const total = pkg.creditsTotal ?? Number.POSITIVE_INFINITY
+        if (pkg.creditsTotal === null) return [pkg.id, total] as const
+        const spends = faker.datatype.boolean({ probability: 0.12 })
+          ? total
+          : faker.number.int({ min: Math.floor(total / 4), max: total - 2 })
+        return [pkg.id, spends] as const
+      })
+    )
     const makeups = new Map<string, number>()
 
     const sessions = [...data.sessions].toSorted((a, b) =>
       a.startsAt.localeCompare(b.startsAt)
     )
     for (const session of sessions) {
+      // Closed sessions take no bookings (ADR-021).
+      if (session.sales === "closed") continue
       const center = centersById.get(session.centerId)
       if (!center) continue
       const isPast = session.endsAt <= nowIso
@@ -596,10 +623,7 @@ export function generateDataset({
         if (pkg.status === "frozen") return false
         if (sessionDay < pkg.startsOn || sessionDay >= pkg.expiresOn)
           return false
-        return (
-          pkg.creditsTotal === null ||
-          (used.get(pkg.id) ?? 0) < pkg.creditsTotal
-        )
+        return (used.get(pkg.id) ?? 0) < (budget.get(pkg.id) ?? 0)
       })
       const daysAhead = (Date.parse(session.startsAt) - now.getTime()) / dayMs
       const fill = isPast
@@ -612,7 +636,13 @@ export function generateDataset({
         session.capacity,
         Math.round(session.capacity * fill)
       )
-      const chosen = faker.helpers.shuffle(eligible).slice(0, target)
+      // Packages made for one discipline go first, so mixed ones last for the rest.
+      const breadth = (pkg: SoldPackage) =>
+        templatesById.get(pkg.templateId)?.disciplineIds.length ?? 0
+      const chosen = faker.helpers
+        .shuffle(eligible)
+        .toSorted((a, b) => breadth(a) - breadth(b))
+        .slice(0, target)
       chosen.forEach((pkg, index) => {
         const template = templatesById.get(pkg.templateId)
         let status: BookingStatus = "booked"
@@ -638,13 +668,16 @@ export function generateDataset({
           personId: pkg.personId,
           packageId: pkg.id,
           status,
-          role: session.options.roleBalance
+          role: session.options.roleCapacity
             ? index % 2 === 0
               ? "leader"
               : "follower"
             : null,
           seat: session.options.seatSelection ? `R${index + 1}` : null,
           isMakeup,
+          priority:
+            session.options.enrollment === "series" &&
+            template?.kind === "course",
           attendanceTakenBy:
             status === "attended" || status === "no_show"
               ? (session.assistantIds[0] ?? session.instructorId)
@@ -673,6 +706,7 @@ export function generateDataset({
             role: null,
             seat: null,
             isMakeup: false,
+            priority: false,
             attendanceTakenBy: null,
             createdAt: addMinutes(
               session.startsAt,
@@ -735,6 +769,11 @@ function slug(text: string) {
     .normalize("NFKD")
     .replace(/\p{M}/gu, "")
     .replace(/[^a-z0-9]/g, "")
+}
+
+/** The seed splits the places between the two roles; managers change them by hand. */
+function halves(capacity: number) {
+  return { leader: Math.ceil(capacity / 2), follower: Math.floor(capacity / 2) }
 }
 
 /** ISO weekday of a calendar date, 1 = Monday … 7 = Sunday. */
