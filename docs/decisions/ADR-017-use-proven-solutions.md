@@ -18,9 +18,12 @@ Her iş için sırayla:
 
 1. **Resmî kurulum ya da CLI yolu** (örneğin shadcn CLI). Üretilen çıktı elle taklit edilmez.
 2. **Yaygın kullanılan, bakımı süren kütüphane, bileşen ya da CI eylemi.** Seçim güncel resmî belgeyle doğrulanır.
-3. **Elle yazma sadece depo sahibinin onayıyla.** PR açıklaması hangi hazır çözümlere bakıldığını, neden yetmediklerini ve onayı belirtir.
+3. **Elle yazım sadece zorunluysa:** projeye özel CI ve iş akışları, kütüphanelerin birbirine doğru bağlanması ve ürüne özgü ekran ve iş mantığı. PR açıklaması hangi hazır çözümlere bakıldığını ve neden yetmediklerini belirtir. Tereddüt varsa önce depo sahibine sorulur.
 
-- Kural uygulama kodu, arayüz bileşenleri, betikler ve CI iş akışları için geçerlidir.
+**Bileşen elle yazılmaz.** Arayüz bileşeni shadcn ya da seçilen kütüphaneden gelir.
+
+- Kural depo geneli için geçerlidir: uygulama kodu, arayüz, altyapı, araç yapılandırması, betikler ve CI.
+- Büyük kütüphane seçimleri [ADR-018](ADR-018-tech-stack.md)'dedir. Listede olmayan büyük bir bağımlılık önce depo sahibiyle konuşulur.
 - Hazır bileşeni projeye uyarlamak (tema, metin, erişilebilirlik düzeltmesi) elle yazma sayılmaz.
 - Kalite kapıları ([ADR-009](ADR-009-testing-and-quality-gates.md)) bu kural için esnetilmez.
 

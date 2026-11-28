@@ -36,6 +36,7 @@ Bu dosya, depodaki belgelerin tek girişidir. Her bilgi **tek bir yerde** yaşar
 | [015](decisions/ADR-015-workflow-security-tooling.md)      | İş akışı güvenliği ve denetim araçları            |
 | [016](decisions/ADR-016-merge-and-release-gates.md)        | Birleştirme ve yayın engelleri                    |
 | [017](decisions/ADR-017-use-proven-solutions.md)           | Hazır çözüm önceliği, tekrar icat yok             |
+| [018](decisions/ADR-018-tech-stack.md)                     | Teknoloji yığını                                  |
 
 ## Belge kuralları
 
