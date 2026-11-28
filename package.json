@@ -10,6 +10,7 @@
     "typecheck": "turbo typecheck",
     "format:check": "oxfmt --check .",
     "check": "turbo run typecheck && pnpm typecheck:root && pnpm lint && pnpm format:check && pnpm knip && pnpm deps && pnpm i18n:check",
+    "test": "vitest run",
     "knip": "knip",
     "deps": "depcruise --config .dependency-cruiser.json apps packages",
     "size": "size-limit",
@@ -25,13 +26,15 @@
     "@size-limit/file": "14.3.0",
     "@types/node": "catalog:",
     "dependency-cruiser": "18.9.0",
+    "eslint-plugin-better-tailwindcss": "4.11.0",
     "knip": "6.48.0",
     "oxfmt": "0.80.0",
     "oxlint": "1.95.0",
     "oxlint-tsgolint": "7.0.2009",
     "size-limit": "14.3.0",
     "turbo": "2.11.13",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "5.1.2"
   },
   "packageManager": "pnpm@12.23.0+sha512.02da94ffaf133f46074322afe552f90d40b5f71ae259aefbccdacc5085b1d617e98d65e0131f5748b9b67445978ee5055d7d59a473f1eef0d504854fefcd5975",
   "engines": {

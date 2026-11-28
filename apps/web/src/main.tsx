@@ -39,11 +39,8 @@ const queryClient = new QueryClient()
 async function start(container: HTMLElement) {
   // No backend yet: every request is answered by the mock worker (ADR-007).
   // Loaded as its own chunk, so removing the mocks later leaves the app bundle as is.
-  const { worker } = await import("@workspace/mocks/browser")
-  await Promise.all([
-    worker.start({ onUnhandledFrame: "bypass", quiet: true }),
-    i18nReady,
-  ])
+  const { startMockWorker } = await import("@workspace/mocks/browser")
+  await Promise.all([startMockWorker(), i18nReady])
   void RouteError.preload?.()
   createRoot(container).render(
     <StrictMode>

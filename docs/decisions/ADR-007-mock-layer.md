@@ -18,9 +18,9 @@ Kabul edildi
 - **Tipli bellek içi depo** `packages/mocks` içinde durur.
   - Seed'li `@faker-js/faker` ile üretilir ve `packages/contracts` içindeki Zod şemalarıyla doğrulanır (ADR-006). MSW işleyicileri de uç noktaları aynı paketten alır, böylece uygulama ile mock aynı sözleşmeyi kullanır.
   - Değişiklikler oturum boyunca kalır, sayfa yenilenince seed'e dönülür.
-  - Kurulumda güncelse `@mswjs/data` kullanılır, değilse küçük bir tipli depo yazılır.
+  - Depo `@msw/data` ile kurulur (`@mswjs/data` kullanımdan kalktı, [ADR-018](ADR-018-tech-stack.md)).
 - **Seed "şimdi"ye göre üretilir**, sabit bir tarihe bağlanmaz. Örnekler: "bugün 18:30 salsa", "3 gün sonra biten paket".
-- **Senaryo parametresi:** `?scenario=empty|error|slow|forbidden`. Her sayfanın durumları özel kurgu gerekmeden açılır.
+- **Senaryo parametresi:** `?scenario=empty|error|slow|forbidden`. Her sayfanın durumları özel kurgu gerekmeden açılır. Kabuğun kendini çizmek için okuduğu oturum, örnek kullanıcılar ve yetenek uç noktaları senaryodan etkilenmez.
 - **Hızlı kişi girişi:**
   - Mock kipinde giriş sayfası "Örnek kullanıcılar" listesini gösterir: platform sahibi, Pro sahibi, bir merkez yöneticisi, eğitmen, üye…
   - Aynı liste Playwright fixture'ı olarak kullanılır.

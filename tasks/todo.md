@@ -71,32 +71,32 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 
 ### T08: Mock çekirdeği
 
-- [ ] MSW çalışanı kuruludur (`packages/mocks`). `@msw/data` eklenir ve doğrulanır. `packages/contracts` şemalarını kabul eden genel ve tipli bir depo kurulur (varlık şemaları T10'da eklenir): seed'li faker, "şimdi"ye göre seed, yenilemede sıfırlama.
-- [ ] Geliştirmede ve Playwright'ta MSW çalışanı. `?scenario=empty|error|slow|forbidden` ara katmanı.
+- [x] MSW çalışanı kuruludur (`packages/mocks`). `@msw/data` eklenir ve doğrulanır. `packages/contracts` şemalarını kabul eden genel ve tipli bir depo kurulur (varlık şemaları T10'da eklenir): seed'li faker, "şimdi"ye göre seed, yenilemede sıfırlama.
+- [x] Geliştirmede ve Playwright'ta MSW çalışanı. `?scenario=empty|error|slow|forbidden` ara katmanı.
 
 **Bağımlılık:** T01 · **Boyut:** M
 
 ### T09: i18n temeli
 
 - [x] i18next + react-i18next, tr ve en. Tipli kaynaklar; bilinmeyen anahtar `tsc`'yi kırar. i18next-cli ile anahtar çıkarma ve eksik anahtar kapısı.
-- [ ] Tembel ad alanları.
-- [ ] `dir` ve `lang` i18n'den gelir. react-aria `I18nProvider` kurulur. `formatSessionTime(utc, tz)` yardımcısı ve birim testleri yazılır (İstanbul ve Berlin yaz saati geçişi).
-- [ ] RTL sınıf denetim betiği: `ml-/mr-/left-/right-` yasak.
+- [x] Tembel ad alanları (`i18next-resources-to-backend`).
+- [x] `dir` ve `lang` i18n'den gelir. react-aria `I18nProvider` kurulur. `formatSessionTime(utc, tz)` yardımcısı ve birim testleri yazılır (İstanbul ve Berlin yaz saati geçişi).
+- [x] RTL sınıf denetimi: `ml-/mr-/left-/right-` yasak. Betik yerine oxlint'te `better-tailwindcss/enforce-logical-properties` (yalnız satır ekseni). Fiziksel kalması gereken yön mantıksal sınıf ve `rtl:` karşılığıyla yazılır (örnek: `sheet.tsx`).
 
 **Bağımlılık:** T01 · **Boyut:** M
 
 ### T10: Domain tabanı ve seed veri kümesi
 
-- [ ] `packages/contracts` içinde Zod şemaları ve uç nokta tanımları: organization, center, room, discipline, person, binding, session, booking, package-template, package, payment, debt; plan özellik adları ve limit anahtarları. `domain/` bunları içe aktarır, şema tanımlamaz.
-- [ ] ADR-007'ye göre seed: Starter 97/100, Pro 150/250, Business 3 merkezde (biri Berlin) 300/1.250. Dört bağlı kişi ve adaylar dahil.
-- [ ] Ekranlar arası tutarlılık testi: varlıklar arasında sayılar birbirini tutar.
+- [x] `packages/contracts` içinde Zod şemaları ve uç nokta tanımları: organization, center, room, discipline, person, binding, session, booking, package-template, package, payment, debt; plan özellik adları ve limit anahtarları. `domain/` bunları içe aktarır, şema tanımlamaz.
+- [x] ADR-007'ye göre seed: Starter 97/100, Pro 150/250, Business 3 merkezde (biri Berlin) 300/1.250. Dört bağlı kişi ve adaylar dahil.
+- [x] Ekranlar arası tutarlılık testi: varlıklar arasında sayılar birbirini tutar.
 
 **Bağımlılık:** T08 · **Boyut:** M (gerekirse varlık gruplarına bölünür)
 
 ### T11: Bağlar ve yetenek kaydı
 
-- [ ] `domain/bindings`: mevcut kişi, bağları, son kullanılan bağ. `domain/capabilities`: MSW'den plan verisi, özellik adları, limit anahtarları. Yardımcılar: `can(feature)`, `limit(key)`, `visibleModules(binding)`.
-- [ ] Starter, Pro ve Business görünürlüğü için birim testleri.
+- [x] `domain/bindings`: mevcut kişi, bağları, son kullanılan bağ. `domain/capabilities`: MSW'den plan verisi, özellik adları, limit anahtarları. Yardımcılar: `can(feature)`, `limit(key)`, `visibleModules(binding)`.
+- [x] Starter, Pro ve Business görünürlüğü için birim testleri.
 
 **Bağımlılık:** T10 · **Boyut:** M
 

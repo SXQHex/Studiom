@@ -24,6 +24,9 @@ permissions:
   "@tanstack/router-plugin":
     skills: false
 catalog:
+  "@faker-js/faker": 10.6.0
+  "@internationalized/date": 3.12.4
+  "@msw/data": 1.1.9
   "@types/node": 26.6.11
   "@types/react": 19.3.3
   "@types/react-dom": 19.3.0
@@ -33,3 +36,4 @@ catalog:
   react-aria-components: 1.22.1
   react-dom: 19.3.1
   typescript: 7.0.2
+  zod: 4.6.7
