@@ -64,7 +64,8 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 
 ### T07: Durum bileşenleri
 
-- [ ] Boş, Hata (yeniden dene), Yükleniyor (iskelet), Yetkisiz, Plan dışı ve Bulunamadı. Metinler taslaktaki "durumlar" ekranından alınır.
+- [x] `StateView` (boş, hata, yetkisiz, plan dışı, bulunamadı) ve `LoadingState` (400 ms altında görünmez) `packages/ui` içindedir. Yönlendiricinin hata, bekleme ve bulunamadı ekranları bunları kullanır.
+- [ ] Yetkisiz ve plan dışı metinleri, ilk kullanıldıkları görevde (T11, T12) taslaktaki "durumlar" ekranından eklenir. Kullanılmayan çeviri anahtarı `pnpm check`'i kırar.
 
 **Bağımlılık:** T06, T09 · **Boyut:** S
 
