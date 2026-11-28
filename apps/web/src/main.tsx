@@ -1,12 +1,14 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { App } from "./app";
+import { StrictMode } from "react"
+import { createRoot } from "react-dom/client"
 
-const root = document.getElementById("root");
-if (!root) throw new Error("Root element #root not found");
+import "@workspace/ui/globals.css"
+import { App } from "./App.tsx"
+import { ThemeProvider } from "@/components/theme-provider.tsx"
 
-createRoot(root).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
-  </StrictMode>,
-);
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
+  </StrictMode>
+)

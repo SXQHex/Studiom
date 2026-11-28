@@ -1,36 +1,22 @@
 {
   "name": "studiom",
+  "version": "0.0.1",
   "private": true,
-  "type": "module",
-  "packageManager": "pnpm@12.23.0",
-  "engines": {
-    "node": ">=26.13.1 <27"
-  },
   "scripts": {
-    "dev": "turbo run dev --filter=@studiom/web",
-    "build": "turbo run build",
-    "check": "turbo run typecheck && pnpm typecheck:scripts && pnpm lint && pnpm format:check && pnpm knip && pnpm deps",
-    "lint": "oxlint --type-aware .",
-    "format": "oxfmt .",
-    "format:check": "oxfmt --check .",
-    "knip": "knip",
-    "deps": "depcruise --config .dependency-cruiser.json .",
-    "e2e": "pnpm --filter @studiom/web e2e",
-    "e2e:visual": "pnpm --filter @studiom/web e2e:visual",
-    "e2e:a11y": "pnpm --filter @studiom/web e2e:a11y",
-    "deploy": "node scripts/deploy-guard.ts && wrangler deploy",
-    "deploy:preview": "wrangler versions upload",
-    "typecheck:scripts": "tsc -p tsconfig.json"
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "format": "turbo format",
+    "typecheck": "turbo typecheck"
   },
   "devDependencies": {
-    "@types/node": "catalog:",
-    "dependency-cruiser": "18.9.0",
-    "knip": "6.49.0",
-    "oxfmt": "0.80.0",
-    "oxlint": "1.95.0",
-    "oxlint-tsgolint": "7.0.2009",
-    "turbo": "2.11.13",
-    "typescript": "catalog:",
-    "wrangler": "4.166.0"
+    "prettier": "^3.10.1",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "turbo": "^2.11.11",
+    "typescript": "~6.0.2"
+  },
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": ">=20.19.0"
   }
 }

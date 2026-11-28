@@ -1,29 +1,7 @@
 packages:
-  - apps/*
-  - packages/*
+  - "apps/*"
+  - "packages/*"
 
-catalog:
-  "@types/node": 26.6.11
-  "@types/react": 19.3.3
-  "@types/react-dom": 19.3.0
-  "@vitejs/plugin-react": 6.3.0
-  react: 19.3.1
-  react-dom: 19.3.1
-  typescript: 7.0.2
-  vite: 8.4.0
-
-# dependency-cruiser cannot read TypeScript 7.0 sources (supported from 7.1, see its FAQ).
-# Remove this extension once TypeScript 7.1 is the latest stable release (ADR-012).
-# Give it a private TypeScript 6 compiler; the app itself stays on the catalog version.
-minimumReleaseAgeExclude:
-  - knip@6.49.0
-
-packageExtensions:
-  dependency-cruiser:
-    dependencies:
-      typescript: 6.0.3
-
-# Dependency install scripts stay off: wrangler's binaries ship as optional dependencies.
 allowBuilds:
-  esbuild: false
-  workerd: false
+  esbuild: true
+  msw: false
