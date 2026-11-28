@@ -1,9 +1,7 @@
 import { createInstance } from "i18next"
 import LanguageDetector from "i18next-browser-languagedetector"
+import resourcesToBackend from "i18next-resources-to-backend"
 import { initReactI18next } from "react-i18next"
-
-import en from "../locales/en/common.json"
-import tr from "../locales/tr/common.json"
 
 const i18n = createInstance()
 
@@ -15,9 +13,16 @@ i18n.on("languageChanged", (language) => {
 
 export const i18nReady = i18n
   .use(LanguageDetector)
+  // Every namespace is its own chunk, loaded when a module first asks for it (ADR-008).
+  .use(
+    resourcesToBackend(
+      (language: string, namespace: string) =>
+        import(`../locales/${language}/${namespace}.json`)
+    )
+  )
   .use(initReactI18next)
   .init({
-    resources: { tr: { common: tr }, en: { common: en } },
+    ns: ["common"],
     supportedLngs: ["tr", "en"],
     nonExplicitSupportedLngs: true,
     fallbackLng: "tr",
