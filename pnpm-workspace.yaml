@@ -21,3 +21,8 @@ packageExtensions:
   dependency-cruiser:
     dependencies:
       typescript: 6.0.3
+
+# Dependency install scripts stay off: wrangler's binaries ship as optional dependencies.
+allowBuilds:
+  esbuild: false
+  workerd: false

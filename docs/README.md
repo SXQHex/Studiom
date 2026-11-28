@@ -4,15 +4,16 @@ Bu dosya, depodaki belgelerin tek girişidir. Her bilgi **tek bir yerde** yaşar
 
 ## Hangi bilgi nerede (SSoT)
 
-| Konu                                                         | Tek kaynak                                                      | Sahip olduğu şey                       |
-| ------------------------------------------------------------ | --------------------------------------------------------------- | -------------------------------------- |
-| Hak ve kullanım bildirimi                                    | [`README.md`](../README.md)                                     | Telif ve otomatik erişim yasağı        |
-| Niyet, kapsam, "bitti" tanımı, fazlar, riskler, açık sorular | [`tasks/plan.md`](../tasks/plan.md)                             | Neyi neden yaptığımız                  |
-| Görevler, kabul ölçütleri, kontrol noktaları                 | [`tasks/todo.md`](../tasks/todo.md)                             | Sıradaki iş                            |
-| Mimari ve ürün kararları                                     | [`docs/decisions/`](decisions/) (ADR)                           | Bir karar, gerekçesi ve alternatifleri |
-| Taslak ekran → yeni yer eşlemesi                             | [`docs/reference/prototype-map.md`](reference/prototype-map.md) | Taslaktan neyin nereye gittiği         |
-| Taslağın kendisi                                             | `docs/reference/prototype-v2/`                                  | Görsel ve metin referansı, salt okunur |
-| Ajan becerileri ve sayfa kapanış kontrolü                    | [`.agents/skills/README.md`](../.agents/skills/README.md)       | Hangi beceri ne zaman kullanılır       |
+| Konu                                                         | Tek kaynak                                                      | Sahip olduğu şey                        |
+| ------------------------------------------------------------ | --------------------------------------------------------------- | --------------------------------------- |
+| Hak ve kullanım bildirimi                                    | [`README.md`](../README.md)                                     | Telif ve otomatik erişim yasağı         |
+| Yayın ayarları                                               | [`README.md`](../README.md#yayın)                               | Cloudflare panel ayarları ve elle yayın |
+| Niyet, kapsam, "bitti" tanımı, fazlar, riskler, açık sorular | [`tasks/plan.md`](../tasks/plan.md)                             | Neyi neden yaptığımız                   |
+| Görevler, kabul ölçütleri, kontrol noktaları                 | [`tasks/todo.md`](../tasks/todo.md)                             | Sıradaki iş                             |
+| Mimari ve ürün kararları                                     | [`docs/decisions/`](decisions/) (ADR)                           | Bir karar, gerekçesi ve alternatifleri  |
+| Taslak ekran → yeni yer eşlemesi                             | [`docs/reference/prototype-map.md`](reference/prototype-map.md) | Taslaktan neyin nereye gittiği          |
+| Taslağın kendisi                                             | `docs/reference/prototype-v2/`                                  | Görsel ve metin referansı, salt okunur  |
+| Ajan becerileri ve sayfa kapanış kontrolü                    | [`.agents/skills/README.md`](../.agents/skills/README.md)       | Hangi beceri ne zaman kullanılır        |
 
 ## ADR dizini
 

@@ -11,3 +11,19 @@
 Dans, yoga ve pilates stüdyoları için çok kiracılı yönetim platformunun frontend'i.
 
 Belgeler için başlangıç noktası: [`docs/README.md`](docs/README.md).
+
+## Yayın
+
+Karar [ADR-011](docs/decisions/ADR-011-preview-and-hosting-cloudflare.md)'dedir. `main`, Cloudflare Workers Builds ile `studiom.fethiyetango.com` adresine yayınlanır. Diğer dallar önizleme adresi alır.
+
+Panel ayarları (Workers & Pages → `studiom` → Settings → Builds):
+
+| Alan                           | Değer                     |
+| ------------------------------ | ------------------------- |
+| Production branch              | `main`                    |
+| Build command                  | `pnpm build`              |
+| Deploy command                 | `pnpm run deploy`         |
+| Preview command (diğer dallar) | `pnpm run deploy:preview` |
+| Root directory                 | boş (depo kökü)           |
+
+Node ve pnpm sürümü `.nvmrc` ve `packageManager` alanından okunur. Elle yayın gerekirse: `pnpm build && pnpm run deploy`.
