@@ -12,5 +12,7 @@ export const baseConfig = defineConfig({
     command: `pnpm build && pnpm preview --port ${port} --strictPort`,
     url: `http://localhost:${port}`,
     reuseExistingServer: !process.env["CI"],
+    // Let `vite preview` exit cleanly so its lock does not block the next suite.
+    gracefulShutdown: { signal: "SIGTERM", timeout: 5000 },
   },
 });

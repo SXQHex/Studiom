@@ -2,6 +2,7 @@ name: CI
 
 on:
   pull_request:
+  workflow_dispatch:
   push:
     branches: [main]
   schedule:
@@ -54,14 +55,17 @@ jobs:
       contents: read
     # Official Playwright image: same browsers and fonts everywhere, so visual baselines are stable.
     # The image tag follows the @playwright/test version, so a version bump needs no second edit.
-    container: mcr.microsoft.com/playwright:v${{ needs.check.outputs.playwright }}-noble
+    container:
+      image: mcr.microsoft.com/playwright:v${{ needs.check.outputs.playwright }}-noble
+      # --init reaps finished preview servers; --ipc=host keeps Chromium from running out of memory.
+      options: --init --ipc=host
     # Container jobs default to sh, which has no `pipefail`.
     defaults:
       run:
         shell: bash
     env:
       CI: "true"
-      FULL_MATRIX: ${{ github.event_name != 'pull_request' }}
+      FULL_MATRIX: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -84,7 +88,6 @@ jobs:
       - name: Accessibility Suite
         run: pnpm e2e:a11y
       - name: Visual Suite
-        if: env.FULL_MATRIX == 'true'
         run: pnpm e2e:visual
       - name: Upload Playwright Report
         if: failure()
