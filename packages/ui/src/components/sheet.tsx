@@ -59,10 +59,11 @@ function SheetOverlay({
   )
 }
 
+/** `start` and `end` follow the text direction: `end` is the right edge in Turkish. */
 function Sheet({
   className,
   children,
-  side = "right",
+  side = "end",
   showCloseButton = true,
   closeLabel,
   ...props
@@ -70,7 +71,7 @@ function Sheet({
   Pick<React.ComponentProps<typeof ModalPrimitive>, "isDismissable"> & {
     className?: string | undefined
     children: React.ReactNode
-    side?: "top" | "right" | "bottom" | "left"
+    side?: "top" | "bottom" | "start" | "end"
     showCloseButton?: boolean
     /** Translated accessible name of the close button. */
     closeLabel: string
@@ -81,7 +82,7 @@ function Sheet({
         data-slot="sheet-content"
         data-side={side}
         className={cn(
-          "fixed z-50 flex flex-col bg-popover bg-clip-padding text-sm text-popover-foreground shadow-xl transition duration-200 ease-in-out data-entering:opacity-0 data-exiting:opacity-0 data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:h-auto data-[side=bottom]:border-t data-[side=bottom]:data-entering:translate-y-[2.5rem] data-[side=bottom]:data-exiting:translate-y-[2.5rem] data-[side=left]:inset-y-0 data-[side=left]:inset-s-0 data-[side=left]:h-full data-[side=left]:w-3/4 data-[side=left]:border-e data-[side=left]:data-entering:translate-x-[-2.5rem] data-[side=left]:data-exiting:translate-x-[-2.5rem] data-[side=right]:inset-y-0 data-[side=right]:inset-e-0 data-[side=right]:h-full data-[side=right]:w-3/4 data-[side=right]:border-s data-[side=right]:data-entering:translate-x-[2.5rem] data-[side=right]:data-exiting:translate-x-[2.5rem] data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:h-auto data-[side=top]:border-b data-[side=top]:data-entering:translate-y-[-2.5rem] data-[side=top]:data-exiting:translate-y-[-2.5rem] data-[side=left]:sm:max-w-sm data-[side=right]:sm:max-w-sm rtl:data-[side=left]:inset-s-auto rtl:data-[side=left]:inset-e-0 rtl:data-[side=left]:data-entering:-translate-x-[-2.5rem] rtl:data-[side=left]:data-exiting:-translate-x-[-2.5rem] rtl:data-[side=right]:inset-s-0 rtl:data-[side=right]:inset-e-auto rtl:data-[side=right]:data-entering:-translate-x-[2.5rem] rtl:data-[side=right]:data-exiting:-translate-x-[2.5rem]",
+          "fixed z-50 flex flex-col bg-popover bg-clip-padding text-sm text-popover-foreground shadow-xl transition duration-200 ease-in-out data-entering:opacity-0 data-exiting:opacity-0 data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:h-auto data-[side=bottom]:border-t data-[side=bottom]:data-entering:translate-y-[2.5rem] data-[side=bottom]:data-exiting:translate-y-[2.5rem] data-[side=end]:inset-y-0 data-[side=end]:inset-e-0 data-[side=end]:h-full data-[side=end]:w-3/4 data-[side=end]:border-s data-[side=end]:data-entering:translate-x-[2.5rem] data-[side=end]:data-exiting:translate-x-[2.5rem] data-[side=start]:inset-y-0 data-[side=start]:inset-s-0 data-[side=start]:h-full data-[side=start]:w-3/4 data-[side=start]:border-e data-[side=start]:data-entering:translate-x-[-2.5rem] data-[side=start]:data-exiting:translate-x-[-2.5rem] data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:h-auto data-[side=top]:border-b data-[side=top]:data-entering:translate-y-[-2.5rem] data-[side=top]:data-exiting:translate-y-[-2.5rem] data-[side=end]:sm:max-w-sm data-[side=start]:sm:max-w-sm rtl:data-[side=end]:data-entering:translate-x-[-2.5rem] rtl:data-[side=end]:data-exiting:translate-x-[-2.5rem] rtl:data-[side=start]:data-entering:translate-x-[2.5rem] rtl:data-[side=start]:data-exiting:translate-x-[2.5rem]",
           className
         )}
       >
@@ -109,11 +110,11 @@ function Sheet({
 function SheetContent({
   className,
   children,
-  side = "right",
+  side = "end",
   showCloseButton = true,
   ...props
 }: React.ComponentProps<typeof Sheet> & {
-  side?: "top" | "right" | "bottom" | "left"
+  side?: "top" | "bottom" | "start" | "end"
   showCloseButton?: boolean
 }) {
   return (
