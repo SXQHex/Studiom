@@ -1,18 +1,6 @@
-import {
-  Outlet,
-  useRouter,
-  type NavigateOptions,
-  type ToOptions,
-} from "@tanstack/react-router"
+import { Outlet, useRouter } from "@tanstack/react-router"
 import { I18nProvider, RouterProvider } from "react-aria-components"
 import { useTranslation } from "react-i18next"
-
-declare module "react-aria-components" {
-  interface RouterConfig {
-    href: NonNullable<ToOptions["to"]>
-    routerOptions: Omit<NavigateOptions, keyof ToOptions>
-  }
-}
 
 /**
  * Connects React Aria links to TanStack Router (React Aria's documented setup) and
@@ -25,10 +13,10 @@ export function AppRoot() {
   return (
     <I18nProvider locale={i18n.resolvedLanguage ?? i18n.language}>
       <RouterProvider
-        navigate={(to, options) => {
-          void router.navigate({ to, ...options })
+        navigate={(href) => {
+          router.history.push(href)
         }}
-        useHref={(to) => router.buildLocation({ to }).href}
+        useHref={(href) => router.history.createHref(href)}
       >
         <Outlet />
       </RouterProvider>

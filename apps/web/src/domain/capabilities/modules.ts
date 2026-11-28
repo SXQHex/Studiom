@@ -17,7 +17,8 @@ interface ModuleDef {
   readonly pages: readonly PageDef[]
 }
 
-const pages = (...ids: string[]): PageDef[] => ids.map((id) => ({ id }))
+const pages = <const Id extends string>(...ids: Id[]) =>
+  ids.map((id) => ({ id }))
 
 const centerModules = [
   { id: "today", pages: pages("today") },
@@ -186,4 +187,52 @@ export function visibleModules(
       )
     }
   }
+}
+
+/** Every module and page of every menu, whether or not a binding opens it. */
+export const moduleCatalog = {
+  center: centerModules,
+  organization: organizationModules,
+  platform: platformModules,
+  me: meModules,
+} satisfies Record<string, readonly ModuleDef[]>
+
+export type ModuleGroup = keyof typeof moduleCatalog
+
+type CatalogModule<G extends ModuleGroup> = (typeof moduleCatalog)[G][number]
+
+/** `group.module` and `group.module.page` of every menu entry; labels cover them all. */
+export type NavKey = {
+  [G in ModuleGroup]: CatalogModule<G> extends infer M
+    ? M extends {
+        id: infer I extends string
+        pages: readonly { id: infer P extends string }[]
+      }
+      ? `${G}.${I}` | `${G}.${I}.${P}`
+      : never
+    : never
+}[ModuleGroup]
+
+export type PageAccess = "open" | "outOfPlan" | "forbidden" | "unknown"
+
+/**
+ * Why an address opens or not. A page the plan lacks is "outOfPlan" only for someone
+ * whose role would otherwise open its module.
+ */
+export function pageAccess(
+  binding: Binding,
+  context: ModuleContext,
+  address: { group: ModuleGroup; module: string; page: string }
+): PageAccess {
+  const modules: readonly ModuleDef[] = moduleCatalog[address.group]
+  const definition = modules
+    .find((m) => m.id === address.module)
+    ?.pages.find((p) => p.id === address.page)
+  if (!definition) return "unknown"
+  const visible = visibleModules(binding, context).find(
+    (m) => m.id === address.module
+  )
+  if (!visible) return "forbidden"
+  if (visible.pages.includes(address.page)) return "open"
+  return "outOfPlan"
 }

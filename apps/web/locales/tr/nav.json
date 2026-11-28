@@ -1,0 +1,159 @@
+{
+  "center": {
+    "center": {
+      "pages": {
+        "audit": "Denetim",
+        "closures": "Kapanışlar",
+        "reports": "Raporlar",
+        "rooms": "Salonlar",
+        "settings": "Ayarlar",
+        "team": "Ekip"
+      },
+      "title": "Merkez"
+    },
+    "people": {
+      "pages": {
+        "applications": "Başvurular",
+        "inbox": "Gelen kutusu",
+        "leads": "Adaylar",
+        "members": "Üyeler"
+      },
+      "title": "Kişiler"
+    },
+    "program": {
+      "pages": {
+        "calendar": "Takvim",
+        "events": "Etkinlikler",
+        "privateRequests": "Özel ders talepleri",
+        "waitlists": "Bekleme listeleri"
+      },
+      "title": "Program"
+    },
+    "sales": {
+      "pages": {
+        "debts": "Borçlar",
+        "packagePrices": "Paket fiyatları",
+        "payroll": "Hakediş",
+        "sales": "Satışlar ve tahsilat",
+        "settlement": "Mutabakat"
+      },
+      "title": "Satış"
+    },
+    "today": {
+      "pages": {
+        "today": "Bugün"
+      },
+      "title": "Bugün"
+    }
+  },
+  "me": {
+    "account": {
+      "pages": {
+        "account": "Hesabım"
+      },
+      "title": "Hesabım"
+    },
+    "home": {
+      "pages": {
+        "home": "Ana sayfa"
+      },
+      "title": "Ana sayfa"
+    },
+    "program": {
+      "pages": {
+        "program": "Program"
+      },
+      "title": "Program"
+    },
+    "requests": {
+      "pages": {
+        "requests": "Talepler"
+      },
+      "title": "Talepler"
+    },
+    "wallet": {
+      "pages": {
+        "wallet": "Cüzdan"
+      },
+      "title": "Cüzdan"
+    }
+  },
+  "organization": {
+    "definitions": {
+      "pages": {
+        "automation": "Otomasyon",
+        "disciplines": "Disiplinler",
+        "documents": "Belgeler",
+        "packages": "Paketler",
+        "policies": "Politikalar",
+        "templates": "Şablonlar ve hatırlatmalar",
+        "workSchedule": "Çalışma takvimi"
+      },
+      "title": "Tanımlar"
+    },
+    "organization": {
+      "pages": {
+        "billing": "Abonelik ve faturalar",
+        "centers": "Merkezler",
+        "overview": "Genel bakış",
+        "ownership": "Sahiplik ve kapatma",
+        "profile": "Profil ve marka",
+        "security": "Güvenlik",
+        "team": "Ekip"
+      },
+      "title": "Organizasyon"
+    },
+    "oversight": {
+      "pages": {
+        "audit": "Denetim",
+        "bookings": "Rezervasyonlar",
+        "calendar": "Takvim",
+        "exceptions": "İstisnalar",
+        "finance": "Finans",
+        "people": "Kişiler",
+        "reports": "Raporlar"
+      },
+      "title": "Gözetim"
+    }
+  },
+  "platform": {
+    "overview": {
+      "pages": {
+        "overview": "Genel bakış"
+      },
+      "title": "Genel bakış"
+    },
+    "subscription": {
+      "pages": {
+        "invoices": "Faturalar ve iadeler",
+        "plans": "Planlar ve fiyatlar",
+        "subscriptions": "Abonelikler"
+      },
+      "title": "Abonelik"
+    },
+    "support": {
+      "pages": {
+        "announcements": "Duyurular",
+        "supportSessions": "Destek oturumları kaydı",
+        "tickets": "Talepler"
+      },
+      "title": "Destek"
+    },
+    "system": {
+      "pages": {
+        "audit": "Platform denetim kaydı",
+        "settings": "Ayarlar",
+        "team": "Platform ekibi"
+      },
+      "title": "Sistem"
+    },
+    "tenants": {
+      "pages": {
+        "organizations": "Organizasyonlar",
+        "suspended": "Askıdakiler",
+        "trials": "Denemeler"
+      },
+      "title": "Kiracılar"
+    }
+  }
+}

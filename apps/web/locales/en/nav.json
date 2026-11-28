@@ -1,0 +1,159 @@
+{
+  "center": {
+    "center": {
+      "pages": {
+        "audit": "Audit",
+        "closures": "Closures",
+        "reports": "Reports",
+        "rooms": "Rooms",
+        "settings": "Settings",
+        "team": "Team"
+      },
+      "title": "Center"
+    },
+    "people": {
+      "pages": {
+        "applications": "Applications",
+        "inbox": "Inbox",
+        "leads": "Leads",
+        "members": "Members"
+      },
+      "title": "People"
+    },
+    "program": {
+      "pages": {
+        "calendar": "Calendar",
+        "events": "Events",
+        "privateRequests": "Private session requests",
+        "waitlists": "Waitlists"
+      },
+      "title": "Schedule"
+    },
+    "sales": {
+      "pages": {
+        "debts": "Debts",
+        "packagePrices": "Package prices",
+        "payroll": "Instructor earnings",
+        "sales": "Sales and payments",
+        "settlement": "Settlement"
+      },
+      "title": "Sales"
+    },
+    "today": {
+      "pages": {
+        "today": "Today"
+      },
+      "title": "Today"
+    }
+  },
+  "me": {
+    "account": {
+      "pages": {
+        "account": "My account"
+      },
+      "title": "My account"
+    },
+    "home": {
+      "pages": {
+        "home": "Home"
+      },
+      "title": "Home"
+    },
+    "program": {
+      "pages": {
+        "program": "Schedule"
+      },
+      "title": "Schedule"
+    },
+    "requests": {
+      "pages": {
+        "requests": "Requests"
+      },
+      "title": "Requests"
+    },
+    "wallet": {
+      "pages": {
+        "wallet": "Wallet"
+      },
+      "title": "Wallet"
+    }
+  },
+  "organization": {
+    "definitions": {
+      "pages": {
+        "automation": "Automation",
+        "disciplines": "Disciplines",
+        "documents": "Documents",
+        "packages": "Packages",
+        "policies": "Policies",
+        "templates": "Templates and reminders",
+        "workSchedule": "Working calendar"
+      },
+      "title": "Setup"
+    },
+    "organization": {
+      "pages": {
+        "billing": "Subscription and invoices",
+        "centers": "Centers",
+        "overview": "Overview",
+        "ownership": "Ownership and closure",
+        "profile": "Profile and brand",
+        "security": "Security",
+        "team": "Team"
+      },
+      "title": "Organization"
+    },
+    "oversight": {
+      "pages": {
+        "audit": "Audit",
+        "bookings": "Bookings",
+        "calendar": "Calendar",
+        "exceptions": "Exceptions",
+        "finance": "Finance",
+        "people": "People",
+        "reports": "Reports"
+      },
+      "title": "Oversight"
+    }
+  },
+  "platform": {
+    "overview": {
+      "pages": {
+        "overview": "Overview"
+      },
+      "title": "Overview"
+    },
+    "subscription": {
+      "pages": {
+        "invoices": "Invoices and refunds",
+        "plans": "Plans and prices",
+        "subscriptions": "Subscriptions"
+      },
+      "title": "Subscriptions"
+    },
+    "support": {
+      "pages": {
+        "announcements": "Announcements",
+        "supportSessions": "Support session log",
+        "tickets": "Tickets"
+      },
+      "title": "Support"
+    },
+    "system": {
+      "pages": {
+        "audit": "Platform audit log",
+        "settings": "Settings",
+        "team": "Platform team"
+      },
+      "title": "System"
+    },
+    "tenants": {
+      "pages": {
+        "organizations": "Organizations",
+        "suspended": "Suspended",
+        "trials": "Trials"
+      },
+      "title": "Tenants"
+    }
+  }
+}
