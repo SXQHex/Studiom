@@ -4,5 +4,5 @@
     "lib": ["ES2023"],
     "types": ["node"]
   },
-  "include": ["scripts", ".size-limit.ts"]
+  "include": ["scripts", ".size-limit.ts", "vitest.config.ts"]
 }
