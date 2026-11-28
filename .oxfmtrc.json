@@ -1,17 +1,25 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "printWidth": 100,
+  "endOfLine": "lf",
+  "semi": false,
+  "singleQuote": false,
   "tabWidth": 2,
-  "useTabs": false,
-  "sortImports": false,
+  "trailingComma": "es5",
+  "printWidth": 80,
   "sortPackageJson": false,
-  "sortTailwindcss": false,
+  "sortTailwindcss": {
+    "stylesheet": "packages/ui/src/styles/globals.css",
+    "functions": [
+      "cn",
+      "cva"
+    ]
+  },
   "ignorePatterns": [
-    "**/dist/**",
-    "**/coverage/**",
-    "**/*.tsbuildinfo",
+    "dist/",
+    "node_modules/",
+    ".turbo/",
+    "coverage/",
     "pnpm-lock.yaml",
-    "docs/reference/prototype-v2/**",
-    ".agents/**"
+    ".pnpm-store/"
   ]
 }
