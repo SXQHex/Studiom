@@ -13,8 +13,14 @@ function TooltipTrigger({
   delay = 0,
   children,
   ...props
-}: React.ComponentProps<typeof TooltipTriggerPrimitive>) {
-  const [trigger, tooltip] = React.Children.toArray(children)
+}: Omit<React.ComponentProps<typeof TooltipTriggerPrimitive>, "children"> & {
+  /** The focusable trigger element, then the tooltip. */
+  children: [
+    React.ComponentProps<typeof Focusable>["children"],
+    React.ReactElement,
+  ]
+}) {
+  const [trigger, tooltip] = children
 
   return (
     <TooltipTriggerPrimitive
@@ -22,9 +28,7 @@ function TooltipTrigger({
       delay={delay}
       {...props}
     >
-      <Focusable>
-        {trigger as React.ComponentProps<typeof Focusable>["children"]}
-      </Focusable>
+      <Focusable>{trigger}</Focusable>
       {tooltip}
     </TooltipTriggerPrimitive>
   )
@@ -58,17 +62,17 @@ function Tooltip({
     >
       {children}
       <OverlayArrow
-        className="z-50 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-[2px] bg-foreground fill-foreground data-[side=left]:translate-x-[-1.5px] rtl:data-[side=left]:-translate-x-[-1.5px] data-[side=right]:translate-x-[1.5px] rtl:data-[side=right]:-translate-x-[1.5px]"
-        style={({ placement, defaultStyle }) => ({
+        className="z-50 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-[2px] bg-foreground fill-foreground data-[side=left]:translate-x-[-1.5px] data-[side=right]:translate-x-[1.5px] rtl:data-[side=left]:-translate-x-[-1.5px] rtl:data-[side=right]:-translate-x-[1.5px]"
+        style={({ placement: side, defaultStyle }) => ({
           ...defaultStyle,
           rotate: "0deg",
           translate: "0 0",
           transform:
-            placement === "bottom"
+            side === "bottom"
               ? "translate(-50%, calc(50% + 2px)) rotate(45deg)"
-              : placement === "top"
+              : side === "top"
                 ? "translate(-50%, calc(-50% - 2px)) rotate(45deg)"
-                : placement === "left"
+                : side === "left"
                   ? "translate(calc(-50% - 2px), -50%) rotate(45deg)"
                   : "translate(calc(50% + 2px), -50%) rotate(45deg)",
         })}

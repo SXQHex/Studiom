@@ -8,7 +8,7 @@ import {
   type ToggleButtonProps,
 } from "react-aria-components"
 
-import { toggleVariants } from "@workspace/ui/components/toggle"
+import { toggleVariants } from "@workspace/ui/lib/toggle-variants"
 
 const ToggleGroupContext = React.createContext<
   VariantProps<typeof toggleVariants> & {
@@ -36,6 +36,14 @@ function ToggleGroup({
     orientation?: "horizontal" | "vertical"
     children?: React.ReactNode
   }) {
+  const gapStyle: React.CSSProperties & Record<"--gap", string> = {
+    "--gap": `calc(var(--spacing) * ${spacing})`,
+  }
+  const contextValue = React.useMemo(
+    () => ({ variant, size, spacing, orientation }),
+    [variant, size, spacing, orientation]
+  )
+
   return (
     <ToggleGroupPrimitive
       data-slot="toggle-group"
@@ -43,18 +51,14 @@ function ToggleGroup({
       data-size={size}
       data-spacing={spacing}
       orientation={orientation}
-      style={
-        { "--gap": `calc(var(--spacing) * ${spacing})` } as React.CSSProperties
-      }
+      style={gapStyle}
       className={cn(
         "group/toggle-group flex w-fit flex-row items-center gap-(--gap) data-[spacing=0]:data-[variant=outline]:rounded-2xl data-vertical:flex-col data-vertical:items-stretch",
         className
       )}
       {...props}
     >
-      <ToggleGroupContext.Provider
-        value={{ variant, size, spacing, orientation }}
-      >
+      <ToggleGroupContext.Provider value={contextValue}>
         {children}
       </ToggleGroupContext.Provider>
     </ToggleGroupPrimitive>
