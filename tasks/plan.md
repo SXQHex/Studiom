@@ -11,7 +11,7 @@ Studiom, dans, yoga ve pilates için çok kiracılı bir platform. Bu planın am
 - RTL hazırlığı
 - dört Playwright profili
 
-Depo kökündeki taslak görsel ve içerik referansıdır (`docs/reference/prototype-map.md`).
+`docs/reference/prototype-v2/` altındaki taslak görsel ve içerik referansıdır (`docs/reference/prototype-map.md`).
 
 ## Onaylanan niyet
 - **Sonuç:** Tüm kabuklar ve kabul edilen menüler mock veri üzerinde uçtan uca çizilmiş ve test edilmiş olur. Taslak sadece başlangıç noktasıdır.

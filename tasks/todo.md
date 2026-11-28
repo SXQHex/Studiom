@@ -14,9 +14,9 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 ## Faz 1: Temel
 
 ### T01: Monorepo iskeleti; taslağın referans klasörüne taşınması
-- [ ] pnpm workspaces + Turborepo; `apps/web`, `packages/contracts`, `packages/ui` ve `packages/mocks`. `.nvmrc` ve kök komutları: `dev`, `build`, `check`, `e2e`.
-- [ ] Taslak `docs/reference/prototype-v2/` altına taşınır, lint ve knip dışında tutulur.
-- [ ] `pnpm build` boş bir Vite + React uygulaması üretir.
+- [x] pnpm workspaces + Turborepo; `apps/web`, `packages/contracts`, `packages/ui` ve `packages/mocks`. `.nvmrc` ve kök komutları: `dev`, `build`, `check` (`e2e` komutu T05'te eklenir).
+- [x] Taslak `docs/reference/prototype-v2/` altına taşınır (lint ve knip dışında tutulması T02'de).
+- [x] `pnpm build` boş bir Vite + React uygulaması üretir. Cloudflare `assets.directory` → `apps/web/dist`.
 **Bağımlılık:** yok · **Boyut:** M
 
 ### T02: Strict TypeScript; lint ve format kapıları

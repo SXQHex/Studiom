@@ -1,0 +1,17 @@
+{
+  "name": "studiom",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.23.0",
+  "engines": {
+    "node": ">=24.22.1"
+  },
+  "scripts": {
+    "dev": "turbo run dev --filter=@studiom/web",
+    "build": "turbo run build",
+    "check": "turbo run typecheck"
+  },
+  "devDependencies": {
+    "turbo": "2.11.13"
+  }
+}

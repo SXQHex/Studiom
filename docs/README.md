@@ -10,7 +10,7 @@ Bu dosya, depodaki belgelerin tek girişidir. Her bilgi **tek bir yerde** yaşar
 | Görevler, kabul ölçütleri, kontrol noktaları | [`tasks/todo.md`](../tasks/todo.md) | Sıradaki iş |
 | Mimari ve ürün kararları | [`docs/decisions/`](decisions/) (ADR) | Bir karar, gerekçesi ve alternatifleri |
 | Taslak ekran → yeni yer eşlemesi | [`docs/reference/prototype-map.md`](reference/prototype-map.md) | Taslaktan neyin nereye gittiği |
-| Taslağın kendisi | `docs/reference/prototype-v2/` (T01'den sonra) | Görsel ve metin referansı, salt okunur |
+| Taslağın kendisi | `docs/reference/prototype-v2/` | Görsel ve metin referansı, salt okunur |
 
 ## ADR dizini
 | No | Konu |
