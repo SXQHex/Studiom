@@ -10,6 +10,7 @@ import {
   bookingsCancel,
   bookingsCreate,
   seriesJoin,
+  seriesPreview,
   sessionsCancel,
   sessionsGet,
   sessionsUpdate,
@@ -325,6 +326,135 @@ describe("booking", () => {
     const joined = await ok(seriesJoin, body)
     expect(joined.items.length).toBeGreaterThan(1)
     expect(creditsUsed(member.id)).toBe(before + joined.items.length)
+  })
+
+  test("full course sessions are listed and only a manager may confirm them", async () => {
+    const targets = mock.db.sessions.findMany(
+      (q) =>
+        q.where({
+          centerId: pro,
+          disciplineId: "dis_pro_tango",
+          status: "scheduled",
+          startsAt: (startsAt) => Date.parse(startsAt) > now.getTime(),
+        }),
+      { orderBy: { startsAt: "asc" } }
+    )
+    for (const each of targets) emptySession(each)
+    const [session, crowded] = targets
+    if (!session || !crowded) throw new Error("no tango course")
+    await mock.db.sessions.update((q) => q.where({ id: crowded.id }), {
+      data(draft) {
+        draft.capacity = 1
+        draft.options.roleCapacity = { leader: 1, follower: 1 }
+      },
+    })
+    // One single booking already takes the only place of that evening.
+    const single = await freeMember(crowded)
+    await mock.db.bookings.create({
+      id: "bkg_test_single",
+      sessionId: crowded.id,
+      personId: single.personId,
+      packageId: first(single.eligibility.packageIds),
+      status: "booked",
+      role: "follower",
+      seat: null,
+      isMakeup: false,
+      priority: false,
+      attendanceTakenBy: null,
+      createdAt: now.toISOString(),
+    })
+    const member = first(
+      mock.db.packages.findMany((q) =>
+        q.where({
+          centerId: pro,
+          templateId: "tpl_pro_dance8",
+          personId: (id) => id !== single.personId,
+        })
+      )
+    )
+    await mock.db.packages.update((q) => q.where({ id: member.id }), {
+      data(draft) {
+        draft.status = "active"
+        draft.creditsTotal = 100
+        draft.expiresOn = "2027-03-01"
+      },
+    })
+    mock.db.bookings.deleteMany((q) => q.where({ personId: member.personId }))
+    const body = {
+      sessionId: session.id,
+      personId: member.personId,
+      packageId: member.id,
+      role: "leader" as const,
+    }
+
+    mock.signIn(member.personId)
+    const preview = await ok(seriesPreview, body)
+    expect(preview.fullSessions.map((s) => s.id)).toEqual([crowded.id])
+    await refused(seriesJoin, body, "full")
+    // The member cannot confirm for themselves, nor can program staff.
+    expect(
+      (await post(seriesJoin, { ...body, confirmFull: true })).status
+    ).toBe(403)
+    mock.signIn("per_zeynep")
+    expect(
+      (await post(seriesJoin, { ...body, confirmFull: true })).status
+    ).toBe(403)
+
+    mock.signIn("per_mert")
+    await refused(seriesJoin, body, "full")
+    const joined = await ok(seriesJoin, { ...body, confirmFull: true })
+    expect(joined.items.every((b) => b.priority)).toBe(true)
+    const over = await ok(sessionsGet, { sessionId: crowded.id })
+    expect(over.capacityWarning).toEqual({ places: 1, leader: 0, follower: 0 })
+    expect(
+      mock.db.audit.findMany((q) =>
+        q.where({ sessionId: crowded.id, kind: "capacity_override" })
+      )
+    ).toHaveLength(1)
+
+    // An overbooked session can still move, and more places resolve the warning.
+    await ok(sessionsUpdate, {
+      sessionId: crowded.id,
+      scope: "this",
+      changes: { startTime: "20:30" },
+    })
+    await ok(sessionsUpdate, {
+      sessionId: crowded.id,
+      scope: "this",
+      changes: { capacity: 2 },
+    })
+    expect(
+      (await ok(sessionsGet, { sessionId: crowded.id })).capacityWarning
+    ).toBeNull()
+  })
+
+  test("a cancelled single booking resolves the warning by itself", async () => {
+    const session = first(upcoming("dis_pro_reformer"))
+    emptySession(session)
+    const one = await freeMember(session)
+    const booking = await ok(bookingsCreate, {
+      sessionId: session.id,
+      personId: one.personId,
+      seat: "R1",
+    })
+    await mock.db.sessions.update((q) => q.where({ id: session.id }), {
+      data(draft) {
+        draft.capacity = 1
+      },
+    })
+    await mock.db.bookings.create({
+      ...booking,
+      id: "bkg_test_priority",
+      personId: "per_ece",
+      seat: null,
+      priority: true,
+    })
+    mock.signIn(one.personId)
+    const before = await ok(sessionsGet, { sessionId: session.id })
+    expect(before.capacityWarning?.places).toBe(1)
+    await ok(bookingsCancel, { bookingId: booking.id })
+    const after = await ok(sessionsGet, { sessionId: session.id })
+    expect(after.capacityWarning).toBeNull()
   })
 
   test("a sold package follows the template version it was sold with", async () => {

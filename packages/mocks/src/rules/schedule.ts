@@ -90,8 +90,12 @@ export function applyChanges(
   }
 }
 
-/** A room holds as many people as its capacity, or its equipment when seats are picked. */
+/**
+ * A room holds as many people as its capacity, or its equipment when seats are picked.
+ * An overbooked session may still change, as long as capacity does not shrink further.
+ */
 export function roomProblem(
+  previous: Session,
   next: Session,
   room: Room | undefined,
   booked: number
@@ -106,21 +110,25 @@ export function roomProblem(
     ? (room.equipment?.units ?? 0)
     : room.capacity
   if (next.capacity > limit) return "over_room_limit"
-  if (next.capacity < booked) return "capacity_below_booked"
+  if (next.capacity < previous.capacity && next.capacity < booked) {
+    return "capacity_below_booked"
+  }
   return null
 }
 
-/** Each role's places fit the session and cover those already booked. */
+/** Each role's places fit the session and do not shrink below those booked. */
 export function roleProblem(
+  previous: Session,
   next: Session,
   booked: { leaders: number; followers: number }
 ): RuleReason | null {
   const quota = next.options.roleCapacity
-  if (quota === null) return null
-  const fits = (places: number, taken: number) =>
-    places <= next.capacity && places >= taken
-  return fits(quota.leader, booked.leaders) &&
-    fits(quota.follower, booked.followers)
+  const before = previous.options.roleCapacity
+  if (quota === null || before === null) return null
+  const fits = (places: number, was: number, taken: number) =>
+    places <= next.capacity && (places >= was || places >= taken)
+  return fits(quota.leader, before.leader, booked.leaders) &&
+    fits(quota.follower, before.follower, booked.followers)
     ? null
     : "invalid_role_capacity"
 }

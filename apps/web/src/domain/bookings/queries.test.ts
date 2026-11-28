@@ -11,6 +11,7 @@ import {
   bookMutation,
   cancelBookingMutation,
   joinSeriesMutation,
+  seriesPreviewQuery,
 } from "./queries"
 
 const now = new Date("2026-11-30T06:00:00.000Z")
@@ -73,6 +74,15 @@ test("refusals of the other actions reach the screen with their rule", async () 
   const join = new MutationObserver(client, joinSeriesMutation)
   await expect(
     join.mutate({ sessionId: session.id, personId: booking.personId })
+  ).rejects.toMatchObject({ reason: "not_a_series" })
+  await expect(
+    client.fetchQuery({
+      ...seriesPreviewQuery({
+        sessionId: session.id,
+        personId: booking.personId,
+      }),
+      retry: false,
+    })
   ).rejects.toMatchObject({ reason: "not_a_series" })
 })
 

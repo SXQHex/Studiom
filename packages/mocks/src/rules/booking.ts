@@ -6,6 +6,7 @@ import type {
 import type { RuleReason } from "@workspace/contracts/rules"
 import type {
   Booking,
+  CapacityWarning,
   DanceRole,
   Eligibility,
   Session,
@@ -152,6 +153,11 @@ function placeProblem(
   return null
 }
 
+/** Fullness is the only refusal a manager can confirm away (ADR-021). */
+export function isFullness(reason: RuleReason | null): boolean {
+  return reason === "full" || reason === "role_full"
+}
+
 /**
  * The single booking rule (ADR-004): without an account and a covering right nobody
  * books. The same answer drives the button on screen and the check on write.
@@ -164,7 +170,8 @@ export function bookingEligibility(facts: BookingFacts): Eligibility {
   const answer = (
     reason: RuleReason | null,
     packageIds: string[] = [],
-    canWaitlist = false
+    canWaitlist = false,
+    fullSessionIds: string[] = []
   ): Eligibility => ({
     unit,
     allowed: reason === null,
@@ -172,6 +179,7 @@ export function bookingEligibility(facts: BookingFacts): Eligibility {
     canWaitlist,
     packageIds,
     warnings,
+    fullSessionIds,
   })
 
   if (facts.targets.some((t) => t.session.status === "cancelled")) {
@@ -190,19 +198,41 @@ export function bookingEligibility(facts: BookingFacts): Eligibility {
   if (!facts.isMember) return answer("not_a_member")
   const packageIds = payingPackages(facts)
   if (packageIds.length === 0) return answer(packageProblem(facts))
-  for (const target of facts.targets) {
+  const problems = facts.targets.flatMap((target) => {
     const problem = placeProblem(target, facts.role, facts.seat)
-    if (problem !== null) {
-      const waitable = problem === "full" || problem === "role_full"
-      // Waiting lists are per session, so a series join cannot queue.
-      return answer(
-        problem,
-        packageIds,
-        waitable && unit === "session" && facts.hasWaitlist
-      )
-    }
+    return problem === null ? [] : [{ id: target.session.id, problem }]
+  })
+  // A seat conflict cannot be confirmed away, so it is reported before fullness.
+  const blocking =
+    problems.find((p) => !isFullness(p.problem)) ?? problems.at(0)
+  if (!blocking) return answer(null, packageIds)
+  const waitable = isFullness(blocking.problem)
+  return answer(
+    blocking.problem,
+    packageIds,
+    // Waiting lists are per session, so a course join cannot queue.
+    waitable && unit === "session" && facts.hasWaitlist,
+    problems.filter((p) => isFullness(p.problem)).map((p) => p.id)
+  )
+}
+
+function excess(taken: number, limit: number): number {
+  return Math.max(0, taken - limit)
+}
+
+/** What is over the limits after a confirmed enrollment or a change. */
+export function capacityWarningOf(
+  session: Session,
+  bookings: readonly Booking[]
+): CapacityWarning | null {
+  const counts = countPlaces(bookings)
+  const quota = session.options.roleCapacity
+  const warning = {
+    places: excess(counts.booked, session.capacity),
+    leader: quota ? excess(counts.leaders, quota.leader) : 0,
+    follower: quota ? excess(counts.followers, quota.follower) : 0,
   }
-  return answer(null, packageIds)
+  return warning.places + warning.leader + warning.follower > 0 ? warning : null
 }
 
 /** The choices a booking still lacks. */

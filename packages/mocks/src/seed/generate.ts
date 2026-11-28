@@ -669,6 +669,9 @@ export function generateDataset({
             : null,
           seat: session.options.seatSelection ? `R${index + 1}` : null,
           isMakeup,
+          priority:
+            session.options.enrollment === "series" &&
+            template?.kind === "course",
           attendanceTakenBy:
             status === "attended" || status === "no_show"
               ? (session.assistantIds[0] ?? session.instructorId)
@@ -697,6 +700,7 @@ export function generateDataset({
             role: null,
             seat: null,
             isMakeup: false,
+            priority: false,
             attendanceTakenBy: null,
             createdAt: addMinutes(
               session.startsAt,

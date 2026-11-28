@@ -62,6 +62,8 @@ export const booking = z.object({
   seat: z.string().nullable(),
   /** A makeup fills capacity but does not count toward role balance (ADR-004). */
   isMakeup: z.boolean(),
+  /** A course enrollment has priority over single bookings (ADR-021). */
+  priority: z.boolean(),
   /** Attendance always records who took it ("X aldı", ADR-003). */
   attendanceTakenBy: id.nullable(),
   createdAt: utcDateTime,
@@ -117,6 +119,8 @@ export const eligibility = z.object({
   /** Packages that can pay for it, the one used by default first. */
   packageIds: z.array(id),
   warnings: z.array(z.enum(["open_debt"])),
+  /** Sessions with no place left (overall or for the chosen role). */
+  fullSessionIds: z.array(id),
 })
 export type Eligibility = z.infer<typeof eligibility>
 
@@ -135,8 +139,18 @@ export const attendanceApproval = z.object({
 })
 export type AttendanceApproval = z.infer<typeof attendanceApproval>
 
+/** How many places are taken beyond the limits; resolves when numbers fit again. */
+export const capacityWarning = z.object({
+  places: z.number().int().nonnegative(),
+  leader: z.number().int().nonnegative(),
+  follower: z.number().int().nonnegative(),
+})
+export type CapacityWarning = z.infer<typeof capacityWarning>
+
 export const sessionDetail = z.object({
   session,
+  /** null while the session is within its capacity and role places. */
+  capacityWarning: capacityWarning.nullable(),
   counts: z.object({
     booked: z.number().int().nonnegative(),
     waitlisted: z.number().int().nonnegative(),
@@ -202,9 +216,19 @@ export const bookingsCreate = defineOperation("bookings_create_v1", {
   response: booking,
 })
 
-/** "Kura katıl": books every upcoming session of the series, all or nothing. */
-export const seriesJoin = defineOperation("bookings_series_join_v1", {
+/** What joining a course would do, so full sessions can be listed first. */
+export const seriesPreview = defineOperation("bookings_series_preview_v1", {
   request: z.object(bookingChoice),
+  response: z.object({ eligibility, fullSessions: z.array(session) }),
+})
+
+/** "Kura katıl": books every upcoming session of the series with priority. */
+export const seriesJoin = defineOperation("bookings_series_join_v1", {
+  request: z.object({
+    ...bookingChoice,
+    /** Center manager only: enroll although some sessions are full (ADR-021). */
+    confirmFull: z.boolean().default(false),
+  }),
   response: z.object({ items: z.array(booking) }),
 })
 

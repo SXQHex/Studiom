@@ -5,6 +5,7 @@ import {
   bookingsCancel,
   bookingsCreate,
   seriesJoin,
+  seriesPreview,
   type Booking,
   type DanceRole,
   type Session,
@@ -20,6 +21,7 @@ import {
   bookingEligibility,
   drawCredit,
   isFreeCancellation,
+  isFullness,
   missingChoice,
   returnCredit,
 } from "../rules/booking"
@@ -202,6 +204,7 @@ export function bookingHandlers(
                 ? (input.seat ?? null)
                 : null,
             isMakeup: false,
+            priority: false,
             attendanceTakenBy: null,
           },
         ])
@@ -209,20 +212,49 @@ export function bookingHandlers(
       })
     ),
 
+    handle(seriesPreview, (input) => {
+      const found = forBooker(input.sessionId, input.personId)
+      if (found instanceof Response) return found
+      const { session, center } = found
+      if (session.options.enrollment !== "series") return refuse("not_a_series")
+      const eligibility = eligibilityFor(context, lookups, {
+        ...input,
+        session,
+        center,
+      })
+      const full = new Set(eligibility.fullSessionIds)
+      return {
+        eligibility,
+        fullSessions: targetsOf(context, lookups, session).filter((s) =>
+          full.has(s.id)
+        ),
+      }
+    }),
+
     handle(seriesJoin, (input) =>
       write(async () => {
         const found = forBooker(input.sessionId, input.personId)
         if (found instanceof Response) return found
-        const { session, center } = found
+        const { session, center, actorId } = found
         if (session.options.enrollment !== "series") {
           return refuse("not_a_series")
         }
+        const manager = managerBinding(
+          lookups.bindingsOfPerson(actorId),
+          center.id
+        )
+        if (input.confirmFull && !manager) return problem("forbidden")
         const eligibility = eligibilityFor(context, lookups, {
           ...input,
           session,
           center,
         })
-        if (eligibility.reason !== null) return refuse(eligibility.reason)
+        const full = new Set(eligibility.fullSessionIds)
+        // Only fullness can be confirmed; every other rule still holds.
+        const confirmed = input.confirmFull && isFullness(eligibility.reason)
+        if (eligibility.reason !== null && !confirmed) {
+          return refuse(eligibility.reason)
+        }
         const packageId = pick(eligibility.packageIds, input.packageId)
         if (packageId === undefined) return refuse("no_package")
         const missing = missingChoice(session, input.role, input.seat)
@@ -234,11 +266,34 @@ export function bookingHandlers(
             packageId,
             status: "booked" as const,
             role: target.options.roleCapacity ? (input.role ?? null) : null,
-            seat: target.options.seatSelection ? (input.seat ?? null) : null,
+            // A full session has no seat to give.
+            seat:
+              target.options.seatSelection && !full.has(target.id)
+                ? (input.seat ?? null)
+                : null,
             isMakeup: false,
+            priority: true,
             attendanceTakenBy: null,
           }))
         )
+        if (manager && full.size > 0) {
+          await Promise.all(
+            [...full].map((sessionId) =>
+              db.audit.create({
+                id: ids("aud"),
+                organizationId: center.organizationId,
+                centerId: center.id,
+                kind: "capacity_override",
+                actorPersonId: actorId,
+                actorBindingId: manager.id,
+                sessionId,
+                subjectPersonId: input.personId,
+                reason: null,
+                createdAt: now().toISOString(),
+              })
+            )
+          )
+        }
         return { items }
       })
     ),

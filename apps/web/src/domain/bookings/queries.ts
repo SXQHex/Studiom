@@ -1,10 +1,11 @@
-import { mutationOptions } from "@tanstack/react-query"
+import { mutationOptions, queryOptions } from "@tanstack/react-query"
 import {
   attendanceApprove,
   attendanceSet,
   bookingsCancel,
   bookingsCreate,
   seriesJoin,
+  seriesPreview,
 } from "@workspace/contracts/schedule"
 import type { z } from "zod"
 
@@ -19,6 +20,16 @@ export const bookMutation = mutationOptions({
     callOperation(bookingsCreate, input),
   onSuccess: (_data, _input, _result, { client }) => client.invalidateQueries(),
 })
+
+/** Eligibility for a course and the full sessions to warn about. */
+export function seriesPreviewQuery(
+  input: z.input<typeof seriesPreview.request>
+) {
+  return queryOptions({
+    queryKey: ["sessions", "series-preview", input],
+    queryFn: () => callOperation(seriesPreview, input),
+  })
+}
 
 export const joinSeriesMutation = mutationOptions({
   mutationFn: (input: z.input<typeof seriesJoin.request>) =>

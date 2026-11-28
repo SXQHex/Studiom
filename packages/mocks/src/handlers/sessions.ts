@@ -15,7 +15,12 @@ import {
   maySeeRoster,
   mayTakeAttendance,
 } from "../rules/access"
-import { countPlaces, isActive, returnCredit } from "../rules/booking"
+import {
+  capacityWarningOf,
+  countPlaces,
+  isActive,
+  returnCredit,
+} from "../rules/booking"
 import {
   applyChanges,
   clashProblem,
@@ -144,6 +149,7 @@ export function sessionHandlers(
 
   /** Why the new versions cannot be saved, if one of them cannot. */
   const changeProblem = (
+    targets: readonly Session[],
     next: readonly Session[],
     center: Center,
     changes: SessionChanges
@@ -157,13 +163,15 @@ export function sessionHandlers(
       changes.roomId !== undefined
     const changing = new Set(next.map((s) => s.id))
     const others = db.sessions.all().filter((s) => !changing.has(s.id))
+    const previous = new Map(targets.map((s) => [s.id, s]))
     for (const session of next) {
+      const before = previous.get(session.id) ?? session
       if (Date.parse(session.startsAt) <= +now()) return "in_past"
       const room = db.rooms.findFirst((q) => q.where({ id: session.roomId }))
       const counts = countPlaces(lookups.bookingsOfSession(session.id))
       const issue =
-        roomProblem(session, room, counts.booked) ??
-        roleProblem(session, counts) ??
+        roomProblem(before, session, room, counts.booked) ??
+        roleProblem(before, session, counts) ??
         (peopleChanged ? teacherProblem(session, center.id) : null) ??
         (moved || peopleChanged ? clashProblem(session, others) : null)
       if (issue) return issue
@@ -192,6 +200,7 @@ export function sessionHandlers(
       return {
         session,
         counts: countPlaces(bookings),
+        capacityWarning: capacityWarningOf(session, bookings),
         roster: seesRoster
           ? bookings.filter(isActive).map((b) => rosterEntry(b))
           : null,
@@ -251,7 +260,7 @@ export function sessionHandlers(
         ) {
           return refuse("invalid_role_capacity")
         }
-        const refusal = changeProblem(next, center, changes)
+        const refusal = changeProblem(targets, next, center, changes)
         if (refusal) return refuse(refusal)
         await saveSessions(next)
         return { items: next }

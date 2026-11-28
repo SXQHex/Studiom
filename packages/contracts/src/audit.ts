@@ -7,7 +7,12 @@ export const auditEvent = z.object({
   id,
   organizationId: id,
   centerId: id,
-  kind: z.enum(["attendance_approved", "attendance_changed"]),
+  kind: z.enum([
+    "attendance_approved",
+    "attendance_changed",
+    /** A course enrollment written into full sessions. */
+    "capacity_override",
+  ]),
   actorPersonId: id,
   actorBindingId: id,
   sessionId: id,
