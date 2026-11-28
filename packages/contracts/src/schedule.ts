@@ -32,6 +32,8 @@ export const session = z.object({
   }),
   /** Sessions of one weekly series share the series id. */
   seriesId: id.nullable(),
+  /** A closed session takes no bookings, except from the center manager with a reason. */
+  sales: z.enum(["open", "closed"]),
   status: z.enum(["scheduled", "cancelled"]),
   cancelReason: z.string().nullable(),
 })
@@ -212,6 +214,8 @@ export const bookingsCreate = defineOperation("bookings_create_v1", {
     ...bookingChoice,
     /** Join the waiting list of a full session instead of taking a place. */
     waitlist: z.boolean().default(false),
+    /** Required when a manager books into a closed session (ADR-021). */
+    reason: z.string().trim().min(1).optional(),
   }),
   response: booking,
 })

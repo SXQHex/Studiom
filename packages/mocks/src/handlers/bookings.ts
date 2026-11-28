@@ -48,6 +48,9 @@ interface BookingRequest {
   personId: string
   role?: DanceRole | undefined
   seat?: string | undefined
+  /** The course as a whole (join, preview) rather than this session alone. */
+  course?: boolean | undefined
+  overrideClosed?: boolean | undefined
 }
 
 /** The sessions one booking covers: this one, or the rest of its series. */
@@ -64,22 +67,35 @@ function targetsOf(
     context.now()
   )
   // A started or cancelled session still has to answer why it cannot be joined.
-  return isUpcoming(session, context.now()) ? upcoming : [session]
+  // Closed sessions are not part of the course.
+  return isUpcoming(session, context.now())
+    ? upcoming.filter((s) => s.sales === "open")
+    : [session]
 }
 
 /** Collects the facts from the store and asks the booking rule. */
 export function eligibilityFor(
   context: MockContext,
   lookups: Lookups,
-  { session, center, personId, role, seat }: BookingRequest
+  {
+    session,
+    center,
+    personId,
+    role,
+    seat,
+    course = false,
+    overrideClosed = false,
+  }: BookingRequest
 ) {
   const { db } = context
   const { organizationId } = center
   return bookingEligibility({
-    targets: targetsOf(context, lookups, session).map((target) => ({
-      session: target,
-      bookings: lookups.bookingsOfSession(target.id),
-    })),
+    targets: (course ? targetsOf(context, lookups, session) : [session]).map(
+      (target) => ({
+        session: target,
+        bookings: lookups.bookingsOfSession(target.id),
+      })
+    ),
     timeZone: center.timeZone,
     now: context.now(),
     personId,
@@ -91,6 +107,7 @@ export function eligibilityFor(
       db.debts.findFirst((q) =>
         q.where({ personId, organizationId, status: "open" })
       ) !== undefined,
+    overrideClosed,
     hasWaitlist:
       lookups.planOf(organizationId)?.features.includes("waitlist") ?? false,
     role,
@@ -161,15 +178,28 @@ export function bookingHandlers(
       write(async () => {
         const found = forBooker(input.sessionId, input.personId)
         if (found instanceof Response) return found
-        const { session, center } = found
-        if (session.options.enrollment === "series") {
-          return refuse("series_only")
-        }
-        const eligibility = eligibilityFor(context, lookups, {
+        const { session, center, actorId } = found
+        const manager = managerBinding(
+          lookups.bindingsOfPerson(actorId),
+          center.id
+        )
+        let eligibility = eligibilityFor(context, lookups, {
           ...input,
           session,
           center,
         })
+        // A closed session takes no booking, except from the center manager with a reason.
+        const override = eligibility.reason === "session_closed"
+        if (override) {
+          if (!manager) return refuse("session_closed")
+          if (input.reason === undefined) return refuse("reason_required")
+          eligibility = eligibilityFor(context, lookups, {
+            ...input,
+            session,
+            center,
+            overrideClosed: true,
+          })
+        }
         if (input.waitlist) {
           if (eligibility.allowed) return refuse("not_full")
           if (!eligibility.canWaitlist) {
@@ -208,6 +238,20 @@ export function bookingHandlers(
             attendanceTakenBy: null,
           },
         ])
+        if (override && manager && input.reason !== undefined) {
+          await db.audit.create({
+            id: ids("aud"),
+            organizationId: center.organizationId,
+            centerId: center.id,
+            kind: "booking_override",
+            actorPersonId: actorId,
+            actorBindingId: manager.id,
+            sessionId: session.id,
+            subjectPersonId: input.personId,
+            reason: input.reason,
+            createdAt: now().toISOString(),
+          })
+        }
         return created ?? problem("internal")
       })
     ),
@@ -221,6 +265,7 @@ export function bookingHandlers(
         ...input,
         session,
         center,
+        course: true,
       })
       const full = new Set(eligibility.fullSessionIds)
       return {
@@ -248,6 +293,7 @@ export function bookingHandlers(
           ...input,
           session,
           center,
+          course: true,
         })
         const full = new Set(eligibility.fullSessionIds)
         // Only fullness can be confirmed; every other rule still holds.

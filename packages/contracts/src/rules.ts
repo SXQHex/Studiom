@@ -11,6 +11,7 @@ export const ruleReason = z.enum([
   "not_a_member",
   "no_package",
   "no_credits",
+  "session_closed",
   "package_frozen",
   "not_enough_credits",
   "full",

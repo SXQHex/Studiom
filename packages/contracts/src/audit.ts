@@ -12,6 +12,8 @@ export const auditEvent = z.object({
     "attendance_changed",
     /** A course enrollment written into full sessions. */
     "capacity_override",
+    /** A manager's reasoned booking into a closed session. */
+    "booking_override",
   ]),
   actorPersonId: id,
   actorBindingId: id,

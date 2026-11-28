@@ -87,6 +87,8 @@ export interface BookingFacts {
   packages: readonly PackageWithTemplate[]
   hasOpenDebt: boolean
   hasWaitlist: boolean
+  /** Set by a manager with a reason, to book into a closed session (ADR-021). */
+  overrideClosed?: boolean | undefined
   /** The choices made so far; omitted while only asking whether booking is possible. */
   role?: DanceRole | undefined
   seat?: string | undefined
@@ -133,6 +135,12 @@ function placeProblem(
 ): RuleReason | null {
   const { session, bookings } = target
   const counts = countPlaces(bookings)
+  // Seats are checked before fullness, so a manager confirming a full course
+  // still cannot write a bad seat through (Codex review).
+  if (session.options.seatSelection && seat !== undefined) {
+    if (!isSeat(seat, session.capacity)) return "invalid_seat"
+    if (counts.takenSeats.includes(seat)) return "seat_taken"
+  }
   if (counts.booked >= session.capacity) return "full"
   const quota = session.options.roleCapacity
   if (quota !== null) {
@@ -145,10 +153,6 @@ function placeProblem(
     ) {
       return "role_full"
     }
-  }
-  if (session.options.seatSelection && seat !== undefined) {
-    if (!isSeat(seat, session.capacity)) return "invalid_seat"
-    if (counts.takenSeats.includes(seat)) return "seat_taken"
   }
   return null
 }
@@ -198,6 +202,12 @@ export function bookingEligibility(facts: BookingFacts): Eligibility {
   if (!facts.isMember) return answer("not_a_member")
   const packageIds = payingPackages(facts)
   if (packageIds.length === 0) return answer(packageProblem(facts))
+  if (
+    !facts.overrideClosed &&
+    facts.targets.some((t) => t.session.sales === "closed")
+  ) {
+    return answer("session_closed", packageIds)
+  }
   const problems = facts.targets.flatMap((target) => {
     const problem = placeProblem(target, facts.role, facts.seat)
     return problem === null ? [] : [{ id: target.session.id, problem }]

@@ -173,7 +173,12 @@ export function sessionHandlers(
         roomProblem(before, session, room, counts.booked) ??
         roleProblem(before, session, counts) ??
         (peopleChanged ? teacherProblem(session, center.id) : null) ??
-        (moved || peopleChanged ? clashProblem(session, others) : null)
+        (moved || peopleChanged
+          ? clashProblem(session, [
+              ...others,
+              ...next.filter((s) => s.id !== session.id),
+            ])
+          : null)
       if (issue) return issue
     }
     return null

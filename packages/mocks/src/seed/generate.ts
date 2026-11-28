@@ -556,6 +556,10 @@ export function generateDataset({
               slot.level === "advanced" ? "intermediate" : null,
           },
           seriesId,
+          sales:
+            discipline.enrollment === "series" && offset === 2
+              ? "closed"
+              : "open",
           status: "scheduled",
           cancelReason: null,
         })
@@ -604,6 +608,8 @@ export function generateDataset({
       a.startsAt.localeCompare(b.startsAt)
     )
     for (const session of sessions) {
+      // Closed sessions take no bookings (ADR-021).
+      if (session.sales === "closed") continue
       const center = centersById.get(session.centerId)
       if (!center) continue
       const isPast = session.endsAt <= nowIso

@@ -319,7 +319,8 @@ describe("booking", () => {
       packageId: member.id,
       role: "leader" as const,
     }
-    await refused(bookingsCreate, body, "series_only")
+    // A single session of a course is open to anyone with a place (ADR-021).
+    await ok(bookingsCreate, body)
     // Bookings of earlier sessions would count as "already booked".
     mock.db.bookings.deleteMany((q) => q.where({ personId: member.personId }))
     const before = creditsUsed(member.id) ?? 0
@@ -524,6 +525,35 @@ describe("booking", () => {
       expect(result.status).toBe(403)
     }
   )
+})
+
+describe("closed sessions", () => {
+  test("a closed course session takes no booking; the manager books it with a reason", async () => {
+    const closed = first(
+      mock.db.sessions.findMany(
+        (q) => q.where({ centerId: pro, sales: "closed", status: "scheduled" }),
+        { orderBy: { startsAt: "asc" } }
+      )
+    )
+    emptySession(closed)
+    const { personId } = await freeMember(closed)
+    const body = { sessionId: closed.id, personId, role: "leader" as const }
+    await refused(bookingsCreate, body, "session_closed")
+    mock.signIn("per_mert")
+    await refused(bookingsCreate, body, "reason_required")
+    const booking = await ok(bookingsCreate, { ...body, reason: "Yer ayrıldı" })
+    expect(booking.status).toBe("booked")
+    expect(
+      mock.db.audit.findMany((q) =>
+        q.where({ sessionId: closed.id, kind: "booking_override" })
+      )
+    ).toEqual([
+      expect.objectContaining({
+        subjectPersonId: personId,
+        reason: "Yer ayrıldı",
+      }),
+    ])
+  })
 })
 
 describe("attendance", () => {
