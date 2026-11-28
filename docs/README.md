@@ -25,6 +25,7 @@ Bu dosya, depodaki belgelerin tek girişidir. Her bilgi **tek bir yerde** yaşar
 | [008](decisions/ADR-008-i18n-time-and-rtl.md) | i18n, saat dilimi ve RTL |
 | [009](decisions/ADR-009-testing-and-quality-gates.md) | Test stratejisi ve kalite kapıları |
 | [010](decisions/ADR-010-plan-capabilities-as-data.md) | Veri olarak plan yetenekleri |
+| [011](decisions/ADR-011-preview-and-hosting-cloudflare.md) | Önizleme ve yayın için Cloudflare |
 
 ## Belge kuralları
 1. **Tekrar yok, bağlantı var.** Bir bilgi başka bir belgede gerekiyorsa kopyalanmaz, kaynağına bağlantı verilir. Bağlam için tek cümlelik bir özet serbesttir.

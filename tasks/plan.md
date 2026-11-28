@@ -78,8 +78,9 @@ Her faz bir kontrol noktasıyla biter. Kontrol noktasında tüm kapılar yeşil 
 | Çalışma anında düzenlenebilen plan verisinin kapı mantığını karmaşıklaştırması | Orta | Tek yetenek kaydı kullanılır ve her kapı ondan geçer. Her plan için e2e kapı testleri yazılır. |
 
 ## Açık sorular
-- **Önizleme yayını:** Çizim boyunca inceleme için Cloudflare mı Vercel mi kullanılacak? Öneri thread'de, karar ADR-005'e işlenecek.
+- Şu an yok.
 
 ## Kapanan sorular
+- 2026-11-28: Önizleme ve yayın Cloudflare'de, adres `studiom.fethiyetango.com` (ADR-011).
 - 2026-11-28: Google ile giriş şimdi çizilecek (ADR-004).
 - 2026-11-28: Taslak T01'de `docs/reference/prototype-v2/` altına taşınacak.
