@@ -2,7 +2,8 @@ import { z } from "zod"
 
 import { defineOperation, listResponse } from "./operation"
 import { enrollment, sessionLevel } from "./organization"
-import { id, utcDateTime } from "./primitives"
+import { calendarDate, id, localTime, utcDateTime } from "./primitives"
+import { ruleReason } from "./rules"
 
 /** The single scheduling concept; recurrence is a property of a session (ADR-004). */
 export const session = z.object({
@@ -33,10 +34,15 @@ export const bookingStatus = z.enum([
   "booked",
   "waitlisted",
   "cancelled",
+  /** Cancelled after the free window: the credit stays used. */
+  "late_cancelled",
   "attended",
   "no_show",
 ])
 export type BookingStatus = z.infer<typeof bookingStatus>
+
+export const danceRole = z.enum(["leader", "follower"])
+export type DanceRole = z.infer<typeof danceRole>
 
 export const booking = z.object({
   id,
@@ -45,7 +51,7 @@ export const booking = z.object({
   /** The sold package the booking draws from; null for a trial seat. */
   packageId: id.nullable(),
   status: bookingStatus,
-  role: z.enum(["leader", "follower"]).nullable(),
+  role: danceRole.nullable(),
   seat: z.string().nullable(),
   /** A makeup fills capacity but does not count toward role balance (ADR-004). */
   isMakeup: z.boolean(),
@@ -69,4 +75,133 @@ export const sessionsList = defineOperation("sessions_list_v1", {
 export const bookingsList = defineOperation("bookings_list_v1", {
   request: z.object({ sessionId: id.optional(), personId: id.optional() }),
   response: listResponse(booking),
+})
+
+/** Which sessions of a series a change applies to (ADR-004). */
+export const editScope = z.enum(["this", "following", "all"])
+export type EditScope = z.infer<typeof editScope>
+
+/** New values for a session. A time is a wall-clock time at the center. */
+export const sessionChanges = z
+  .object({
+    date: calendarDate,
+    startTime: localTime,
+    durationMinutes: z.number().int().min(15).max(480),
+    roomId: id,
+    instructorId: id,
+    assistantIds: z.array(id),
+    capacity: z.number().int().positive(),
+    level: sessionLevel,
+  })
+  .partial()
+  .refine((changes) => Object.keys(changes).length > 0, {
+    message: "Nothing to change",
+  })
+export type SessionChanges = z.infer<typeof sessionChanges>
+
+/** Whether a person can book (or join the series of) a session, and why not. */
+export const eligibility = z.object({
+  unit: enrollment,
+  allowed: z.boolean(),
+  reason: ruleReason.nullable(),
+  canWaitlist: z.boolean(),
+  /** Packages that can pay for it, the one used by default first. */
+  packageIds: z.array(id),
+  warnings: z.array(z.enum(["open_debt"])),
+})
+export type Eligibility = z.infer<typeof eligibility>
+
+/** One participant as staff and teachers see them: no money information (ADR-003). */
+export const rosterEntry = z.object({
+  booking,
+  name: z.string(),
+  /** Credits left on the paying package; null when unlimited or without package. */
+  creditsLeft: z.number().int().nonnegative().nullable(),
+})
+export type RosterEntry = z.infer<typeof rosterEntry>
+
+export const sessionDetail = z.object({
+  session,
+  counts: z.object({
+    booked: z.number().int().nonnegative(),
+    waitlisted: z.number().int().nonnegative(),
+    leaders: z.number().int().nonnegative(),
+    followers: z.number().int().nonnegative(),
+    takenSeats: z.array(z.string()),
+  }),
+  /** null when the signed-in person may not see who attends. */
+  roster: z.array(rosterEntry).nullable(),
+  /** The signed-in person as a participant; null when they are not a member here. */
+  viewer: z.object({ booking: booking.nullable(), eligibility }).nullable(),
+  permissions: z.object({
+    manage: z.boolean(),
+    takeAttendance: z.boolean(),
+  }),
+})
+export type SessionDetail = z.infer<typeof sessionDetail>
+
+export const sessionsGet = defineOperation("sessions_get_v1", {
+  request: z.object({ sessionId: id }),
+  response: sessionDetail,
+})
+
+/** Returns every session that changed. */
+const changedSessions = z.object({ items: z.array(session) })
+
+export const sessionsUpdate = defineOperation("sessions_update_v1", {
+  request: z.object({
+    sessionId: id,
+    scope: editScope,
+    changes: sessionChanges,
+  }),
+  response: changedSessions,
+})
+
+export const sessionsCancel = defineOperation("sessions_cancel_v1", {
+  request: z.object({
+    sessionId: id,
+    scope: editScope,
+    reason: z.string().trim().min(1),
+  }),
+  response: changedSessions,
+})
+
+const bookingChoice = {
+  sessionId: id,
+  personId: id,
+  /** Omit to use the eligible package that expires first. */
+  packageId: id.optional(),
+  role: danceRole.optional(),
+  seat: z.string().optional(),
+}
+
+export const bookingsCreate = defineOperation("bookings_create_v1", {
+  request: z.object({
+    ...bookingChoice,
+    /** Join the waiting list of a full session instead of taking a place. */
+    waitlist: z.boolean().default(false),
+  }),
+  response: booking,
+})
+
+/** "Kura katıl": books every upcoming session of the series, all or nothing. */
+export const seriesJoin = defineOperation("bookings_series_join_v1", {
+  request: z.object(bookingChoice),
+  response: z.object({ items: z.array(booking) }),
+})
+
+export const bookingsCancel = defineOperation("bookings_cancel_v1", {
+  request: z.object({ bookingId: id }),
+  response: booking,
+})
+
+export const attendanceSet = defineOperation("attendance_set_v1", {
+  request: z.object({
+    bookingId: id,
+    /** `booked` takes a mark back. */
+    status: z.enum(["attended", "no_show", "booked"]),
+    /** Required after the session's day: an exception on record (ADR-003). */
+    reason: z.string().trim().min(1).optional(),
+  }),
+  response: booking,
 })
