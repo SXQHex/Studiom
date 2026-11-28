@@ -45,7 +45,12 @@ jobs:
     permissions:
       contents: read
     # Official Playwright image: same browsers and fonts everywhere, so visual baselines are stable.
+    # Keep this tag equal to the @playwright/test version in apps/web/package.json.
     container: mcr.microsoft.com/playwright:v1.65.1-noble
+    # Container jobs default to sh, which has no `pipefail`.
+    defaults:
+      run:
+        shell: bash
     env:
       CI: "true"
       FULL_MATRIX: ${{ github.event_name != 'pull_request' }}
