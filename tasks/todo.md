@@ -39,8 +39,8 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 
 ### T04: CI hattı
 
-- [ ] GitHub Actions: kurulum → `check` → `build` → PR'da e2e (Desktop Chromium + iPhone 15). `main` ve gece çalışmalarında Playwright Docker imajıyla 4 profil + visual.
-- [ ] Boyut bütçesi denetimi: ilk JS ≤ 150 KB gzip.
+- [x] GitHub Actions: kurulum → `check` → `build` → PR'da e2e (Desktop Chromium + iPhone 15). `main` ve gece çalışmalarında Playwright Docker imajıyla 4 profil + visual.
+- [x] Boyut bütçesi denetimi: ilk JS ≤ 150 KB gzip.
 
 **Bağımlılık:** T02, T03 · **Boyut:** M
 

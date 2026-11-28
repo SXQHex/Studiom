@@ -11,6 +11,8 @@ export default defineConfig({
   testDir: "./e2e",
   testMatch: "**/*.visual.spec.ts",
   ignoreSnapshots: !process.env["CI"],
+  // Until the baseline approval flow exists, CI writes missing baselines instead of failing.
+  updateSnapshots: "missing",
   expect: { toHaveScreenshot: { animations: "disabled", maxDiffPixelRatio: 0.001 } },
   projects: [desktopChromium, iphone15].flatMap((p) => (p ? [p] : [])),
 });
