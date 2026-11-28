@@ -226,6 +226,12 @@ importers:
       '@tanstack/react-router':
         specifier: 1.170.46
         version: 1.170.46(@types/react@19.3.3)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@workspace/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
+      '@workspace/mocks':
+        specifier: workspace:*
+        version: link:../../packages/mocks
       '@workspace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -250,9 +256,6 @@ importers:
       react-i18next:
         specifier: 18.0.3
         version: 18.0.3(@types/react@19.3.3)(i18next@27.2.10(typescript@7.0.2))(react@19.3.1)(typescript@7.0.2)
-      zod:
-        specifier: 4.6.7
-        version: 4.6.7
     devDependencies:
       '@axe-core/playwright':
         specifier: 4.14.1
@@ -287,6 +290,29 @@ importers:
       vite:
         specifier: 8.4.0
         version: 8.4.0(@types/node@26.6.11)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1)
+
+  packages/contracts:
+    dependencies:
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+    devDependencies:
+      typescript:
+        specifier: 7.0.2
+        version: 7.0.2
+
+  packages/mocks:
+    dependencies:
+      '@workspace/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      msw:
+        specifier: 3.0.8
+        version: 3.0.8(@types/node@26.6.11)(supports-color@7.2.0)(typescript@7.0.2)(vite@8.4.0(@types/node@26.6.11)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1))
+    devDependencies:
+      typescript:
+        specifier: 7.0.2
+        version: 7.0.2
 
   packages/ui:
     dependencies:

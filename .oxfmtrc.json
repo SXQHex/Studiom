@@ -19,6 +19,9 @@
     "pnpm-lock.yaml",
     ".pnpm-store/",
     "docs/reference/prototype-v2/**",
-    ".agents/**"
+    ".agents/**",
+    "apps/web/src/routeTree.gen.ts",
+    "apps/web/public/mockServiceWorker.js",
+    "apps/web/src/types/**"
   ]
 }

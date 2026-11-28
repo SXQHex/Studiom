@@ -2,11 +2,14 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "ignore": [
     "docs/reference/prototype-v2/**",
-    ".agents/**"
+    ".agents/**",
+    "apps/web/src/types/**"
   ],
   "workspaces": {
     ".": {},
-    "apps/web": {},
+    "apps/web": {
+      "entry": ["i18next.config.ts", "src/index.css"]
+    },
     "packages/ui": {}
   }
 }

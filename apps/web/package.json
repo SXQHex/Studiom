@@ -10,11 +10,14 @@
     "preview": "vite preview",
     "e2e": "playwright test",
     "e2e:visual": "playwright test --config playwright.visual.config.ts",
-    "e2e:a11y": "playwright test --config playwright.a11y.config.ts"
+    "e2e:a11y": "playwright test --config playwright.a11y.config.ts",
+    "mocks:worker": "msw init public --save"
   },
   "dependencies": {
     "@tanstack/react-query": "5.108.4",
     "@tanstack/react-router": "1.170.46",
+    "@workspace/contracts": "workspace:*",
+    "@workspace/mocks": "workspace:*",
     "@workspace/ui": "workspace:*",
     "i18next": "27.2.10",
     "i18next-browser-languagedetector": "8.3.1",
@@ -22,8 +25,7 @@
     "next-themes": "0.4.6",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "react-i18next": "18.0.3",
-    "zod": "4.6.7"
+    "react-i18next": "18.0.3"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.1",

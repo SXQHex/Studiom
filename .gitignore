@@ -31,3 +31,8 @@ dist-ssr
 
 # typescript
 *.tsbuildinfo
+
+# tool caches
+.tanstack
+.wrangler
+coverage
