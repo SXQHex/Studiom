@@ -157,7 +157,7 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 
 ### T19: Merkez › Program › Takvim
 
-- [ ] Hafta ve gün takvimi; salon ve eğitmen filtreleri. Sürükleme, boyutlandırma ve klavyeyle taşıma. Taslak ve kaydet çubuğu.
+- [ ] Hafta ve gün takvimi; salon ve eğitmen filtreleri. Sürükleme ve boyutlandırma; klavyeyle taşıma yerine seans düzenleme formu (ADR-018). Taslak ve kaydet çubuğu.
 - [ ] Koşullu seçenekleri olan seans oluşturma ve düzenleme formu (TanStack Form + Zod).
 - Ön deneme bulguları (2026-11-28, Mac, salon başına 8 seans):
   - İlk çizim 3 / 6 / 10 salonda Chromium'da 123 / 146 / 158 ms, 4 kat yavaş işlemcide 393 / 469 / 545 ms, WebKit'te 189 / 179 / 203 ms. Gün değişimi 105 ms altında.
