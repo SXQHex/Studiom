@@ -10,7 +10,7 @@ import { afterAll, beforeAll, beforeEach, expect, test } from "vitest"
 import { createMockServer } from "./node"
 
 const origin = "http://studiom.test"
-const { server, setScenario, signIn } = await createMockServer()
+const { server, db, setScenario, signIn } = await createMockServer()
 
 beforeAll(() => server.listen({ onUnhandledFrame: "error" }))
 afterAll(() => server.close())
@@ -92,4 +92,31 @@ test("the slow scenario delays the answer", async () => {
   const response = await call(peopleList, { organizationId: "org_pro" })
   expect(response.status).toBe(200)
   expect(Date.now() - started).toBeGreaterThanOrEqual(2_000)
+})
+
+async function sessionIdsBetween(from: string, to: string) {
+  const response = await call(sessionsList, {
+    centerId: "ctr_pro_kadikoy",
+    from,
+    to,
+  })
+  const body = sessionsList.response.parse(await response.json())
+  return body.items.map((s) => s.id)
+}
+
+// The contract accepts both precisions; the seed stores milliseconds.
+test.each([
+  ["with milliseconds", (utc: string) => utc],
+  ["without milliseconds", (utc: string) => utc.replace(".000Z", "Z")],
+])("the session window is half-open for bounds %s", async (_, write) => {
+  const [first] = db.sessions.findMany(
+    (q) => q.where({ centerId: "ctr_pro_kadikoy" }),
+    { orderBy: { startsAt: "asc" } }
+  )
+  if (!first) throw new Error("no seeded session")
+  const start = write(first.startsAt)
+  const minute = (offset: number) =>
+    write(new Date(Date.parse(first.startsAt) + offset * 60_000).toISOString())
+  expect(await sessionIdsBetween(start, minute(1))).toContain(first.id)
+  expect(await sessionIdsBetween(minute(-1), start)).not.toContain(first.id)
 })

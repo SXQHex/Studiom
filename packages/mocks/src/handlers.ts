@@ -268,11 +268,17 @@ export function createHandlers(context: MockContext): RequestHandler[] {
                 .filter((b) => b.status !== "cancelled")
                 .map((b) => b.sessionId)
             )
+      // Compared as instants: bounds may be written with another precision (`…:00Z`).
+      const fromTime = Date.parse(from)
+      const toTime = Date.parse(to)
       return db.sessions
         .findMany(
           (q) =>
             q.where({
-              startsAt: (startsAt) => startsAt >= from && startsAt < to,
+              startsAt: (startsAt) => {
+                const time = Date.parse(startsAt)
+                return time >= fromTime && time < toTime
+              },
             }),
           { orderBy: { startsAt: "asc" } }
         )
