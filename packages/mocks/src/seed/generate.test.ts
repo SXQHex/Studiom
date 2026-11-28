@@ -107,6 +107,24 @@ describe.each(instants)("dataset around %s", (now) => {
     }
   })
 
+  test("booked roles stay within each role's places", () => {
+    for (const session of data.sessions) {
+      const quota = session.options.roleCapacity
+      if (!quota) continue
+      for (const role of ["leader", "follower"] as const) {
+        const taken = data.bookings.filter(
+          (b) =>
+            b.sessionId === session.id &&
+            b.role === role &&
+            !b.isMakeup &&
+            b.status !== "cancelled" &&
+            b.status !== "waitlisted"
+        )
+        expect(taken.length).toBeLessThanOrEqual(quota[role])
+      }
+    }
+  })
+
   test("past sessions have attendance with its taker, future ones none", () => {
     for (const b of data.bookings) {
       const session = sessions.get(b.sessionId)

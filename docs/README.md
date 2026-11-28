@@ -39,6 +39,7 @@ Bu dosya, depodaki belgelerin tek girişidir. Her bilgi **tek bir yerde** yaşar
 | [018](decisions/ADR-018-tech-stack.md)                     | Teknoloji yığını                                  |
 | [019](decisions/ADR-019-baseline-ci-run.md)                | Görsel taban commit'inden sonra tek CI koşusu     |
 | [020](decisions/ADR-020-merge-is-visual-approval.md)       | Görsel onay birleştirmedir                        |
+| [021](decisions/ADR-021-booking-and-attendance-rules.md)   | Rezervasyon ve yoklama kuralları                  |
 
 ## Belge kuralları
 

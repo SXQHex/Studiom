@@ -37,6 +37,7 @@ export async function startMockWorker() {
       db,
       scenario: () => scenarioFromUrl(globalThis.location.href),
       auth: tabAuth,
+      now: () => new Date(),
     })
   )
   await worker.start({ onUnhandledFrame: "bypass", quiet: true })

@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+import { ruleReason } from "./rules"
+
 /** Operations follow the Edge Function style: POST /functions/v1/api/<operation> (ADR-018). */
 export const apiBasePath = "/functions/v1/api"
 
@@ -29,7 +31,9 @@ export const noInput = z.object({}).strict()
 
 /** Error body of every failed operation; the HTTP status carries the same meaning. */
 export const apiError = z.object({
-  code: z.enum(["forbidden", "not_found", "invalid", "internal"]),
+  code: z.enum(["forbidden", "not_found", "invalid", "conflict", "internal"]),
+  /** Which business rule refused a `conflict`, for the screen to explain it. */
+  reason: ruleReason.optional(),
   message: z.string().optional(),
 })
 export type ApiError = z.infer<typeof apiError>

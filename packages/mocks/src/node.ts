@@ -7,9 +7,11 @@ import { createDb } from "./store"
 
 /**
  * The mock API for unit tests in Node: the same handlers and seed as the browser worker.
- * `scenario` and `signIn` steer it the way `?scenario=` and the sample sign-in do.
+ * `setScenario` and `signIn` steer it the way `?scenario=` and the sample sign-in do.
+ * Time stands at `now` until `setNow` moves it.
  */
 export async function createMockServer(now = new Date()) {
+  let clock = now
   const db = await createDb(generateDataset({ now }))
   const state: { scenario: Scenario | null; personId: string | null } = {
     scenario: null,
@@ -19,6 +21,7 @@ export async function createMockServer(now = new Date()) {
     ...createHandlers({
       db,
       scenario: () => state.scenario,
+      now: () => clock,
       auth: {
         get: () => state.personId,
         set: (personId) => {
@@ -30,6 +33,9 @@ export async function createMockServer(now = new Date()) {
   return {
     server,
     db,
+    setNow: (instant: Date) => {
+      clock = instant
+    },
     setScenario: (scenario: Scenario | null) => {
       state.scenario = scenario
     },
