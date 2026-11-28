@@ -44,30 +44,12 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: read
-      # paths-filter lists the files of a pull request through the API.
-      pull-requests: read
     outputs:
       playwright: ${{ steps.versions.outputs.playwright }}
-      screenshots_changed: ${{ steps.screenshots.outputs.changed }}
     steps:
       - uses: actions/checkout@v7.0.1
         with:
-          # Full history to compare the screenshot baselines with the base branch.
-          fetch-depth: 0
           persist-credentials: false
-      # Pull requests and branch runs only: on the default branch there is nothing to approve.
-      # Any change under the filter, or a failing detection, asks for approval.
-      - name: Detect Screenshot Changes
-        id: screenshots
-        if: >-
-          github.event_name == 'pull_request' ||
-          (github.event_name == 'workflow_dispatch' &&
-          github.ref_name != github.event.repository.default_branch)
-        uses: dorny/paths-filter@v4.0.3
-        with:
-          filters: |
-            changed:
-              - 'apps/web/e2e/__screenshots__/**'
       - uses: pnpm/action-setup@v6.1.1
       - uses: actions/setup-node@v7.1.0
         with:
@@ -139,32 +121,16 @@ jobs:
             apps/web/test-results/
           retention-days: 7
 
-  visual-approval:
-    name: Visual Approval
-    needs: [check, e2e]
-    if: needs.check.outputs.screenshots_changed == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    # Waits for a person: review the images in "Files changed", then approve (ADR-016).
-    environment: visual-approval
-    permissions: {}
-    steps:
-      - name: Record Approval
-        run: echo "Screenshot changes approved."
-
   # The only check the branch rule requires. It fails unless every job above passed.
   gate:
     name: CI Gate
-    needs: [workflows, check, e2e, visual-approval]
+    needs: [workflows, check, e2e]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions: {}
     steps:
-      # Visual Approval may be skipped only when no screenshot changed.
       - name: Require Every Job
         uses: re-actors/alls-green@v1.3.0
         with:
           jobs: ${{ toJSON(needs) }}
-          allowed-skips: >-
-            ${{ needs.check.outputs.screenshots_changed != 'true' && 'visual-approval' || '' }}

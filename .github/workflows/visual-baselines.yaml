@@ -91,10 +91,11 @@ jobs:
     needs: generate
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # Runs no branch code. Writes the images and asks CI to verify the new commit.
+    # Runs no branch code. Only writes the images.
+    # CI for the new commit waits for "Approve and run workflows" on the pull request,
+    # because it is pushed with the workflow token.
     permissions:
       contents: write
-      actions: write
     env:
       BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
     steps:
@@ -110,7 +111,6 @@ jobs:
       # The checkout stays on the generated commit, so the push fails if the branch moved
       # meanwhile and stale screenshots are never pushed.
       - name: Commit and Push
-        id: push
         uses: stefanzweifel/git-auto-commit-action@v7.2.1
         env:
           GH_TOKEN: ${{ github.token }}
@@ -124,13 +124,3 @@ jobs:
           commit_message: "test(visual): update baselines"
           commit_author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
           before_push_hook: gh auth setup-git
-      # A push made with the workflow token starts no CI run by itself.
-      - name: Start CI on the New Commit
-        if: steps.push.outputs.changes_detected == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-          gh workflow run ci.yaml --repo "$REPO" --ref "$BRANCH" ||
-            echo "::warning::CI could not be started (it must exist on the default branch). Close and reopen the pull request to run it."

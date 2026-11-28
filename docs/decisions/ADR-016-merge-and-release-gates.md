@@ -2,7 +2,7 @@
 
 ## Durum
 
-Kabul edildi
+Kabul edildi. "Görsel onay" maddesi ve `CI Gate` içindeki onay koşulu [ADR-020](ADR-020-merge-is-visual-approval.md) ile geçersiz.
 
 ## Tarih
 
