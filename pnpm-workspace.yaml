@@ -11,7 +11,8 @@ catalog:
   typescript: 7.0.2
   vite: 8.4.0
 
-# dependency-cruiser cannot read TypeScript 7.0 sources yet (it needs >=7.1 or <7).
+# dependency-cruiser cannot read TypeScript 7.0 sources (supported from 7.1, see its FAQ).
+# Remove this extension once TypeScript 7.1 is the latest stable release (ADR-012).
 # Give it a private TypeScript 6 compiler; the app itself stays on the catalog version.
 minimumReleaseAgeExclude:
   - knip@6.49.0
