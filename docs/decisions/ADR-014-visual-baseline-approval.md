@@ -2,7 +2,7 @@
 
 ## Durum
 
-Kabul edildi. ADR-009'daki "visual birleşmede ve her gece koşar" maddesinin yerine geçer.
+Kabul edildi. "PR'ı birleştirmek onaydır" maddesi [ADR-016](ADR-016-merge-and-release-gates.md) ile geçersiz. ADR-009'daki "visual birleşmede ve her gece koşar" maddesinin yerine geçer.
 
 ## Tarih
 

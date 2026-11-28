@@ -2,6 +2,8 @@
   // Static SPA on Cloudflare Workers static assets (ADR-005, ADR-011).
   // Assets come from the Vite build output; run `pnpm build` before deploying.
   "name": "studiom",
+  // Refuses `wrangler deploy` anywhere but a Workers Builds run on main (ADR-016).
+  "build": { "command": "node scripts/deploy-guard.ts" },
   "compatibility_date": "2026-11-01",
   "assets": {
     "directory": "./apps/web/dist",

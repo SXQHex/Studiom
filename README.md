@@ -26,4 +26,4 @@ Panel ayarları (Workers & Pages → `studiom` → Settings → Builds):
 | Preview command (diğer dallar) | `pnpm run deploy:preview` |
 | Root directory                 | boş (depo kökü)           |
 
-Node ve pnpm sürümü `.nvmrc` ve `packageManager` alanından okunur. Elle yayın gerekirse: `pnpm build && pnpm run deploy`.
+Node ve pnpm sürümü `.nvmrc` ve `packageManager` alanından okunur. Elle üretim yayını yoktur: yayın sadece `main`'e birleştirmeyle olur ([ADR-016](docs/decisions/ADR-016-merge-and-release-gates.md)). Geri alma Cloudflare panelindeki sürüm geçmişinden yapılır.

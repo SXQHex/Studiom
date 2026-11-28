@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "turbo run dev --filter=@studiom/web",
     "build": "turbo run build",
-    "check": "turbo run typecheck && pnpm lint && pnpm format:check && pnpm knip && pnpm deps",
+    "check": "turbo run typecheck && pnpm typecheck:scripts && pnpm lint && pnpm format:check && pnpm knip && pnpm deps",
     "lint": "oxlint --type-aware .",
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
@@ -18,16 +18,19 @@
     "e2e": "pnpm --filter @studiom/web e2e",
     "e2e:visual": "pnpm --filter @studiom/web e2e:visual",
     "e2e:a11y": "pnpm --filter @studiom/web e2e:a11y",
-    "deploy": "wrangler deploy",
-    "deploy:preview": "wrangler versions upload"
+    "deploy": "node scripts/deploy-guard.ts && wrangler deploy",
+    "deploy:preview": "wrangler versions upload",
+    "typecheck:scripts": "tsc -p tsconfig.json"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "dependency-cruiser": "18.9.0",
     "knip": "6.49.0",
     "oxfmt": "0.80.0",
     "oxlint": "1.95.0",
     "oxlint-tsgolint": "7.0.2009",
     "turbo": "2.11.13",
+    "typescript": "catalog:",
     "wrangler": "4.166.0"
   }
 }

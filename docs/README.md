@@ -34,6 +34,7 @@ Bu dosya, depodaki belgelerin tek girişidir. Her bilgi **tek bir yerde** yaşar
 | [013](decisions/ADR-013-page-closing-check-wcag22.md)      | Sayfa kapanış kontrolü ve WCAG 2.2 AA             |
 | [014](decisions/ADR-014-visual-baseline-approval.md)       | Görsel taban onay akışı                           |
 | [015](decisions/ADR-015-workflow-security-tooling.md)      | İş akışı güvenliği ve denetim araçları            |
+| [016](decisions/ADR-016-merge-and-release-gates.md)        | Birleştirme ve yayın engelleri                    |
 
 ## Belge kuralları
 

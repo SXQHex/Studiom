@@ -46,10 +46,29 @@ jobs:
       contents: read
     outputs:
       playwright: ${{ steps.versions.outputs.playwright }}
+      screenshots_changed: ${{ steps.screenshots.outputs.changed }}
     steps:
       - uses: actions/checkout@v7.0.1
         with:
+          # Full history to compare the screenshot baselines with the base branch.
+          fetch-depth: 0
           persist-credentials: false
+      - name: Detect Screenshot Changes
+        id: screenshots
+        env:
+          BASE: ${{ github.base_ref || github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          # Any difference, or a failing comparison, asks for approval.
+          if git diff --quiet "origin/$BASE...HEAD" -- apps/web/e2e/__screenshots__; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            {
+              echo "### Screenshot changes awaiting approval"
+              git diff --name-status "origin/$BASE...HEAD" -- apps/web/e2e/__screenshots__
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
       - uses: pnpm/action-setup@v6.1.1
       - uses: actions/setup-node@v7.1.0
         with:
@@ -120,3 +139,44 @@ jobs:
             apps/web/playwright-report/
             apps/web/test-results/
           retention-days: 7
+
+  visual-approval:
+    name: Visual Approval
+    needs: [check, e2e]
+    if: needs.check.outputs.screenshots_changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Waits for a person: review the images in "Files changed", then approve (ADR-016).
+    environment: visual-approval
+    permissions: {}
+    steps:
+      - name: Record Approval
+        run: echo "Screenshot changes approved."
+
+  # The only check the branch rule requires. It fails unless every job above passed.
+  gate:
+    name: CI Gate
+    needs: [workflows, check, e2e, visual-approval]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Require Every Job
+        env:
+          WORKFLOWS: ${{ needs.workflows.result }}
+          CHECK: ${{ needs.check.result }}
+          E2E: ${{ needs.e2e.result }}
+          CHANGED: ${{ needs.check.outputs.screenshots_changed }}
+          APPROVAL: ${{ needs.visual-approval.result }}
+        run: |
+          set -euo pipefail
+          echo "workflows=$WORKFLOWS check=$CHECK e2e=$E2E screenshots_changed=$CHANGED approval=$APPROVAL"
+          test "$WORKFLOWS" = success
+          test "$CHECK" = success
+          test "$E2E" = success
+          if [ "$CHANGED" = "true" ]; then
+            test "$APPROVAL" = success
+          else
+            test "$APPROVAL" = skipped
+          fi
