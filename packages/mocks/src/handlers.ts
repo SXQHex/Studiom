@@ -4,11 +4,7 @@ import {
   packageTemplatesList,
   paymentsList,
 } from "@workspace/contracts/commerce"
-import {
-  apiBasePath,
-  type ApiError,
-  type Operation,
-} from "@workspace/contracts/operation"
+import { apiBasePath, type Operation } from "@workspace/contracts/operation"
 import {
   centersList,
   disciplinesList,
@@ -26,21 +22,25 @@ import {
 import { capabilitiesGet, plansList } from "@workspace/contracts/plan"
 import { bookingsList, sessionsList } from "@workspace/contracts/schedule"
 import { systemHealth } from "@workspace/contracts/system"
-import { delay, http, HttpResponse, type RequestHandler } from "msw"
+import { delay, http, type RequestHandler } from "msw"
 import { z } from "zod"
 
-import { type Scenario, slowDelayMs } from "./scenario"
+import { bookingHandlers } from "./handlers/bookings"
+import { createLookups } from "./handlers/lookups"
+import { peopleHandlers } from "./handlers/people"
+import {
+  createIds,
+  createWriteQueue,
+  handle,
+  problem,
+  respond,
+  type MockContext,
+} from "./handlers/respond"
+import { sessionHandlers } from "./handlers/sessions"
+import { slowDelayMs } from "./scenario"
 import { people as namedPeople, sampleUsers } from "./seed/catalog"
-import type { MockDb } from "./store"
+import { isActive } from "./rules/booking"
 import { organizationUsage } from "./usage"
-
-export interface MockContext {
-  db: MockDb
-  /** The scenario of the page that sent the request. */
-  scenario: () => Scenario | null
-  /** The signed-in person; the browser keeps it for the tab's lifetime. */
-  auth: { get(): string | null; set(personId: string | null): void }
-}
 
 /** The shell needs these to draw itself, so scenarios never touch them. */
 const scenarioExempt = new Set(
@@ -48,51 +48,6 @@ const scenarioExempt = new Set(
     (op) => op.name
   )
 )
-
-const statusOf: Record<ApiError["code"], number> = {
-  invalid: 400,
-  forbidden: 403,
-  not_found: 404,
-  internal: 500,
-}
-
-function problem(code: ApiError["code"], message?: string) {
-  const body: ApiError = message === undefined ? { code } : { code, message }
-  return HttpResponse.json(body, { status: statusOf[code] })
-}
-
-/** Answers one operation: validates the request and the response against the contract. */
-function respond<Request extends z.ZodType>(
-  op: Operation<Request>,
-  resolve: (input: z.output<Request>) => unknown
-) {
-  return http.post(`*${op.path}`, async ({ request }) => {
-    const text = await request.text()
-    let body: unknown = {}
-    if (text) {
-      try {
-        body = JSON.parse(text)
-      } catch {
-        return problem("invalid", "Body is not JSON")
-      }
-    }
-    const input = op.request.safeParse(body)
-    if (!input.success) return problem("invalid", z.prettifyError(input.error))
-    const result = resolve(input.data)
-    if (result instanceof Response) return result
-    return new HttpResponse(JSON.stringify(op.response.parse(result)), {
-      headers: { "Content-Type": "application/json" },
-    })
-  })
-}
-
-/** `respond` with the resolver's result checked against the response type at compile time. */
-function handle<Request extends z.ZodType, Result extends z.ZodType>(
-  op: Operation<Request, Result>,
-  resolve: (input: z.output<Request>) => z.input<Result> | Response
-) {
-  return respond(op, resolve)
-}
 
 const paging = z.object({ page: z.number(), pageSize: z.number() })
 
@@ -125,6 +80,9 @@ function touchesCenter(b: Binding, centerId: string) {
 
 export function createHandlers(context: MockContext): RequestHandler[] {
   const { db, scenario, auth } = context
+  const lookups = createLookups(db)
+  const write = createWriteQueue()
+  const ids = createIds()
 
   /** A list operation: the `empty` scenario empties it; paged inputs are paged. */
   function list<Request extends z.ZodType>(
@@ -230,8 +188,9 @@ export function createHandlers(context: MockContext): RequestHandler[] {
       db.disciplines.findMany((q) => q.where({ organizationId }))
     ),
 
-    list(peopleList, ({ organizationId, centerId, scope, query }) => {
-      const ids = new Set(
+    list(peopleList, (input) => {
+      const { organizationId, centerId, scope, query, accountStatus } = input
+      const matching = new Set(
         bindingsOf(organizationId)
           .filter((b) => scope === undefined || b.scope === scope)
           .filter((b) => centerId === undefined || touchesCenter(b, centerId))
@@ -239,9 +198,13 @@ export function createHandlers(context: MockContext): RequestHandler[] {
       )
       const needle = query?.trim().toLocaleLowerCase("tr") ?? ""
       return db.people
-        .findMany((q) => q.where({ id: (id) => ids.has(id) }), {
+        .findMany((q) => q.where({ id: (id) => matching.has(id) }), {
           orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
         })
+        .filter(
+          (p) =>
+            accountStatus === undefined || p.accountStatus === accountStatus
+        )
         .filter((p) =>
           `${p.firstName} ${p.lastName} ${p.email}`
             .toLocaleLowerCase("tr")
@@ -265,7 +228,7 @@ export function createHandlers(context: MockContext): RequestHandler[] {
           : new Set(
               db.bookings
                 .findMany((q) => q.where({ personId }))
-                .filter((b) => b.status !== "cancelled")
+                .filter(isActive)
                 .map((b) => b.sessionId)
             )
       // Compared as instants: bounds may be written with another precision (`…:00Z`).
@@ -318,5 +281,9 @@ export function createHandlers(context: MockContext): RequestHandler[] {
     list(debtsList, (filter) =>
       db.debts.findMany((q) => q.where((r) => matchesFilter(r, filter)))
     ),
+
+    ...sessionHandlers(context, lookups, write, ids),
+    ...bookingHandlers(context, lookups, write, ids),
+    ...peopleHandlers(context, lookups, write, ids),
   ]
 }

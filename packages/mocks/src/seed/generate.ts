@@ -22,6 +22,7 @@ import type {
   Organization,
   Room,
 } from "@workspace/contracts/organization"
+import type { ExceptionEvent } from "@workspace/contracts/exception"
 import type { Binding, Lead, Person } from "@workspace/contracts/person"
 import type { Plan } from "@workspace/contracts/plan"
 import type { Money } from "@workspace/contracts/primitives"
@@ -55,6 +56,8 @@ export interface Dataset {
   debts: Debt[]
   sessions: Session[]
   bookings: Booking[]
+  /** Filled by actions during the session; the seed starts without any. */
+  exceptions: ExceptionEvent[]
 }
 
 export interface GenerateOptions {
@@ -98,6 +101,7 @@ export function generateDataset({
     debts: [],
     sessions: [],
     bookings: [],
+    exceptions: [],
   }
 
   const counters = new Map<string, number>()
@@ -577,6 +581,18 @@ export function generateDataset({
       packagesByCenter.set(pkg.centerId, list)
     }
     const used = new Map<string, number>()
+    // How many credits each limited package spends in the seed. Most keep some, so
+    // members can still book; a few are used up.
+    const budget = new Map(
+      data.packages.map((pkg) => {
+        const total = pkg.creditsTotal ?? Number.POSITIVE_INFINITY
+        if (pkg.creditsTotal === null) return [pkg.id, total] as const
+        const spends = faker.datatype.boolean({ probability: 0.12 })
+          ? total
+          : faker.number.int({ min: Math.floor(total / 4), max: total - 2 })
+        return [pkg.id, spends] as const
+      })
+    )
     const makeups = new Map<string, number>()
 
     const sessions = [...data.sessions].toSorted((a, b) =>
@@ -596,10 +612,7 @@ export function generateDataset({
         if (pkg.status === "frozen") return false
         if (sessionDay < pkg.startsOn || sessionDay >= pkg.expiresOn)
           return false
-        return (
-          pkg.creditsTotal === null ||
-          (used.get(pkg.id) ?? 0) < pkg.creditsTotal
-        )
+        return (used.get(pkg.id) ?? 0) < (budget.get(pkg.id) ?? 0)
       })
       const daysAhead = (Date.parse(session.startsAt) - now.getTime()) / dayMs
       const fill = isPast
@@ -612,7 +625,13 @@ export function generateDataset({
         session.capacity,
         Math.round(session.capacity * fill)
       )
-      const chosen = faker.helpers.shuffle(eligible).slice(0, target)
+      // Packages made for one discipline go first, so mixed ones last for the rest.
+      const breadth = (pkg: SoldPackage) =>
+        templatesById.get(pkg.templateId)?.disciplineIds.length ?? 0
+      const chosen = faker.helpers
+        .shuffle(eligible)
+        .toSorted((a, b) => breadth(a) - breadth(b))
+        .slice(0, target)
       chosen.forEach((pkg, index) => {
         const template = templatesById.get(pkg.templateId)
         let status: BookingStatus = "booked"
