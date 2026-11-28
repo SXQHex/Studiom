@@ -28,6 +28,7 @@ Bu dosya, depodaki belgelerin tek girişidir. Her bilgi **tek bir yerde** yaşar
 | [009](decisions/ADR-009-testing-and-quality-gates.md)      | Test stratejisi ve kalite kapıları                |
 | [010](decisions/ADR-010-plan-capabilities-as-data.md)      | Veri olarak plan yetenekleri                      |
 | [011](decisions/ADR-011-preview-and-hosting-cloudflare.md) | Önizleme ve yayın için Cloudflare                 |
+| [012](decisions/ADR-012-version-policy.md)                 | Sürüm politikası                                  |
 
 ## Belge kuralları
 
