@@ -16,6 +16,8 @@ Belgeler için başlangıç noktası: [`docs/README.md`](docs/README.md).
 
 Karar [ADR-011](docs/decisions/ADR-011-preview-and-hosting-cloudflare.md)'dedir. `main`, Cloudflare Workers Builds ile `studiom.fethiyetango.com` adresine yayınlanır. Diğer dallar önizleme adresi alır.
 
+Wrangler yapılandırması `apps/web/wrangler.jsonc` dosyasındadır. Yayın koruması (`scripts/deploy-guard.ts`) `apps/web/vite.config.ts` üzerinden üretilen yapılandırmaya eklenir.
+
 Panel ayarları (Workers & Pages → `studiom` → Settings → Builds):
 
 | Alan                           | Değer                     |
