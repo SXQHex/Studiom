@@ -14,7 +14,10 @@
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
     "knip": "knip",
-    "deps": "depcruise --config .dependency-cruiser.json ."
+    "deps": "depcruise --config .dependency-cruiser.json .",
+    "e2e": "pnpm --filter @studiom/web e2e",
+    "e2e:visual": "pnpm --filter @studiom/web e2e:visual",
+    "e2e:a11y": "pnpm --filter @studiom/web e2e:a11y"
   },
   "devDependencies": {
     "dependency-cruiser": "18.9.0",

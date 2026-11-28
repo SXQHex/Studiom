@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "tsc -b"
+    "typecheck": "tsc -b",
+    "e2e": "playwright test",
+    "e2e:visual": "playwright test --config playwright.visual.config.ts",
+    "e2e:a11y": "playwright test --config playwright.a11y.config.ts"
   },
   "dependencies": {
     "react": "catalog:",
@@ -18,6 +21,9 @@
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:",
+    "@playwright/test": "1.65.1",
+    "@axe-core/playwright": "4.14.1",
+    "@types/node": "26.6.11"
   }
 }

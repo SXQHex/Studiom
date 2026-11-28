@@ -16,7 +16,7 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 
 ### T01: Monorepo iskeleti; taslağın referans klasörüne taşınması
 
-- [x] pnpm workspaces + Turborepo; `apps/web`. `packages/contracts`, `packages/ui` ve `packages/mocks` boş yer tutucu bırakılmaz, ilk kullanıldıkları görevde açılır (T10, T06, T08). `.nvmrc` ve kök komutları: `dev`, `build`, `check` (`e2e` komutu T05'te eklenir).
+- [x] pnpm workspaces + Turborepo; `apps/web`. `packages/contracts`, `packages/ui` ve `packages/mocks` boş yer tutucu bırakılmaz, ilk kullanıldıkları görevde açılır (T10, T06, T08). `.nvmrc` ve kök komutları: `dev`, `build`, `check`, `e2e` (T05'te eklendi).
 - [x] Taslak `docs/reference/prototype-v2/` altına taşınır, lint, format ve knip dışında tutulur.
 - [x] `pnpm build` boş bir Vite + React uygulaması üretir. Cloudflare `assets.directory` → `apps/web/dist`.
 
@@ -46,9 +46,9 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 
 ### T05: Playwright altyapısı
 
-- [ ] Dört proje: `desktop-chromium`, `pixel-7`, `desktop-webkit`, `iphone-15`. Varsayılan renk şeması koyu. iPhone 15 farklı bir `timezoneId` ile koşar.
-- [ ] Ayrı `e2e`, `e2e-smoke`, `visual` ve `a11y` yapılandırmaları. visual saati dondurur ve sadece mock ile koşar. a11y `@axe-core/playwright` kullanır.
-- [ ] Her takımda bir yer tutucu test yeşil.
+- [x] Dört proje: `desktop-chromium`, `pixel-7`, `desktop-webkit`, `iphone-15`. Varsayılan renk şeması koyu. iPhone 15 farklı bir `timezoneId` ile koşar.
+- [x] Ayrı `e2e`, `e2e-smoke`, `visual` ve `a11y` yapılandırmaları. visual saati dondurur ve sadece mock ile koşar. a11y `@axe-core/playwright` kullanır.
+- [x] Her takımda bir yer tutucu test yeşil.
 
 **Bağımlılık:** T01 · **Boyut:** M
 
