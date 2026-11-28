@@ -1,12 +1,11 @@
 {
+  "$schema": "./node_modules/wrangler/config-schema.json",
   // Static SPA on Cloudflare Workers static assets (ADR-005, ADR-011).
-  // Assets come from the Vite build output; run `pnpm build` before deploying.
+  // The Cloudflare Vite plugin sets the asset directory in the build output.
   "name": "studiom",
-  // Refuses `wrangler deploy` anywhere but a Workers Builds run on main (ADR-016).
-  "build": { "command": "node scripts/deploy-guard.ts" },
+  // The deploy guard (ADR-016) is added in vite.config.ts.
   "compatibility_date": "2026-11-01",
   "assets": {
-    "directory": "./apps/web/dist",
     "not_found_handling": "single-page-application",
   },
   "routes": [{ "pattern": "studiom.fethiyetango.com", "custom_domain": true }],

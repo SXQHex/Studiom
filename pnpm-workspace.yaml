@@ -6,6 +6,8 @@ allowBuilds:
   esbuild: true
   msw: false
   "@swc/core": false
+  # The platform binary ships as an optional dependency; the install script is not needed.
+  workerd: false
 
 # Exact versions (ADR-012).
 saveExact: true

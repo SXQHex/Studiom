@@ -17,7 +17,9 @@
     "e2e:visual": "pnpm --filter web e2e:visual",
     "e2e:a11y": "pnpm --filter web e2e:a11y",
     "i18n:check": "pnpm --filter web exec i18next-cli extract --ci && pnpm --filter web exec i18next-cli status",
-    "typecheck:root": "tsc -p tsconfig.json"
+    "typecheck:root": "tsc -p tsconfig.json",
+    "deploy": "pnpm --filter web run deploy",
+    "deploy:preview": "pnpm --filter web run deploy:preview"
   },
   "devDependencies": {
     "@size-limit/file": "14.3.0",
