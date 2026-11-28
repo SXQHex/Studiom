@@ -25,6 +25,10 @@ Beceriler genel çalışma rehberidir. Kullanıcının açık kararları, ADR'le
 | `performance-optimization` | Boyut bütçesi ve açılış hızı |
 | `github-actions-workflow-pro` | CI hattı (T04) ve iş akışı denetimi |
 
+### `github-actions-workflow-pro` için proje kuralı
+
+Araç seçimi [ADR-015](../../docs/decisions/ADR-015-workflow-security-tooling.md)'tedir ve becerinin önerilerinden önce gelir: eylemler SHA yorumu yerine `actions.lock` ile sabitlenir (pinact kullanılmaz), poutine kullanılmaz. `validate.sh` bu ikisini "absent" diye bildirir, bu beklenen durumdur.
+
 Kod incelemesi, sadeleştirme ve güvenlik incelemesi için Claude'un yerleşik `/code-review`, `/simplify` ve `/security-review` komutları kullanılır. Cloudflare becerileri `cloudflare@cloudflare` eklentisinden gelir.
 
 ## Sayfa kapanış kontrolü (mwg + WCAG 2.2 AA)
