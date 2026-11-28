@@ -31,6 +31,7 @@ Bu dosya, depodaki belgelerin tek girişidir. Her bilgi **tek bir yerde** yaşar
 | [011](decisions/ADR-011-preview-and-hosting-cloudflare.md) | Önizleme ve yayın için Cloudflare                 |
 | [012](decisions/ADR-012-version-policy.md)                 | Sürüm politikası                                  |
 | [013](decisions/ADR-013-page-closing-check-wcag22.md)      | Sayfa kapanış kontrolü ve WCAG 2.2 AA             |
+| [014](decisions/ADR-014-visual-baseline-approval.md)       | Görsel taban onay akışı                           |
 
 ## Belge kuralları
 

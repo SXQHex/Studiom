@@ -2,7 +2,7 @@
 
 ## Durum
 
-Kabul edildi
+Kabul edildi. Görsel takımın ne zaman koştuğu ve tabanların nasıl onaylandığı [ADR-014](ADR-014-visual-baseline-approval.md) ile geçersiz.
 
 ## Tarih
 
