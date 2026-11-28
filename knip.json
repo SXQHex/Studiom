@@ -1,0 +1,8 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignore": ["docs/reference/prototype-v2/**", ".agents/**"],
+  "workspaces": {
+    ".": {},
+    "apps/web": {}
+  }
+}

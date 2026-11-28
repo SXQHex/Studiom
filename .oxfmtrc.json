@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false,
+  "sortImports": false,
+  "sortPackageJson": false,
+  "sortTailwindcss": false,
+  "ignorePatterns": [
+    "**/dist/**",
+    "**/coverage/**",
+    "**/*.tsbuildinfo",
+    "pnpm-lock.yaml",
+    "docs/reference/prototype-v2/**",
+    ".agents/**"
+  ]
+}

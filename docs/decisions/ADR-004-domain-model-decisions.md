@@ -1,16 +1,21 @@
 # ADR-004: Alan modeli kararları (seans, paket, aday, kurulum)
 
 ## Durum
+
 Kabul edildi
 
 ## Tarih
+
 2026-11-28
 
 ## Bağlam
+
 Dans, yoga ve pilates rezervasyon biçimlerinde farklılaşıyor: serbest katılım, aletli yer seçimi, lider/takipçi dengeli dönemlik kurlar. Paketlerin merkezler arasında tutarlı olması organizasyon için önemli. Hesabı ya da hakkı olmayan kişi rezervasyon yapamaz.
 
 ## Karar
+
 ### Seans
+
 - Arayüzdeki tek kavram **Seans**'tır. Tekrar, seansın bir özelliğidir ve takvim alışkanlığıyla düzenlenir: "Yalnız bu / Bu ve sonrakiler / Tümü".
 - Seansın seçenekleri:
   - **kayıt birimi:** seans seans ya da tekrarın tamamı ("Kura katıl")
@@ -19,9 +24,11 @@ Dans, yoga ve pilates rezervasyon biçimlerinde farklılaşıyor: serbest katıl
   - **yer seçimi:** salonda alet varsa, örneğin reformer
 
   Disiplinler varsayılanları önerir.
+
 - Saatler UTC olarak tutulur, **merkezin IANA saat diliminde** gösterilir (ADR-008).
 
 ### Paketler
+
 - **Şablonları organizasyon tanımlar.** Şablon şunları içerir:
   - ad ve disiplinler
   - hak sayısı ya da sınırsız
@@ -42,6 +49,7 @@ Dans, yoga ve pilates rezervasyon biçimlerinde farklılaşıyor: serbest katıl
 - Business'ta bir paketin başka merkezde kullanılması bir mutabakat hareketi doğurur. Paket yine o merkezin paketi olarak kalır.
 
 ### Aday ve kurulum
+
 - **Kendi kendine kayıt yoktur.** Hesap sadece **davetle** oluşur. Platform, satışı platform dışında yaptıktan sonra organizasyon sahibini davet eder. Merkez de üye ve personeli davet eder.
 - **Açık sayfadan gelen aday akışı:**
   1. Ziyaretçi "Deneme dersi iste" ya da "Bilgi al" formunu doldurur. Hesap açılmaz, form onay alanları içerir.
@@ -56,10 +64,12 @@ Dans, yoga ve pilates rezervasyon biçimlerinde farklılaşıyor: serbest katıl
 - A stüdyosunun kullanıcısı B'ye başvurursa herkes gibi işlem görür. Organizasyonlar arası otomatik doldurma yapılmaz.
 
 ## Değerlendirilen alternatifler
+
 - **Üç rezervasyon modeli (açık, aletli, kur):** Seçenekli tek kavram lehine reddedildi.
 - **"Ders/sınıf" dizisi kavramı:** Reddedildi, takvimdeki tekrar mantığı zaten tanıdık.
 - **Açık sayfadan kendi kendine kayıt:** Reddedildi, hakkı olmayan kişi zaten rezervasyon yapamıyor.
 
 ## Sonuçlar
+
 - Tek seans formu, tek seans detayı ve tek rezervasyon akışı olur. Farklılıklar sadece koşullu alanlarla gelir.
 - Starter'da sadece temel aday takibi vardır: elle aday kaydı, not ve takip tarihi. Deneme teklifi Pro ve üzerindedir.

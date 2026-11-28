@@ -1,16 +1,21 @@
 # ADR-003: Yetki modeli
 
 ## Durum
+
 Kabul edildi
 
 ## Tarih
+
 2026-11-28
 
 ## Bağlam
+
 Roller platform, organizasyon ve merkez kapsamlarında tanımlı. Üye merkez yöneticisinin değil, **organizasyonun** müşterisidir. Organizasyonun, toplamların içinde gizlenebilecek kayırmaları görebilmesi gerekir. Business'ta merkezler arası izolasyon delinememelidir.
 
 ## Karar
+
 ### Platform
+
 - **Platform Sahibi** her şeyi yapabilir. Şunları ise sadece o yapabilir:
   - plan kataloğu ve fiyatları yönetmek
   - iade yapmak
@@ -22,6 +27,7 @@ Roller platform, organizasyon ve merkez kapsamlarında tanımlı. Üye merkez y�
 - **Platform Yöneticisi** şunları yapar: kiracıları görüntüleme, askıya alma ve geri açma, deneme süresini uzatma, destek kipi (salt okunur), destek talepleri, duyurular.
 
 ### Organizasyon (matris v2)
+
 - **Sahip (`owner`)** tüm **org. yöneticisi (`org_manager`)** haklarını içerir. Org. yöneticisi yedek bir roldür.
 - **Sadece sahibin yapabildikleri:**
   - organizasyonu kapatmak ve yeniden açmak
@@ -48,6 +54,7 @@ Roller platform, organizasyon ve merkez kapsamlarında tanımlı. Üye merkez y�
 - Merkez içindeki her yazma işlemi **merkez bağı** ister.
 
 ### Merkez
+
 - **Merkez yöneticisi:** tüm merkez modülleri.
 - **Personel:** Yönetici, kişi başına **modülün tamamını** açar: Program, Kişiler, Satış, Merkez. Hazır kalıplar vardır, örneğin "Resepsiyon" ve "Satış danışmanı". Yönetici asistanı pozisyonu personeldir.
 - **Eğitmen:** Ben kabuğunda çalışır. Katılımcıların adını ve kalan hakkını görür. Borç ya da ödeme bilgisini görmez.
@@ -55,9 +62,11 @@ Roller platform, organizasyon ve merkez kapsamlarında tanımlı. Üye merkez y�
 - Yoklama her zaman alanı kaydeder ("X aldı").
 
 ## Değerlendirilen alternatifler
+
 - **Organizasyona sadece toplam göstermek:** Reddedildi. Kayırma toplamların içinde kaybolur.
 - **Hücre hücre personel izin matrisi:** Reddedildi. "Modül = yetki birimi" kuralıyla çelişiyor ve öğrenmesi zor.
 
 ## Sonuçlar
+
 - İstisna sınıfındaki her işlemde gerekçe alanı gerekir. Organizasyon okumaları için bir erişim kaydı yazıcısı ve bir atama talebi akışı gerekir.
 - Eşikli onaylar kapsam dışıdır, örneğin "%20 üzeri indirim onay ister".

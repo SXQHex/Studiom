@@ -1,15 +1,19 @@
 # ADR-008: Uluslararasılaştırma, saat dilimi ve RTL
 
 ## Durum
+
 Kabul edildi
 
 ## Tarih
+
 2026-11-28
 
 ## Bağlam
+
 Arayüz şimdiden tr ve en ile çıkmalı, yeni diller sadece locale dosyası eklenerek gelebilmeli. Merkezler farklı saat dilimlerinde olabilir. RTL belki hiç gerekmeyecek, ama ani bir ihtiyaçta tüm ekranları yeniden elden geçirmek istemiyoruz.
 
 ## Karar
+
 - **i18next + react-i18next** kullanılır.
   - Kaynaklar tiplidir (`CustomTypeOptions`), bilinmeyen anahtar tip denetiminde hata verir.
   - Anahtar çıkarma ve eksik anahtar denetimi **i18next-cli** ile yapılır ve CI kapısıdır.
@@ -29,9 +33,11 @@ Arayüz şimdiden tr ve en ile çıkmalı, yeni diller sadece locale dosyası ek
   - Şimdilik RTL dil çıkmaz.
 
 ## Değerlendirilen alternatifler
+
 - **Paraglide JS:** Derleme anında güçlü tip güvenliği sunuyor. Kullanıcı ekosistem genişliği için, tip güvenliği ve yerelleştirme modülleriyle birlikte i18next'i seçti.
 - **Lingui:** Makro ve çıkarma kurulum maliyeti var.
 
 ## Sonuçlar
+
 - Yeni dil eklemek `locales/<dil>/` eklemek demektir.
 - RTL örnekleri görsel ve duman testleriyle kapsanır (ADR-009).

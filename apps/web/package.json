@@ -1,0 +1,29 @@
+{
+  "name": "@studiom/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/check-bundle.ts",
+    "preview": "vite preview",
+    "typecheck": "tsc -b",
+    "e2e": "playwright test",
+    "e2e:visual": "playwright test --config playwright.visual.config.ts",
+    "e2e:a11y": "playwright test --config playwright.a11y.config.ts"
+  },
+  "dependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "@playwright/test": "1.65.1",
+    "@axe-core/playwright": "4.14.1",
+    "@types/node": "26.6.11"
+  }
+}

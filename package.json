@@ -1,0 +1,30 @@
+{
+  "name": "studiom",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.23.0",
+  "engines": {
+    "node": ">=26.13.1 <27"
+  },
+  "scripts": {
+    "dev": "turbo run dev --filter=@studiom/web",
+    "build": "turbo run build",
+    "check": "turbo run typecheck && pnpm lint && pnpm format:check && pnpm knip && pnpm deps",
+    "lint": "oxlint --type-aware .",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check .",
+    "knip": "knip",
+    "deps": "depcruise --config .dependency-cruiser.json .",
+    "e2e": "pnpm --filter @studiom/web e2e",
+    "e2e:visual": "pnpm --filter @studiom/web e2e:visual",
+    "e2e:a11y": "pnpm --filter @studiom/web e2e:a11y"
+  },
+  "devDependencies": {
+    "dependency-cruiser": "18.9.0",
+    "knip": "6.49.0",
+    "oxfmt": "0.80.0",
+    "oxlint": "1.95.0",
+    "oxlint-tsgolint": "7.0.2009",
+    "turbo": "2.11.13"
+  }
+}

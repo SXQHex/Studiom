@@ -1,15 +1,19 @@
 # ADR-002: Gezinme ve bilgi mimarisi kuralları
 
 ## Durum
+
 Kabul edildi
 
 ## Tarih
+
 2026-11-28
 
 ## Bağlam
+
 Hedef, yetki kapsamı belli ve modüler bir yapı: basit bir kabuk → menü → alt menü → sayfa düzeni. Farklı veri kümelerini taşıyan sayfa içi sekmeler veri ve önbellek yönetimini zorlaştırır. Yan paneli bir merkez bağlamına geçirmek de önbelleği karmaşıklaştırır ve backend okumalarını katlar.
 
 ## Karar
+
 1. **Modül = yetki birimi.** Bir modülü görebiliyorsan tüm sayfalarını da görürsün. İçerideki kısıtlar sayfa bazında değil, eylem (düğme) bazındadır.
 2. **Bir sayfa = bir veri kümesi = bir adres.** Farklı veri kümeleri ayrı alt menü sayfalarıdır, veri sekmesi olmaz. Sekme ya da segment sadece aynı listeyi filtreleyebilir.
 3. **Alt menü tek seviyedir.** Menü içinde menü olmaz.
@@ -19,6 +23,7 @@ Hedef, yetki kapsamı belli ve modüler bir yapı: basit bir kabuk → menü →
 7. **Plan dışı modüller gizlenir**, kilitli gösterilmez. Yükseltme bilgisi iki yerde verilir: Organizasyon › Abonelik ve bağlamsal limit diyalogları.
 
 ### Kabul edilen menüler
+
 - **Stüdyo › Merkez grubu:**
   - Bugün (pano)
   - Program: Takvim, Etkinlikler, Özel ders talepleri, Bekleme listeleri
@@ -44,9 +49,11 @@ Hedef, yetki kapsamı belli ve modüler bir yapı: basit bir kabuk → menü →
 - **Masaüstünde** modüller için ikon şeridi ve modülün sayfaları için bir panel bulunur. **Mobilde** modüller alt çubukta, sayfalar üstte yatay bir listede yer alır.
 
 ## Değerlendirilen alternatifler
+
 - **Merkez başına detay sekmeleri:** Reddedildi. Veri sekmelerini yönetmek zor, bağlam değişimi de önbelleği karmaşıklaştırıyor.
 - **Yükseltme için kilitli menü öğeleri:** Reddedildi. Öğrenme eğrisini artırıyor.
 
 ## Sonuçlar
+
 - Menüler daha az ve daha düz olur. Her adres tek bir sorgu anahtarı ailesine karşılık gelir.
 - Bir modülün sayfa listesi büyüyebilir, ama asla iç içe büyümez.

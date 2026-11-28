@@ -1,13 +1,13 @@
 {
   // Static SPA on Cloudflare Workers static assets (ADR-005, ADR-011).
-  // T01 points "assets.directory" to the Vite build output (apps/web/dist).
+  // Assets come from the Vite build output; run `pnpm build` before deploying.
   "name": "studiom",
   "compatibility_date": "2026-11-01",
   "assets": {
-    "directory": "./site",
-    "not_found_handling": "single-page-application"
+    "directory": "./apps/web/dist",
+    "not_found_handling": "single-page-application",
   },
   "routes": [{ "pattern": "studiom.fethiyetango.com", "custom_domain": true }],
   "workers_dev": true,
-  "preview_urls": true
+  "preview_urls": true,
 }

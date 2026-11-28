@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  schedule:
+    # Nightly full matrix (all four profiles + visual), ADR-009.
+    - cron: "0 1 * * *"
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  workflows:
+    name: Workflow Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      # actionlint 1.7.12 (includes shellcheck). Update the tag comment and digest together.
+      - name: Actionlint
+        uses: docker://rhysd/actionlint@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
+        with:
+          args: -color
+      # The zizmor version is pinned inside the action release, so Dependabot updates both.
+      - name: Zizmor
+        uses: zizmorcore/zizmor-action@v0.8.1
+        with:
+          advanced-security: false
+          annotations: true
+
+  check:
+    name: Check and Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    outputs:
+      playwright: ${{ steps.versions.outputs.playwright }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6.1.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Read Playwright Version
+        id: versions
+        run: |
+          set -euo pipefail
+          version="$(node -p "require('./apps/web/package.json').devDependencies['@playwright/test']")"
+          echo "playwright=$version" >> "$GITHUB_OUTPUT"
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Typecheck, Lint, Format, Knip, Boundaries
+        run: pnpm check
+      - name: Build With Bundle Budget
+        run: pnpm build
+
+  e2e:
+    name: E2E Tests
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    # Official Playwright image: same browsers and fonts everywhere, so visual baselines are stable.
+    # The image tag follows the @playwright/test version, so a version bump needs no second edit.
+    container:
+      image: mcr.microsoft.com/playwright:v${{ needs.check.outputs.playwright }}-noble
+      # --init reaps finished preview servers; --ipc=host keeps Chromium from running out of memory.
+      options: --init --ipc=host
+    # Container jobs default to sh, which has no `pipefail`.
+    defaults:
+      run:
+        shell: bash
+    env:
+      CI: "true"
+      FULL_MATRIX: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6.1.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Behavior Suite
+        run: |
+          set -euo pipefail
+          if [ "$FULL_MATRIX" = "true" ]; then
+            pnpm e2e
+          else
+            pnpm e2e --project=desktop-chromium --project=iphone-15 --project=smoke
+          fi
+      - name: Accessibility Suite
+        run: pnpm e2e:a11y
+      - name: Visual Suite
+        run: pnpm e2e:visual
+      - name: Upload Playwright Report
+        if: failure()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: playwright-report
+          path: |
+            apps/web/playwright-report/
+            apps/web/test-results/
+          retention-days: 7
