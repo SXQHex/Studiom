@@ -2,7 +2,7 @@
 
 ## Durum
 
-Kabul edildi. "PR'ı birleştirmek onaydır" maddesi [ADR-016](ADR-016-merge-and-release-gates.md) ile, "İş akışı CI'ı kendisi tetikler" maddesi [ADR-019](ADR-019-baseline-ci-run.md) ile geçersiz. ADR-009'daki "visual birleşmede ve her gece koşar" maddesinin yerine geçer.
+Kabul edildi. "İş akışı CI'ı kendisi tetikler" maddesi [ADR-019](ADR-019-baseline-ci-run.md) ile geçersiz. "PR'ı birleştirmek onaydır" maddesi [ADR-020](ADR-020-merge-is-visual-approval.md) ile yeniden geçerlidir. ADR-009'daki "visual birleşmede ve her gece koşar" maddesinin yerine geçer.
 
 ## Tarih
 

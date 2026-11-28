@@ -14,7 +14,7 @@ Taban görüntülerini iş akışı token'ıyla commit eder. GitHub o commit'in 
 
 ## Karar
 
-İş akışı CI tetiklemez. Taban commit'inden sonra depo sahibi PR sayfasında **Approve and run workflows** düğmesine basar. Birleştirme kuralları [ADR-016](ADR-016-merge-and-release-gates.md)'daki gibidir.
+İş akışı CI tetiklemez. Taban commit'inden sonra depo sahibi PR sayfasında **Approve and run workflows** düğmesine basar. Görsel onayın nasıl verildiği [ADR-020](ADR-020-merge-is-visual-approval.md)'dedir.
 
 ## Değerlendirilen alternatifler
 
@@ -22,5 +22,5 @@ Taban görüntülerini iş akışı token'ıyla commit eder. GitHub o commit'in 
 
 ## Sonuçlar
 
-- Görsel değiştiren PR'da tek CI koşusu ve tek `Visual Approval` vardır.
+- Görsel değiştiren PR'da tek CI koşusu vardır.
 - İş akışının `actions: write` yetkisi kalktı.
