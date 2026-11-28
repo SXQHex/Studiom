@@ -10,7 +10,7 @@ Kabul edildi
 Starter, Pro ve Business limitlerde ve özelliklerde ayrışıyor. Platform Sahibi bunları düzenleyebilmeli. Her modül plan kontrolünü kendi içine sabit yazarsa davranış tutarsızlaşır.
 
 ## Karar
-- API'den (şimdilik MSW'den) okunan tek bir **yetenek kaydı** vardır: `domain/capabilities`. Kodda sadece iki şey sabittir:
+- API'den (şimdilik MSW'den) okunan tek bir **yetenek kaydı** vardır: `domain/capabilities`. Kodda sadece iki şey sabittir ve ikisi de `packages/contracts` içinde tanımlıdır:
   - özellik **adları**: `waitlist`, `freeze`, `payroll`, `events`, `advancedCrm`, `automation`, `emailNotifications`, `reminders`, `advancedReports`, `settlement`, `staffPermissions`, …
   - limit **anahtarları**: `centers`, `rooms`, `disciplines`, `instructors`, `activeStudents`
 - Menüler, düğmeler ve limit diyalogları "bağlar × yetenekler"den türetilir. Plan dışı modüller gizlenir (ADR-002).

@@ -14,7 +14,7 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 ## Faz 1: Temel
 
 ### T01: Monorepo iskeleti; taslağın referans klasörüne taşınması
-- [ ] pnpm workspaces + Turborepo; `apps/web`, `packages/ui` ve `packages/mocks`. `.nvmrc` ve kök komutları: `dev`, `build`, `check`, `e2e`.
+- [ ] pnpm workspaces + Turborepo; `apps/web`, `packages/contracts`, `packages/ui` ve `packages/mocks`. `.nvmrc` ve kök komutları: `dev`, `build`, `check`, `e2e`.
 - [ ] Taslak `docs/reference/prototype-v2/` altına taşınır, lint ve knip dışında tutulur.
 - [ ] `pnpm build` boş bir Vite + React uygulaması üretir.
 **Bağımlılık:** yok · **Boyut:** M
@@ -26,7 +26,7 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 **Bağımlılık:** T01 · **Boyut:** M
 
 ### T03: dependency-cruiser katman kuralları
-- [ ] ADR-006'daki kurallar uygulanır: domain ↛ shells, kabuk ↛ kabuk, modül ↛ kardeş modül, döngü yok, packages ↛ apps.
+- [ ] ADR-006'daki kurallar uygulanır: domain ↛ shells, kabuk ↛ kabuk, modül ↛ kardeş modül, döngü yok, packages ↛ apps, paketler arası yön (`mocks` → `contracts`, `contracts` bağımsız, `ui` ↛ `contracts`).
 - [ ] Örnek bir ihlal `pnpm check`'i kırar.
 **Bağımlılık:** T01 · **Boyut:** S
 
@@ -52,7 +52,7 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 **Bağımlılık:** T06, T09 · **Boyut:** S
 
 ### T08: Mock çekirdeği
-- [ ] `@mswjs/data` doğrulanır. Domain Zod şemalarından tipli bir depo kurulur: seed'li faker, "şimdi"ye göre seed, yenilemede sıfırlama.
+- [ ] `@mswjs/data` doğrulanır. `packages/contracts` şemalarını kabul eden genel ve tipli bir depo kurulur (varlık şemaları T10'da eklenir): seed'li faker, "şimdi"ye göre seed, yenilemede sıfırlama.
 - [ ] Geliştirmede ve Playwright'ta MSW çalışanı. `?scenario=empty|error|slow|forbidden` ara katmanı.
 **Bağımlılık:** T01 · **Boyut:** M
 
@@ -63,7 +63,7 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 **Bağımlılık:** T01 · **Boyut:** M
 
 ### T10: Domain tabanı ve seed veri kümesi
-- [ ] Zod şemalarıyla `domain/` varlıkları: organization, center, room, discipline, person, binding, session, booking, package-template, package, payment, debt.
+- [ ] `packages/contracts` içinde Zod şemaları ve uç nokta tanımları: organization, center, room, discipline, person, binding, session, booking, package-template, package, payment, debt; plan özellik adları ve limit anahtarları. `domain/` bunları içe aktarır, şema tanımlamaz.
 - [ ] ADR-007'ye göre seed: Starter 97/100, Pro 150/250, Business 3 merkezde (biri Berlin) 300/1.250. Dört bağlı kişi ve adaylar dahil.
 - [ ] Ekranlar arası tutarlılık testi: varlıklar arasında sayılar birbirini tutar.
 **Bağımlılık:** T08 · **Boyut:** M (gerekirse varlık gruplarına bölünür)

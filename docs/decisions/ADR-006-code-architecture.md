@@ -11,9 +11,10 @@ Aynı veri birden çok kabukta görünüyor. Merkez sayfaları ile organizasyon 
 
 ## Karar
 - **Katmanlar** (Feature-Sliced Design'ın sadeleştirilmiş hâli): `packages/*` → `apps/web/src/domain/<varlık>` → `apps/web/src/shells/<kabuk>/<modül>`.
+  - `packages/contracts`: **sözleşmenin tek kaynağı.** Varlıkların Zod şemaları ve türetilmiş tipleri, API uç noktası tanımları (yol, istek, yanıt), plan özellik adları ve limit anahtarları burada durur. React'e ve uygulamaya bağımlı değildir. Backend geldiğinde API sözleşmesi de buradan beslenir.
   - `packages/ui`: shadcn + react-aria ilkel bileşenleri, tokenlar, durum bileşenleri (boş, hata, yükleniyor, yetkisiz, bulunamadı).
-  - `packages/mocks`: seed, depo ve MSW işleyicileri.
-  - `domain/<varlık>`: people, sessions, bookings, packages, finance… Her varlık şunları içerir: Zod şemaları ve tipler, `queryOptions`, `readOnly` gibi kipleri olan ortak görünümler, ortak eylemler (yoklama, iptal).
+  - `packages/mocks`: seed, depo ve MSW işleyicileri. Şemaları ve uç noktaları `packages/contracts`'tan alır, kendisi şema tanımlamaz.
+  - `domain/<varlık>`: people, sessions, bookings, packages, finance… Şemaları `packages/contracts`'tan alır, kendisi şema tanımlamaz. Her varlık şunları içerir: `queryOptions`, `readOnly` gibi kipleri olan ortak görünümler, ortak eylemler (yoklama, iptal) ve sadece arayüze ait form şemaları.
   - `shells/`: `platform`, `studio/{center,organization}`, `me/{home,program,requests,wallet,account}`, `public`. Bir modül sayfaları ve o modüle özgü formları ve akışları taşır.
 - **Modül klasöründe sadece kod bulunur.**
   - Çeviriler merkezdedir: `apps/web/locales/{tr,en}/<kabuk>-<modül>.json`. Her modül bir i18next ad alanıdır.
@@ -27,6 +28,7 @@ Aynı veri birden çok kabukta görünüyor. Merkez sayfaları ile organizasyon 
   - modül ↛ kardeş modül
   - döngü yok
   - packages ↛ apps
+  - paketler arası yön: `contracts` hiçbir pakete bağımlı değildir; `mocks` → `contracts`; `ui` → `contracts` yasak (ui iş verisini bilmez)
 
   Bu denetim oxlint, oxfmt ve knip ile aynı "esnetilmez" sınıftadır.
 

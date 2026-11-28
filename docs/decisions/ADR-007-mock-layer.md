@@ -12,7 +12,7 @@ Kabul edildi
 ## Karar
 - **MSW** tarayıcıda ve Playwright'ta çalışır. Uygulama gerçek `fetch` çağrıları yapar, işleyiciler bunları yanıtlar. İleride tek değişiklik MSW'yi kapatmak olur.
 - **Tipli bellek içi depo** `packages/mocks` içinde durur.
-  - Seed'li `@faker-js/faker` ile üretilir ve domain Zod şemalarıyla doğrulanır.
+  - Seed'li `@faker-js/faker` ile üretilir ve `packages/contracts` içindeki Zod şemalarıyla doğrulanır (ADR-006). MSW işleyicileri de uç noktaları aynı paketten alır, böylece uygulama ile mock aynı sözleşmeyi kullanır.
   - Değişiklikler oturum boyunca kalır, sayfa yenilenince seed'e dönülür.
   - Kurulumda güncelse `@mswjs/data` kullanılır, değilse küçük bir tipli depo yazılır.
 - **Seed "şimdi"ye göre üretilir**, sabit bir tarihe bağlanmaz. Örnekler: "bugün 18:30 salsa", "3 gün sonra biten paket".
