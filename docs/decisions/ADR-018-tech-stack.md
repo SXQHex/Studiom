@@ -2,7 +2,7 @@
 
 ## Durum
 
-Kısmen onaylandı. TypeScript 7, FullCalendar 7 ve temel kurulum yöntemi onaylı (2026-11-28; yöntemi ajanın seçmesi istendi). Mock verisi katmanı onay bekliyor. Tamamı onaylanmadan kurulum yapılmaz.
+Kısmen onaylandı. TypeScript 7, FullCalendar 7 ve temel kurulum yöntemi onaylı (2026-11-28; yöntemi ajanın seçmesi istendi). Mock verisi katmanı da onaylı: MSW + `@msw/data` + Faker. Açık kalan tek konu takvim görünümü (kaynak sütunu gereksinimi). Tamamı onaylanmadan kurulum yapılmaz.
 
 ## Tarih
 
@@ -77,14 +77,16 @@ Her adım ayrı commit'tir; araçlar kendi resmî komutuyla eklenir.
 
 Ağ katmanı MSW'dir. Veri deposu için bakılanlar:
 
-| Seçenek              | Haftalık indirme    | Durum                                                     |
-| -------------------- | ------------------- | --------------------------------------------------------- |
-| `@msw/data` (öneri)  | 132 bin             | MSW ekibinden; Zod şeması, ilişki, sorgu, sayfalama       |
-| Mirage JS            | 386 bin             | MSW'nin yerine geçer; son sürüm Ekim 2023                 |
-| json-server          | 416 bin             | Ayrı sunucu süreci ister; 1.x beta                        |
-| TanStack DB          | 1,7 Mn (`react-db`) | 1.0 aday sürüm; mock değil, uygulama veri mimarisi        |
-| Dexie (IndexedDB)    | 3,6 Mn              | Genel tarayıcı veritabanı; sorgu ve ilişkiyi biz bağlarız |
-| Prism, `@msw/source` | 292 bin / 34 bin    | OpenAPI belgesi ister; henüz yok                          |
+| Seçenek               | Haftalık indirme    | Durum                                                     |
+| --------------------- | ------------------- | --------------------------------------------------------- |
+| `@msw/data` (seçildi) | 132 bin             | MSW ekibinden; Zod şeması, ilişki, sorgu, sayfalama       |
+| Mirage JS             | 386 bin             | MSW'nin yerine geçer; son sürüm Ekim 2023                 |
+| json-server           | 416 bin             | Ayrı sunucu süreci ister; 1.x beta                        |
+| TanStack DB           | 1,7 Mn (`react-db`) | 1.0 aday sürüm; mock değil, uygulama veri mimarisi        |
+| Dexie (IndexedDB)     | 3,6 Mn              | Genel tarayıcı veritabanı; sorgu ve ilişkiyi biz bağlarız |
+| Prism, `@msw/source`  | 292 bin / 34 bin    | OpenAPI belgesi ister; henüz yok                          |
+
+API sözleşmesi `packages/contracts` içinde Zod ile tipli işlemler olarak tanımlanır; backend geldiğinde Supabase Edge Function aynı sözleşmeyi uygular ve yalnız MSW kapatılır.
 
 Veri üretimi: Faker (24,9 Mn, tohumlanabilir). `zod-schema-faker` (90 bin) şemadan rastgele veri üretir; ekranlar arası tutarlı senaryo için yetmez.
 
