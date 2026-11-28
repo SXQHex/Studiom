@@ -5,6 +5,7 @@ Bu dosya, depodaki belgelerin tek girişidir. Her bilgi **tek bir yerde** yaşar
 ## Hangi bilgi nerede (SSoT)
 | Konu | Tek kaynak | Sahip olduğu şey |
 |---|---|---|
+| Hak ve kullanım bildirimi | [`README.md`](../README.md) | Telif ve otomatik erişim yasağı |
 | Niyet, kapsam, "bitti" tanımı, fazlar, riskler, açık sorular | [`tasks/plan.md`](../tasks/plan.md) | Neyi neden yaptığımız |
 | Görevler, kabul ölçütleri, kontrol noktaları | [`tasks/todo.md`](../tasks/todo.md) | Sıradaki iş |
 | Mimari ve ürün kararları | [`docs/decisions/`](decisions/) (ADR) | Bir karar, gerekçesi ve alternatifleri |
