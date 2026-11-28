@@ -3,6 +3,9 @@
   "ignore": ["docs/reference/prototype-v2/**", ".agents/**"],
   "workspaces": {
     ".": {},
-    "apps/web": {}
+    "apps/web": {
+      "entry": ["index.html", "src/styles.css"]
+    },
+    "packages/ui": {}
   }
 }

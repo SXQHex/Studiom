@@ -16,6 +16,7 @@ catalog:
 # Give it a private TypeScript 6 compiler; the app itself stays on the catalog version.
 minimumReleaseAgeExclude:
   - knip@6.49.0
+  - lucide-react@1.82.0
 
 packageExtensions:
   dependency-cruiser:
