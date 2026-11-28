@@ -56,9 +56,9 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 
 ### T06: `packages/ui` temeli, tokenlar ve keşif çalışması
 
-- [ ] `tokens.css` taşınır: açık, koyu, yüksek kontrast ve `--now`. Tailwind v4'te sadece mantıksal yardımcılar kullanılır. Yazı tipi Geist'tir (`@fontsource-variable/geist`).
-- [ ] İlkel bileşenler `shadcn add` ile eklenir (React Aria tabanı): Button, Badge, Card, Input, Select, ToggleButtonGroup (segment), Dialog/Sheet, Table, Sonner, Tooltip.
-- [ ] Takvim ön denemesi: FullCalendar'ın shadcn kaydı ve salon başına gün sütunu ([ADR-018](../docs/decisions/ADR-018-tech-stack.md), "Bilinen sınırlar"). React Aria uyumu ve çok salonda performans doğrulanır.
+- [x] Taslağın renkleri `packages/ui/src/styles/globals.css` dosyasındadır: açık, koyu, yüksek kontrast, `--success` ve `--now`. Açık temada `--destructive`, 4,5:1 için koyulaştırıldı. Yazı tipi Geist'tir.
+- [x] İlkel bileşenler `shadcn add` ile eklendi: Button, Badge, Card, Input, Textarea, InputGroup, Select, Toggle, ToggleGroup, Dialog, Sheet, Table, Sonner, Tooltip, Empty. Uygulamada `toast` kullanan ilk görev `sonner` paketini `apps/web`'e ekler.
+- [x] Takvim ön denemesi (2026-11-28): `@fullcalendar` shadcn kaydı React Aria tabanıyla uyumsuz (`onClick`, `disabled`, farklı `Tabs` API'si, `as any`). ADR-018 gereği FullCalendar'ın kendi teması kullanılır. Salon sütunu sonuçları T19'dadır. Tailwind'de yalnız mantıksal yardımcılar kuralını T09'daki denetim zorlar.
 
 **Bağımlılık:** T02 · **Boyut:** M (gerekirse bölünür)
 
@@ -159,6 +159,11 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 
 - [ ] Hafta ve gün takvimi; salon ve eğitmen filtreleri. Sürükleme, boyutlandırma ve klavyeyle taşıma. Taslak ve kaydet çubuğu.
 - [ ] Koşullu seçenekleri olan seans oluşturma ve düzenleme formu (TanStack Form + Zod).
+- Ön deneme bulguları (2026-11-28, Mac, salon başına 8 seans):
+  - İlk çizim 3 / 6 / 10 salonda Chromium'da 123 / 146 / 158 ms, 4 kat yavaş işlemcide 393 / 469 / 545 ms, WebKit'te 189 / 179 / 203 ms. Gün değişimi 105 ms altında.
+  - Salonlar arası sürükleme Chromium ve WebKit'te çalıştı. Fazla saat ekseni `slotHeaderInnerClass: "invisible !w-0 !min-w-0 !px-0 overflow-hidden"` ile gizlenir. Koyu tema `colorScheme` seçeneğiyle verilir; tema değişkenleri tokenlara bağlanmalıdır.
+  - Sütunlar ekrana sığmayınca sürükleme yatayda kendiliğinden kaymıyor. Görünen salonlar çiplerle sınırlanır.
+  - Ek paket yükü yaklaşık 83 KB JS + 4 KB CSS (sayfa parçası, gzip).
 
 **Bağımlılık:** T06 keşfi, T15 · **Boyut:** M (gerekirse form T19b olarak ayrılır)
 
