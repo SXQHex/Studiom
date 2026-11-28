@@ -68,10 +68,10 @@ function SelectValue<T extends object>({
       )}
       {...props}
     >
-      {typeof children === "function"
-        ? children
-        : ({ selectedItems, selectedText, defaultChildren }) =>
-            selectedItems.length > 1 ? selectedText : defaultChildren}
+      {/* The registry version replaced static children with the fallback. */}
+      {children ??
+        (({ selectedItems, selectedText, defaultChildren }) =>
+          selectedItems.length > 1 ? selectedText : defaultChildren)}
     </SelectValuePrimitive>
   )
 }
