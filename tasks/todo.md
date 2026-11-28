@@ -81,7 +81,7 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 - [x] i18next + react-i18next, tr ve en. Tipli kaynaklar; bilinmeyen anahtar `tsc`'yi kırar. i18next-cli ile anahtar çıkarma ve eksik anahtar kapısı.
 - [x] Tembel ad alanları (`i18next-resources-to-backend`).
 - [x] `dir` ve `lang` i18n'den gelir. react-aria `I18nProvider` kurulur. `formatSessionTime(utc, tz)` yardımcısı ve birim testleri yazılır (İstanbul ve Berlin yaz saati geçişi).
-- [ ] RTL sınıf denetim betiği: `ml-/mr-/left-/right-` yasak. Hazır kural `better-tailwindcss/enforce-logical-properties` denendi; `sheet.tsx` içindeki iki sınıf için karar bekliyor.
+- [x] RTL sınıf denetimi: `ml-/mr-/left-/right-` yasak. Betik yerine oxlint'te `better-tailwindcss/enforce-logical-properties` (yalnız satır ekseni). Fiziksel kalması gereken yön mantıksal sınıf ve `rtl:` karşılığıyla yazılır (örnek: `sheet.tsx`).
 
 **Bağımlılık:** T01 · **Boyut:** M
 
