@@ -5,6 +5,7 @@ packages:
 allowBuilds:
   esbuild: true
   msw: false
+  "@swc/core": false
 
 # Exact versions (ADR-012).
 saveExact: true
@@ -15,3 +16,8 @@ packageExtensions:
   dependency-cruiser:
     dependencies:
       typescript: 6.0.3
+permissions:
+  '@tanstack/react-router':
+    skills: false
+  '@tanstack/router-plugin':
+    skills: false
