@@ -20,7 +20,10 @@
       "comment": "ADR-006: a shell never imports another shell.",
       "severity": "error",
       "from": { "path": "^apps/web/src/shells/([^/]+)/" },
-      "to": { "path": "^apps/web/src/shells/", "pathNot": "^apps/web/src/shells/$1/" }
+      "to": {
+        "path": "^apps/web/src/shells/",
+        "pathNot": "^apps/web/src/shells/$1/"
+      }
     },
     {
       "name": "studio-module-isolated",

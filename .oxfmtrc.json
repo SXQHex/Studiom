@@ -9,10 +9,7 @@
   "sortPackageJson": false,
   "sortTailwindcss": {
     "stylesheet": "packages/ui/src/styles/globals.css",
-    "functions": [
-      "cn",
-      "cva"
-    ]
+    "functions": ["cn", "cva"]
   },
   "ignorePatterns": [
     "dist/",
@@ -20,6 +17,8 @@
     ".turbo/",
     "coverage/",
     "pnpm-lock.yaml",
-    ".pnpm-store/"
+    ".pnpm-store/",
+    "docs/reference/prototype-v2/**",
+    ".agents/**"
   ]
 }
