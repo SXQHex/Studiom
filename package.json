@@ -10,13 +10,13 @@
     "typecheck": "turbo typecheck"
   },
   "devDependencies": {
-    "prettier": "^3.10.1",
-    "prettier-plugin-tailwindcss": "^0.8.1",
-    "turbo": "^2.11.11",
-    "typescript": "~6.0.2"
+    "prettier": "3.10.1",
+    "prettier-plugin-tailwindcss": "0.8.1",
+    "turbo": "2.11.13",
+    "typescript": "7.0.2"
   },
-  "packageManager": "pnpm@11.25.0",
+  "packageManager": "pnpm@12.23.0+sha512.02da94ffaf133f46074322afe552f90d40b5f71ae259aefbccdacc5085b1d617e98d65e0131f5748b9b67445978ee5055d7d59a473f1eef0d504854fefcd5975",
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=26.13.1 <27"
   }
 }

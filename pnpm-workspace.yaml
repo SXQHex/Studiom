@@ -5,3 +5,7 @@ packages:
 allowBuilds:
   esbuild: true
   msw: false
+
+# Exact versions (ADR-012).
+saveExact: true
+savePrefix: ""
