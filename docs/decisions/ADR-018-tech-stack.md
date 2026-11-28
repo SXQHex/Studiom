@@ -2,7 +2,7 @@
 
 ## Durum
 
-Önerildi. Depo sahibinin onayı bekleniyor. Onaylanmadan kurulum yapılmaz.
+Kısmen onaylandı. TypeScript 7, FullCalendar 7 ve temel kurulum yöntemi onaylı (2026-11-28; yöntemi ajanın seçmesi istendi). Mock verisi katmanı onay bekliyor. Tamamı onaylanmadan kurulum yapılmaz.
 
 ## Tarih
 
@@ -21,6 +21,21 @@ pnpm dlx shadcn@latest init --base aria --preset rhea --template vite --monorepo
 ```
 
 Komut dolu bir depo köküne kuramıyor (2026-11-28 denemesi). Bu yüzden geçici bir klasörde çalıştırılır, ham çıktısı ayrı bir commit olarak köke alınır. `docs/`, `tasks/`, `.agents/`, `.github/`, `README.md` ve git geçmişi korunur. Sonraki her uyarlama ayrı commit'tir. İskeletin getirdiği ESLint ve Prettier, oxlint ve oxfmt ile; TypeScript 6 ve pnpm 11 güncel sürümlerle değiştirilir ([ADR-012](ADR-012-version-policy.md)).
+
+### Kurulum sırası
+
+Her adım ayrı commit'tir; araçlar kendi resmî komutuyla eklenir.
+
+1. `shadcn init` (yukarıdaki komut): monorepo iskeleti, ham çıktı.
+2. pnpm 12 ve TypeScript 7'ye geçiş.
+3. `oxlint --init`, `oxfmt --migrate prettier`; ESLint ve Prettier kaldırılır.
+4. `pnpm create @knip/config`, `depcruise --init`, size-limit.
+5. `pnpm create playwright`, Vitest.
+6. TanStack Router, Query, Form ve Zod.
+7. i18next paketleri ve `i18next-cli init`.
+8. `msw init`, mock veri katmanı.
+9. FullCalendar'ın shadcn kaydı.
+10. `@cloudflare/vite-plugin` ve wrangler; mevcut CI, dal kuralı ve yayın korumaları yeni yapıya bağlanır.
 
 ## Uygulama
 
@@ -57,6 +72,21 @@ Komut dolu bir depo köküne kuramıyor (2026-11-28 denemesi). Bu yüzden geçic
 | CI                     | GitHub Actions; `re-actors/alls-green`, `dorny/paths-filter`, `stefanzweifel/git-auto-commit-action` | `gh actions-lock`                              | elle yazılan adımların yerine; ADR-014, 015, 016 |
 | Güvenlik               | actionlint, zizmor, CodeQL, secret scanning, Dependabot                                              | kurulu                                         | ADR-015                                          |
 | Yayın                  | Cloudflare Workers Builds, wrangler, `@cloudflare/vite-plugin`                                       | `pnpm add -D @cloudflare/vite-plugin wrangler` | ADR-011                                          |
+
+## Mock verisi seçenekleri
+
+Ağ katmanı MSW'dir. Veri deposu için bakılanlar:
+
+| Seçenek              | Haftalık indirme    | Durum                                                     |
+| -------------------- | ------------------- | --------------------------------------------------------- |
+| `@msw/data` (öneri)  | 132 bin             | MSW ekibinden; Zod şeması, ilişki, sorgu, sayfalama       |
+| Mirage JS            | 386 bin             | MSW'nin yerine geçer; son sürüm Ekim 2023                 |
+| json-server          | 416 bin             | Ayrı sunucu süreci ister; 1.x beta                        |
+| TanStack DB          | 1,7 Mn (`react-db`) | 1.0 aday sürüm; mock değil, uygulama veri mimarisi        |
+| Dexie (IndexedDB)    | 3,6 Mn              | Genel tarayıcı veritabanı; sorgu ve ilişkiyi biz bağlarız |
+| Prism, `@msw/source` | 292 bin / 34 bin    | OpenAPI belgesi ister; henüz yok                          |
+
+Veri üretimi: Faker (24,9 Mn, tohumlanabilir). `zod-schema-faker` (90 bin) şemadan rastgele veri üretir; ekranlar arası tutarlı senaryo için yetmez.
 
 ## Bilinen sınırlar
 
