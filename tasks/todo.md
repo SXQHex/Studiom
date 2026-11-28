@@ -56,7 +56,7 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 
 - [ ] `tokens.css` taşınır: açık, koyu, yüksek kontrast ve `--now`. Tailwind v4'te sadece mantıksal yardımcılar kullanılır. Geist kendi sunucumuzdan `woff2` alt kümesi olarak sunulur.
 - [ ] İlkel bileşenler react-aria-components üzerinde shadcn tarzında yazılır: Button, Badge, Card, Input, Select, ToggleButtonGroup (segment), Dialog/Sheet, Table, Toast, Tooltip.
-- [ ] Keşif çalışması: react-aria hook'larıyla haftalık takvim ön denemesi (sürükleme, boyutlandırma, Shift+ok). Risk erken doğrulanır.
+- [ ] Keşif çalışması (ADR-017: önce hazır, yaygın bir takvim çözümü aranır; elle yazma onaya bağlıdır): haftalık takvim ön denemesi (sürükleme, boyutlandırma, Shift+ok). Risk erken doğrulanır.
 
 **Bağımlılık:** T02 · **Boyut:** M (gerekirse bölünür)
 
