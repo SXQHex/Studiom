@@ -63,6 +63,7 @@ Komut dolu bir depo köküne kuramıyor (2026-11-28 denemesi). Bu yüzden geçic
 - Fareyle taşıma, boyutlandırma ve boş alanda sürükleyerek oluşturma FullCalendar'ın ücretsiz sürümünde vardır.
 - **FullCalendar klavyeyle sürüklemeyi desteklemiyor** ([açık talep](https://github.com/fullcalendar/fullcalendar/issues/2535)). Erişilebilir yol seans düzenleme formudur (saat ve gün değiştirme); taslaktaki Shift+ok taşıma yapılmaz. Salonların yan yana sütun olduğu görünüm ücretli eklentidedir; kullanılmaz, salon filtreyle seçilir. Adlandırılmış saat dilimi ve RTL kurulumda doğrulanacak.
 - **FullCalendar'ın shadcn kaydı React Aria tabanından söz etmiyor.** `components.json`'a kayıt adresi eklenir; kurulumda getirdiği bileşenlerin React Aria ile uyumu doğrulanır, uymazsa FullCalendar'ın kendi temasıyla kullanılır.
+- **Syncfusion Scheduler** (depo sahibinde lisans var) değerlendirildi. 2026-11-28 ölçümü, React'in üstüne eklenen gzip boyutu: FullCalendar yaklaşık 79 KB JS + 4 KB CSS; Syncfusion yaklaşık 428 KB JS + 205 KB CSS (hafif tema). Resmî Tailwind 4 ve shadcn teması yok; lisans anahtarı gerekir. Güçlü yanı, lisans kapsamında salonları yan yana sütunlayan kaynak görünümüdür.
 - **`@mswjs/data` kullanımdan kalktı;** yerini `@msw/data` aldı ([ADR-007](ADR-007-mock-layer.md)'deki ad bununla güncellenir). Kullanımı daha düşüktür.
 - **TypeScript 7** iskeletin sürümünden yenidir. Uyumsuz araç çıkarsa ADR-012'deki istisna yolu işler.
 - Ek durum kütüphanesi (Redux, Zustand) yok; sunucu durumu Query'de, adres durumu Router'dadır.
