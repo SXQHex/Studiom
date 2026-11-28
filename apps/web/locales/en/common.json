@@ -2,5 +2,9 @@
   "home": {
     "apiReady": "Mock data service is ready.",
     "underConstruction": "Under construction."
+  },
+  "notFound": {
+    "backHome": "Back to home",
+    "title": "Page not found"
   }
 }

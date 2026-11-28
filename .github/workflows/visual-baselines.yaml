@@ -106,28 +106,27 @@ jobs:
         with:
           name: visual-baselines
           path: apps/web/e2e/__screenshots__/
+      # The credentials are set only for the push, not stored by checkout.
+      # The checkout stays on the generated commit, so the push fails if the branch moved
+      # meanwhile and stale screenshots are never pushed.
       - name: Commit and Push
         id: push
+        uses: stefanzweifel/git-auto-commit-action@v7.2.1
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          find apps/web/e2e/__screenshots__ -type f ! -name '*.png' -delete
-          git add apps/web/e2e/__screenshots__
-          if git diff --cached --quiet; then
-            echo "Baselines are already up to date."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "test(visual): update baselines"
-          # Fails if the branch moved meanwhile, so stale screenshots are never pushed.
-          gh auth setup-git
-          git push origin "HEAD:refs/heads/$BRANCH"
-          echo "pushed=true" >> "$GITHUB_OUTPUT"
+        with:
+          branch: ${{ env.BRANCH }}
+          skip_fetch: true
+          skip_checkout: true
+          # Only images are committed, whatever else the artifact holds.
+          file_pattern: apps/web/e2e/__screenshots__/*.png
+          disable_globbing: true
+          commit_message: "test(visual): update baselines"
+          commit_author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          before_push_hook: gh auth setup-git
       # A push made with the workflow token starts no CI run by itself.
       - name: Start CI on the New Commit
-        if: steps.push.outputs.pushed == 'true'
+        if: steps.push.outputs.changes_detected == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}

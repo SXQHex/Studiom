@@ -4,6 +4,10 @@ export default interface Resources {
     "home": {
       "apiReady": "Örnek veri hizmeti hazır.",
       "underConstruction": "Yapım aşamasında."
+    },
+    "notFound": {
+      "backHome": "Ana sayfaya dön",
+      "title": "Sayfa bulunamadı"
     }
   }
 }

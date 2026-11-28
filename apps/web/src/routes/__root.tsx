@@ -1,3 +1,12 @@
-import { createRootRoute, Outlet } from "@tanstack/react-router"
+import { createRootRoute, lazyRouteComponent } from "@tanstack/react-router"
 
-export const Route = createRootRoute({ component: Outlet })
+import { AppRoot } from "@/app-root"
+
+export const Route = createRootRoute({
+  component: AppRoot,
+  // Loaded on demand to keep it out of the initial bundle.
+  notFoundComponent: lazyRouteComponent(
+    () => import("@/shells/public/not-found/not-found-page"),
+    "NotFoundPage"
+  ),
+})
