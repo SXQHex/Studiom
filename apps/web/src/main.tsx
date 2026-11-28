@@ -1,14 +1,32 @@
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { createRouter, RouterProvider } from "@tanstack/react-router"
+import {
+  createRouter,
+  lazyRouteComponent,
+  RouterProvider,
+} from "@tanstack/react-router"
 import { ThemeProvider } from "next-themes"
 import { I18nextProvider } from "react-i18next"
 
 import { i18n, i18nReady } from "@/i18n"
 import { routeTree } from "@/routeTree.gen"
+import { RoutePending } from "@/states/route-pending"
 
-const router = createRouter({ routeTree, defaultPreload: "intent" })
+// Outside the initial bundle, but fetched at start so it is there when needed.
+const RouteError = lazyRouteComponent(
+  () => import("@/states/route-error"),
+  "RouteError"
+)
+
+const router = createRouter({
+  routeTree,
+  defaultPreload: "intent",
+  defaultErrorComponent: RouteError,
+  defaultPendingComponent: RoutePending,
+  // Short loads keep the previous page instead of flashing a skeleton.
+  defaultPendingMs: 400,
+})
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -26,6 +44,7 @@ async function start(container: HTMLElement) {
     worker.start({ onUnhandledFrame: "bypass", quiet: true }),
     i18nReady,
   ])
+  void RouteError.preload?.()
   createRoot(container).render(
     <StrictMode>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

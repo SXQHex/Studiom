@@ -1,10 +1,20 @@
 {
+  "error": {
+    "dataTitle": "Could not load the data",
+    "description": "The server could not be reached. Nothing you entered was lost.",
+    "pageTitle": "Could not load the page",
+    "retry": "Try again"
+  },
   "home": {
     "apiReady": "Mock data service is ready.",
     "underConstruction": "Under construction."
   },
+  "loading": {
+    "label": "Loading"
+  },
   "notFound": {
     "backHome": "Back to home",
+    "description": "The link may be old or wrong.",
     "title": "Page not found"
   }
 }

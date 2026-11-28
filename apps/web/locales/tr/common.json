@@ -1,10 +1,20 @@
 {
+  "error": {
+    "dataTitle": "Veri yüklenemedi",
+    "description": "Sunucuya ulaşılamadı. Girdiğin hiçbir şey kaybolmadı.",
+    "pageTitle": "Sayfa yüklenemedi",
+    "retry": "Tekrar dene"
+  },
   "home": {
     "apiReady": "Örnek veri hizmeti hazır.",
     "underConstruction": "Yapım aşamasında."
   },
+  "loading": {
+    "label": "Yükleniyor"
+  },
   "notFound": {
     "backHome": "Ana sayfaya dön",
+    "description": "Bağlantı eski ya da yanlış olabilir.",
     "title": "Sayfa bulunamadı"
   }
 }
