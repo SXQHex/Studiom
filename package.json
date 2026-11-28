@@ -9,17 +9,19 @@
   "scripts": {
     "dev": "turbo run dev --filter=@studiom/web",
     "build": "turbo run build",
-    "check": "turbo run typecheck && pnpm lint && pnpm format:check && pnpm knip",
+    "check": "turbo run typecheck && pnpm lint && pnpm format:check && pnpm knip && pnpm deps",
     "lint": "oxlint --type-aware .",
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
-    "knip": "knip"
+    "knip": "knip",
+    "deps": "depcruise --config .dependency-cruiser.json ."
   },
   "devDependencies": {
-    "turbo": "2.11.13",
+    "dependency-cruiser": "18.9.0",
     "knip": "6.48.0",
     "oxfmt": "0.80.0",
     "oxlint": "1.95.0",
-    "oxlint-tsgolint": "7.0.2008"
+    "oxlint-tsgolint": "7.0.2008",
+    "turbo": "2.11.13"
   }
 }

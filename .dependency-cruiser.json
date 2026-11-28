@@ -1,0 +1,84 @@
+{
+  "$schema": "https://raw.githubusercontent.com/sverweij/dependency-cruiser/main/src/schema/configuration.schema.json",
+  "forbidden": [
+    {
+      "name": "no-circular",
+      "comment": "ADR-006: no import cycles.",
+      "severity": "error",
+      "from": {},
+      "to": { "circular": true }
+    },
+    {
+      "name": "domain-not-to-shells",
+      "comment": "ADR-006: the domain layer knows no shell.",
+      "severity": "error",
+      "from": { "path": "^apps/web/src/domain/" },
+      "to": { "path": "^apps/web/src/shells/" }
+    },
+    {
+      "name": "shell-not-to-other-shell",
+      "comment": "ADR-006: a shell never imports another shell.",
+      "severity": "error",
+      "from": { "path": "^apps/web/src/shells/([^/]+)/" },
+      "to": { "path": "^apps/web/src/shells/", "pathNot": "^apps/web/src/shells/$1/" }
+    },
+    {
+      "name": "studio-module-isolated",
+      "comment": "ADR-006: a Studio module (studio/<group>/<module>) imports neither sibling modules nor the other group.",
+      "severity": "error",
+      "from": { "path": "^apps/web/src/shells/studio/([^/]+)/([^/]+)/" },
+      "to": {
+        "path": "^apps/web/src/shells/studio/",
+        "pathNot": "^apps/web/src/shells/studio/$1/$2/"
+      }
+    },
+    {
+      "name": "module-isolated",
+      "comment": "ADR-006: a module (<shell>/<module>) of platform, me or public imports no sibling module.",
+      "severity": "error",
+      "from": { "path": "^apps/web/src/shells/(platform|me|public)/([^/]+)/" },
+      "to": {
+        "path": "^apps/web/src/shells/$1/",
+        "pathNot": "^apps/web/src/shells/$1/$2/"
+      }
+    },
+    {
+      "name": "packages-not-to-apps",
+      "comment": "ADR-006: packages never import application code.",
+      "severity": "error",
+      "from": { "path": "^packages/" },
+      "to": { "path": "^apps/" }
+    },
+    {
+      "name": "contracts-independent",
+      "comment": "ADR-006: contracts depend on no other workspace package.",
+      "severity": "error",
+      "from": { "path": "^packages/contracts/" },
+      "to": { "path": "^packages/", "pathNot": "^packages/contracts/" }
+    },
+    {
+      "name": "ui-no-business-data",
+      "comment": "ADR-006: ui knows no business data (no contracts, no mocks).",
+      "severity": "error",
+      "from": { "path": "^packages/ui/" },
+      "to": { "path": "^packages/(contracts|mocks)/" }
+    },
+    {
+      "name": "mocks-only-to-contracts",
+      "comment": "ADR-006: mocks may depend on contracts only.",
+      "severity": "error",
+      "from": { "path": "^packages/mocks/" },
+      "to": { "path": "^packages/", "pathNot": "^packages/(mocks|contracts)/" }
+    }
+  ],
+  "options": {
+    "includeOnly": "^(apps|packages)/",
+    "exclude": { "path": "(^|/)(node_modules|dist)/" },
+    "tsPreCompilationDeps": true,
+    "tsConfig": { "fileName": "apps/web/tsconfig.app.json" },
+    "enhancedResolveOptions": {
+      "exportsFields": ["exports"],
+      "conditionNames": ["import", "default"]
+    }
+  }
+}

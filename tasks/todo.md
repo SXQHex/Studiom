@@ -32,8 +32,8 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 
 ### T03: dependency-cruiser katman kuralları
 
-- [ ] ADR-006'daki kurallar uygulanır: domain ↛ shells, kabuk ↛ kabuk, modül ↛ kardeş modül, döngü yok, packages ↛ apps, paketler arası yön (`mocks` → `contracts`, `contracts` bağımsız, `ui` ↛ `contracts`).
-- [ ] Örnek bir ihlal `pnpm check`'i kırar.
+- [x] ADR-006'daki kurallar uygulanır: domain ↛ shells, kabuk ↛ kabuk, modül ↛ kardeş modül, döngü yok, packages ↛ apps, paketler arası yön (`mocks` → `contracts`, `contracts` bağımsız, `ui` ↛ `contracts`).
+- [x] Örnek bir ihlal `pnpm check`'i kırar. Kabuk ve modül kuralları örnek dosyalarla doğrulandı. Paket kuralları, paketler açıldığında (T06, T08, T10) aynı yöntemle doğrulanır.
 
 **Bağımlılık:** T01 · **Boyut:** S
 

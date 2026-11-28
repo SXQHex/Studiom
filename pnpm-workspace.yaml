@@ -10,3 +10,10 @@ catalog:
   react-dom: 19.3.1
   typescript: 7.0.2
   vite: 8.3.8
+
+# dependency-cruiser cannot read TypeScript 7.0 sources yet (it needs >=7.1 or <7).
+# Give it a private TypeScript 6 compiler; the app itself stays on the catalog version.
+packageExtensions:
+  dependency-cruiser:
+    dependencies:
+      typescript: 6.0.3
