@@ -9,6 +9,7 @@ import {
 import { ThemeProvider } from "next-themes"
 import { I18nextProvider } from "react-i18next"
 
+import { restoreContrast } from "@/app-shell/use-high-contrast"
 import { i18n, i18nReady } from "@/i18n"
 import { routeTree } from "@/routeTree.gen"
 import { RoutePending } from "@/states/route-pending"
@@ -19,8 +20,11 @@ const RouteError = lazyRouteComponent(
   "RouteError"
 )
 
+const queryClient = new QueryClient()
+
 const router = createRouter({
   routeTree,
+  context: { queryClient },
   defaultPreload: "intent",
   defaultErrorComponent: RouteError,
   defaultPendingComponent: RoutePending,
@@ -34,14 +38,13 @@ declare module "@tanstack/react-router" {
   }
 }
 
-const queryClient = new QueryClient()
-
 async function start(container: HTMLElement) {
   // No backend yet: every request is answered by the mock worker (ADR-007).
   // Loaded as its own chunk, so removing the mocks later leaves the app bundle as is.
   const { startMockWorker } = await import("@workspace/mocks/browser")
   await Promise.all([startMockWorker(), i18nReady])
   void RouteError.preload?.()
+  restoreContrast()
   createRoot(container).render(
     <StrictMode>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

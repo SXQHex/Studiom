@@ -1,0 +1,6 @@
+{
+  "failed": "Could not sign in",
+  "hint": "Pick a user to try the app with sample data.",
+  "sampleUsers": "Sample users",
+  "title": "Sign in"
+}

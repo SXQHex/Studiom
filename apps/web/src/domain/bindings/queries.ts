@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query"
-import { sessionCurrent } from "@workspace/contracts/person"
+import { sampleUsersList, sessionCurrent } from "@workspace/contracts/person"
 
 import { callOperation } from "@/api/client"
 
@@ -7,4 +7,10 @@ import { callOperation } from "@/api/client"
 export const currentSessionQuery = queryOptions({
   queryKey: ["session", "current"],
   queryFn: () => callOperation(sessionCurrent, {}),
+})
+
+/** Mock mode only: people to try the app as (ADR-007). */
+export const sampleUsersQuery = queryOptions({
+  queryKey: ["session", "sampleUsers"],
+  queryFn: () => callOperation(sampleUsersList, {}),
 })

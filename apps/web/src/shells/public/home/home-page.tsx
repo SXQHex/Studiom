@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 
-import { Button } from "@workspace/ui/components/button"
+import { Button, LinkButton } from "@workspace/ui/components/button"
 import { LoadingState } from "@workspace/ui/components/loading-state"
 import { StateView } from "@workspace/ui/components/state-view"
 
@@ -15,6 +15,7 @@ export function HomePage() {
     <main className="flex min-h-svh flex-col items-start gap-2 p-6">
       <h1 className="text-2xl font-semibold">Studiom</h1>
       <p>{t("home.underConstruction")}</p>
+      <LinkButton href="/auth/login">{t("home.signIn")}</LinkButton>
       {health.isPending ? <LoadingState label={t("loading.label")} /> : null}
       {health.isError ? (
         <StateView

@@ -65,7 +65,7 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 ### T07: Durum bileşenleri
 
 - [x] `StateView` (boş, hata, yetkisiz, plan dışı, bulunamadı) ve `LoadingState` (400 ms altında görünmez) `packages/ui` içindedir. Yönlendiricinin hata, bekleme ve bulunamadı ekranları bunları kullanır.
-- [ ] Yetkisiz ve plan dışı metinleri, ilk kullanıldıkları görevde (T11, T12) taslaktaki "durumlar" ekranından eklenir. Kullanılmayan çeviri anahtarı `pnpm check`'i kırar.
+- [x] Yetkisiz ve plan dışı metinleri T12 ile eklendi.
 
 **Bağımlılık:** T06, T09 · **Boyut:** S
 
@@ -102,8 +102,8 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 
 ### T12: Uygulama kabuk çerçevesi
 
-- [ ] TanStack Router dosya rotaları: `platform`, `studio`, `me`, `public`, `auth`. Kabuk ve modül başına tembel yükleme, niyetle ön yükleme.
-- [ ] Yerleşim: masaüstünde ikon şeridi ve modül paneli, mobilde alt çubuk ve üstte sayfa listesi. Daraltılabilir. Tema düğmesi ve bildirim zili.
+- [x] TanStack Router dosya rotaları: `platform`, `studio`, `me`, `public`, `auth`. Kabuk başına tembel yükleme, niyetle ön yükleme. Çizilmemiş sayfalar tek bir dinamik rotadır; sayfa çizilince kendi rota dosyası onun önüne geçer.
+- [x] Yerleşim: masaüstünde ikon şeridi ve modül paneli (`shadcn add sidebar`), mobilde alt çubuk ve üstte sayfa listesi. Daraltılabilir. Tema (yüksek kontrast dahil) ve bildirim zili. Adresi açılmayan sayfa yetkisiz, plan dışı ya da bulunamadı gösterir.
 
 **Bağımlılık:** T06, T09, T11 · **Boyut:** M
 
@@ -115,7 +115,7 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 
 ### T14: Giriş yüzeyi
 
-- [ ] Ekranlar: giriş (e-posta + parola, "Google ile devam et" ve mock "Örnek kullanıcılar" hızlı girişi), parolamı unuttum ve yeni parola, MFA, yeniden doğrulama, davet, süresi dolmuş davet, hesap silindi. Metinler taslaktan alınır.
+- [ ] Ekranlar: giriş (e-posta + parola, "Google ile devam et" ve mock "Örnek kullanıcılar" hızlı girişi, bu liste T12 ile `auth/login` adresindedir), parolamı unuttum ve yeni parola, MFA, yeniden doğrulama, davet, süresi dolmuş davet, hesap silindi. Metinler taslaktan alınır.
 - [ ] e2e: her örnek kullanıcı giriş yapar ve doğru kabuğa düşer.
 
 **Bağımlılık:** T13 · **Boyut:** M
@@ -450,7 +450,7 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 ### T54: Tam matris sağlamlaştırma
 
 - [ ] Her senaryo için dört profil yeşil.
-- [ ] en, açık tema ve RTL'de smoke testleri.
+- [ ] en, açık tema ve RTL'de smoke testleri. Sağdan sola yazılan bir dil eklenirken Geist'in yanına Noto yedek yazı tipi yeni bir ADR ile değerlendirilir.
 - [ ] Her sayfa × 4 durum için görsel kapsam.
 - [ ] Koyu ve açık temada a11y.
 - [ ] Boyut bütçesi.

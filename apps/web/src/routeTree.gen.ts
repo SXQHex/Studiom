@@ -10,33 +10,125 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MeRouteImport } from './routes/me'
+import { Route as PlatformRouteImport } from './routes/platform'
+import { Route as StudioRouteImport } from './routes/studio'
+import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as MeModuleRouteImport } from './routes/me/$module'
+import { Route as PlatformModulePageRouteImport } from './routes/platform/$module.$page'
+import { Route as StudioGroupModulePageRouteImport } from './routes/studio/$group.$module.$page'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MeRoute = MeRouteImport.update({
+  id: '/me',
+  path: '/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlatformRoute = PlatformRouteImport.update({
+  id: '/platform',
+  path: '/platform',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudioRoute = StudioRouteImport.update({
+  id: '/studio',
+  path: '/studio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeModuleRoute = MeModuleRouteImport.update({
+  id: '/$module',
+  path: '/$module',
+  getParentRoute: () => MeRoute,
+} as any)
+const PlatformModulePageRoute = PlatformModulePageRouteImport.update({
+  id: '/$module/$page',
+  path: '/$module/$page',
+  getParentRoute: () => PlatformRoute,
+} as any)
+const StudioGroupModulePageRoute = StudioGroupModulePageRouteImport.update({
+  id: '/$group/$module/$page',
+  path: '/$group/$module/$page',
+  getParentRoute: () => StudioRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/me': typeof MeRouteWithChildren
+  '/platform': typeof PlatformRouteWithChildren
+  '/studio': typeof StudioRouteWithChildren
+  '/auth/login': typeof AuthLoginRoute
+  '/me/$module': typeof MeModuleRoute
+  '/platform/$module/$page': typeof PlatformModulePageRoute
+  '/studio/$group/$module/$page': typeof StudioGroupModulePageRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/me': typeof MeRouteWithChildren
+  '/platform': typeof PlatformRouteWithChildren
+  '/studio': typeof StudioRouteWithChildren
+  '/auth/login': typeof AuthLoginRoute
+  '/me/$module': typeof MeModuleRoute
+  '/platform/$module/$page': typeof PlatformModulePageRoute
+  '/studio/$group/$module/$page': typeof StudioGroupModulePageRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/me': typeof MeRouteWithChildren
+  '/platform': typeof PlatformRouteWithChildren
+  '/studio': typeof StudioRouteWithChildren
+  '/auth/login': typeof AuthLoginRoute
+  '/me/$module': typeof MeModuleRoute
+  '/platform/$module/$page': typeof PlatformModulePageRoute
+  '/studio/$group/$module/$page': typeof StudioGroupModulePageRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/me'
+    | '/platform'
+    | '/studio'
+    | '/auth/login'
+    | '/me/$module'
+    | '/platform/$module/$page'
+    | '/studio/$group/$module/$page'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/me'
+    | '/platform'
+    | '/studio'
+    | '/auth/login'
+    | '/me/$module'
+    | '/platform/$module/$page'
+    | '/studio/$group/$module/$page'
+  id:
+    | '__root__'
+    | '/'
+    | '/me'
+    | '/platform'
+    | '/studio'
+    | '/auth/login'
+    | '/me/$module'
+    | '/platform/$module/$page'
+    | '/studio/$group/$module/$page'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  MeRoute: typeof MeRouteWithChildren
+  PlatformRoute: typeof PlatformRouteWithChildren
+  StudioRoute: typeof StudioRouteWithChildren
+  AuthLoginRoute: typeof AuthLoginRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +140,97 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/me': {
+      id: '/me'
+      path: '/me'
+      fullPath: '/me'
+      preLoaderRoute: typeof MeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/platform': {
+      id: '/platform'
+      path: '/platform'
+      fullPath: '/platform'
+      preLoaderRoute: typeof PlatformRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/studio': {
+      id: '/studio'
+      path: '/studio'
+      fullPath: '/studio'
+      preLoaderRoute: typeof StudioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me/$module': {
+      id: '/me/$module'
+      path: '/$module'
+      fullPath: '/me/$module'
+      preLoaderRoute: typeof MeModuleRouteImport
+      parentRoute: typeof MeRoute
+    }
+    '/platform/$module/$page': {
+      id: '/platform/$module/$page'
+      path: '/$module/$page'
+      fullPath: '/platform/$module/$page'
+      preLoaderRoute: typeof PlatformModulePageRouteImport
+      parentRoute: typeof PlatformRoute
+    }
+    '/studio/$group/$module/$page': {
+      id: '/studio/$group/$module/$page'
+      path: '/$group/$module/$page'
+      fullPath: '/studio/$group/$module/$page'
+      preLoaderRoute: typeof StudioGroupModulePageRouteImport
+      parentRoute: typeof StudioRoute
+    }
   }
 }
 
+interface MeRouteChildren {
+  MeModuleRoute: typeof MeModuleRoute
+}
+
+const MeRouteChildren: MeRouteChildren = {
+  MeModuleRoute: MeModuleRoute,
+}
+
+const MeRouteWithChildren = MeRoute._addFileChildren(MeRouteChildren)
+
+interface PlatformRouteChildren {
+  PlatformModulePageRoute: typeof PlatformModulePageRoute
+}
+
+const PlatformRouteChildren: PlatformRouteChildren = {
+  PlatformModulePageRoute: PlatformModulePageRoute,
+}
+
+const PlatformRouteWithChildren = PlatformRoute._addFileChildren(
+  PlatformRouteChildren,
+)
+
+interface StudioRouteChildren {
+  StudioGroupModulePageRoute: typeof StudioGroupModulePageRoute
+}
+
+const StudioRouteChildren: StudioRouteChildren = {
+  StudioGroupModulePageRoute: StudioGroupModulePageRoute,
+}
+
+const StudioRouteWithChildren =
+  StudioRoute._addFileChildren(StudioRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  MeRoute: MeRouteWithChildren,
+  PlatformRoute: PlatformRouteWithChildren,
+  StudioRoute: StudioRouteWithChildren,
+  AuthLoginRoute: AuthLoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
