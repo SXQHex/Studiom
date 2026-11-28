@@ -65,12 +65,15 @@ function Dialog({
   children,
   showCloseButton = true,
   isDismissable = true,
+  closeLabel,
   ...props
 }: Omit<ModalOverlayPrimitiveProps, "className" | "children"> &
   Pick<React.ComponentProps<typeof ModalPrimitive>, "isDismissable"> & {
     className?: string
     children: React.ReactNode
     showCloseButton?: boolean
+    /** Translated accessible name of the close button. */
+    closeLabel: string
   }) {
   return (
     <DialogOverlay isDismissable={isDismissable} {...props}>
@@ -93,7 +96,7 @@ function Dialog({
               size="icon-sm"
             >
               <XIcon />
-              <span className="sr-only">Close</span>
+              <span className="sr-only">{closeLabel}</span>
             </DialogClose>
           )}
         </DialogPrimitive>
@@ -114,11 +117,12 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
 
 function DialogFooter({
   className,
-  showCloseButton = false,
+  closeLabel,
   children,
   ...props
 }: React.ComponentProps<"div"> & {
-  showCloseButton?: boolean
+  /** Translated text; when given, the footer ends with a close button. */
+  closeLabel?: string
 }) {
   return (
     <div
@@ -130,7 +134,9 @@ function DialogFooter({
       {...props}
     >
       {children}
-      {showCloseButton && <DialogClose variant="outline">Close</DialogClose>}
+      {closeLabel === undefined ? null : (
+        <DialogClose variant="outline">{closeLabel}</DialogClose>
+      )}
     </div>
   )
 }

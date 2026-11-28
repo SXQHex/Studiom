@@ -60,7 +60,7 @@ Taslaktaki her ekran bir kez listelenir. "Kaldırıldı" satırları gerekçesin
 
 ## Aynen ya da büyük ölçüde yeniden kullanılanlar
 
-- **Tokenlar:** `tokens.css` → `packages/ui/src/styles/tokens.css`. shadcn adları, OKLCH değerleri, açık, koyu ve yüksek kontrast temalar ve tek vurgu rengi `--now` korunur.
+- **Tokenlar:** `tokens.css` → `packages/ui/src/styles/globals.css` (shadcn'ın tema dosyası). shadcn adları, OKLCH değerleri, açık, koyu ve yüksek kontrast temalar ve tek vurgu rengi `--now` korunur.
 - **Bileşenlerin görünümü ve davranışı:**
   - düğme ve rozet varyantları
   - kart

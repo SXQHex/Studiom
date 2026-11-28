@@ -64,6 +64,7 @@ function Sheet({
   children,
   side = "right",
   showCloseButton = true,
+  closeLabel,
   ...props
 }: Omit<ModalOverlayPrimitiveProps, "className" | "children"> &
   Pick<React.ComponentProps<typeof ModalPrimitive>, "isDismissable"> & {
@@ -71,6 +72,8 @@ function Sheet({
     children: React.ReactNode
     side?: "top" | "right" | "bottom" | "left"
     showCloseButton?: boolean
+    /** Translated accessible name of the close button. */
+    closeLabel: string
   }) {
   return (
     <SheetOverlay {...props}>
@@ -94,7 +97,7 @@ function Sheet({
               size="icon-sm"
             >
               <XIcon />
-              <span className="sr-only">Close</span>
+              <span className="sr-only">{closeLabel}</span>
             </SheetClose>
           )}
         </SheetPrimitive>
