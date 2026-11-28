@@ -1,0 +1,76 @@
+# Taslak v2 → Studiom eşleme tablosu
+
+Vanilla HTML/JS taslak **görsel ve içerik referansıdır**. Taslak şu dosyalardan oluşur ve "FtkSaaS tasarım v2" başlığını taşır: `index.html`, `app.js`, `app.css`, `tokens.css`. Taslağın bilgi mimarisi değiştirilir (ADR-001, ADR-002). Taslaktan hiç kod taşınmaz. Yeniden kullanılanlar şunlardır: tokenlar, bileşenlerin görünümü ve davranışı, Türkçe arayüz metinleri ve akış tasarımları.
+
+Taslaktaki her ekran bir kez listelenir. "Kaldırıldı" satırları gerekçesini söyler. Yollar yeni kod düzenine göre yazılmıştır (ADR-006).
+
+| Taslak ekranı (`data-view`) | Başlık | Yeni yeri | Faz | Not |
+|---|---|---|---|---|
+| `genel-bakis` | Bugünün programı | `studio/center/today` | 2 | Şimdi çizgili zaman akışı, sıradaki seans paneli, bekleyen işler |
+| `program` | Ders programı | `studio/center/program` (takvim) | 2 | Hafta ve gün ızgarası; sürükleme, boyutlandırma, Shift+ok ile taşıma; taslak ve kaydet çubuğu |
+| `seans` | Seans detayı | `studio/center/program/sessions/$id` | 2 | Ortak görünüm `domain/sessions` içinde. Yoklama `domain/bookings` içinde. |
+| `talepler` | Özel ders talepleri | `studio/center/program/private-requests` + `me/requests` | 2 | Merkez görünümü ve eğitmenin gelen talepleri |
+| `etkinlikler`, `etkinlik` | Etkinlikler | `studio/center/program/events` | 5 | Pro ve üzeri |
+| `uyeler` | Üyeler | `studio/center/people/members` | 2 | Arama öncelikli ve sayfalı. Davet durumu aynı listenin filtresi. |
+| `uye` | Üye profili | `studio/center/people/members/$id` | 2 | Salt okunur hâli `studio/organization/oversight/people` tarafından kullanılır. |
+| `uye-hesaplar` | Davetler ve hesaplar | `studio/center/people/members` (davet filtresi ve eylemleri) | 2 | Ayrı sayfa değil, çünkü tek veri kümesi |
+| `uye-birlestir` | Kişileri birleştir | `studio/center/people/members/merge` | 3 | Üye listesinden açılan akış sayfası |
+| `adaylar` | Adaylar | `studio/center/people/leads` | 3 | Starter'da sadece elle aday, not ve takip tarihi var. |
+| `gelen-kutusu` | Gelen kutusu | `studio/center/people/inbox` | 2 | |
+| `paketler` | Paketler | İkiye bölünür: `studio/organization/definitions/packages` (şablonlar) + `studio/center/sales/prices` (satış fiyatı) | 2–3 | ADR-004 |
+| `finans` | Finans | `studio/center/sales/payments` + `studio/center/sales/debts` | 2 | İki veri kümesi olduğu için iki sayfa |
+| `hakedis` | Hakediş | `studio/center/sales/payroll` + `me/wallet` (eğitmen) | 3 | Pro ve üzeri |
+| `merkezler` | Merkezler | `studio/organization/organization/centers` | 3 | Arşivli merkez görünümü dahil |
+| `otomasyon` | Otomasyon | `studio/organization/definitions/automation` | 5 | Pro ve üzeri |
+| `raporlar` | Raporlar | `studio/center/center/reports` + `studio/organization/oversight/reports` | 3 | İçerik plana göre kademeli |
+| `denetim` | Denetim | `studio/center/center/audit` + `studio/organization/oversight/audit` | 3 | Organizasyon denetimi erişim kaydını da içerir. |
+| `belgeler` | Belgeler | `studio/organization/definitions/documents` + `me/account` (belgelerim) | 3 | |
+| `ayarlar` | Ayarlar | Kapsama göre bölünür: `studio/center/center/settings`, `studio/organization/organization/{profile,security,subscription,ownership}` | 3 | Hücre hücre izin matrisi kaldırılır. Personel modül anahtarları alır (ADR-003). |
+| `ayarlar` → Ekip | Ekip ve yetkiler | `studio/center/center/team` (eğitmen, asistan, personel) + `studio/organization/team` (org. yöneticileri, merkez yöneticileri, atama talepleri) | 3 | Ekip kapsama göre bölünür. |
+| `studyo` | Stüdyo | `studio/organization/organization/profile` | 3 | Marka, iletişim, açık sayfa ayarları |
+| `hesap` | Hesabım | `me/account` | 2 | Kişisel hesap herkes için kullanıcı düzeyinde |
+| `egt-bugun` | Eğitmen · Bugün | `me/home` (eğitmen bölümleri) | 2 | |
+| `egt-program` | Eğitmen · Programım | `me/program` ("Verdiklerim" filtresi) | 2 | |
+| `egt-seans` | Seans yoklaması | `me/program/sessions/$id` | 2 | Stüdyo kabuğundaki yoklama bileşeninin aynısı |
+| `egt-hakedis` | Hakedişim | `me/wallet` (hakediş bölümü) | 3 | |
+| `m-dersler` | Dersler | `me/program` ("Tümü") | 2 | |
+| `m-rez` | Rezervasyonlarım | `me/program` ("Benimkiler") | 2 | Yerini `me/home` ve filtre aldı (karar 2026-11-28) |
+| `m-haklarim` | Haklarım | `me/wallet` | 2 | Organizasyona göre gruplu |
+| `m-ozel` | Özel ders | `me/program` (talep eylemi) | 2 | |
+| `m-bildirim` | Bildirimler | Kabuk düzeyinde bildirim paneli (zil) | 2 | Tüm kabuklar ortak kullanır. |
+| `m-hesap` | Hesabım | `me/account` | 2 | "Üyeliklerim" dahil |
+| `a-giris` | Giriş | `auth/login` | 1 | Mock kipinde "Örnek kullanıcılar" hızlı giriş listesi gösterilir. |
+| `a-kayit` | Stüdyonu oluştur | **Kaldırıldı** | – | Kendi kendine kayıt yok. Organizasyonu platform oluşturur ve sahibi davet eder (ADR-004). |
+| `a-dogrula` | E-postanı doğrula | Kayıt adımı olarak **kaldırıldı** | – | Davet e-postayı zaten doğrular. E-posta değişikliği doğrulaması `me/account` içindedir. |
+| `a-parola`, `a-yeni-parola` | Parola sıfırlama | `auth/forgot`, `auth/reset` | 1 | |
+| `a-mfa` | İki adımlı doğrulama | `auth/mfa` + `auth/step-up` (Platform için yeniden MFA) | 1 | |
+| `a-kurulum` | Stüdyonu tanıt | `studio/organization` içinde kurulum sihirbazı modalı + genel bakışta "Kurulumu tamamla" | 3 | |
+| `a-davet`, `a-davet-bitti` | Davet | `auth/invite`, `auth/invite-expired` | 1 | Hesap oluşturmanın tek yolu |
+| `a-alan` | Hangi stüdyoyla devam | **Kaldırıldı** | – | Kişi son kullandığı bağa düşer. Değişiklik çalışma alanı seçiciyle yapılır. |
+| `a-silindi` | Hesabın silindi | `auth/account-deleted` | 1 | |
+| `p-takvim` | Açık ders programı | `public/s/$slug` | 3 | Rezervasyon düğmesi yok, sadece "Deneme dersi iste" / "Bilgi al" var. |
+| `p-basvuru` | Başvur | `public/s/$slug/apply` | 3 | Organizasyonun Başvurular sayfasına kayıt düşürür. |
+| `p-kapali` | Yayında değil | `public/s/$slug` yayında değil durumu | 3 | |
+| `durum`, `durumlar` | Durum ekranları | Sayfa olarak **kaldırıldı** → `packages/ui` durum bileşenleri + `?scenario=` | 1 | Boş, hata, yavaş, yetkisiz, bulunamadı |
+| `taslak` | Yer tutucu | **Kaldırıldı** | – | |
+| `yardim` | Yardım | Kabuk alt bağlantısı → ortak yardım sayfası | 4 | |
+| Rol değiştirici (`#role-sw`) ve "olarak görüntüle" çubuğu | Önizleme | **Kaldırıldı** | – | Yerini gerçek bağlar ve seçici aldı. Personel için "olarak görüntüle" yerine modül anahtarları kullanılır. |
+| `opshell` | Giriş önizlemesi | **Kaldırıldı** | – | Bir platform kabuğu değil, giriş ekranlarının önizlemesiydi. |
+| — | Platform kabuğu | `platform/*` | 4 | **Yeni tasarım.** Taslakta hiç platform ekranı yok. |
+
+## Aynen ya da büyük ölçüde yeniden kullanılanlar
+- **Tokenlar:** `tokens.css` → `packages/ui/src/styles/tokens.css`. shadcn adları, OKLCH değerleri, açık, koyu ve yüksek kontrast temalar ve tek vurgu rengi `--now` korunur.
+- **Bileşenlerin görünümü ve davranışı:**
+  - düğme ve rozet varyantları
+  - kart
+  - segment (→ react-aria `ToggleButtonGroup`)
+  - yan panel (sheet)
+  - anahtar-değer listesi
+  - kapasite çubuğu ve bölünmüş çubuk
+  - şimdi çizgili zaman akışı
+  - haftalık takvim etkileşimleri
+  - toast
+  - daraltılabilir kenar çubuğu
+  - etki önizleme listeleri (`.aff`)
+- **Türkçe arayüz metinleri:** `locales/tr/*` için ilk kaynak olur.
+- **Kurgusal içerik:** Kişi, stüdyo ve seans adları `packages/mocks` içindeki seed sözlüğüne dönüşür.
