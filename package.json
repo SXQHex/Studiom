@@ -9,9 +9,17 @@
   "scripts": {
     "dev": "turbo run dev --filter=@studiom/web",
     "build": "turbo run build",
-    "check": "turbo run typecheck"
+    "check": "turbo run typecheck && pnpm lint && pnpm format:check && pnpm knip",
+    "lint": "oxlint --type-aware .",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check .",
+    "knip": "knip"
   },
   "devDependencies": {
-    "turbo": "2.11.13"
+    "turbo": "2.11.13",
+    "knip": "6.48.0",
+    "oxfmt": "0.80.0",
+    "oxlint": "1.95.0",
+    "oxlint-tsgolint": "7.0.2008"
   }
 }

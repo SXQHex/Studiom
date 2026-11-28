@@ -1,15 +1,19 @@
 # ADR-005: Frontend yığını ve yayın
 
 ## Durum
+
 Kabul edildi
 
 ## Tarih
+
 2026-11-28
 
 ## Bağlam
+
 Bu aşama sadece frontend kapsıyor ve tutarlı mock veriyle çalışıyor, backend sonra gelecek. Gereksinimler şunlar: react-aria bileşenleri üzerinde shadcn görünümü, iyi uygulamaya uygun ve tam modüler bir yapı, tekerleği yeniden icat etmeyen bir altyapı, hızlı ve ucuz işletim.
 
 ## Karar
+
 - **Monorepo:** pnpm workspaces + Turborepo.
 - **Uygulama:** `apps/web`, şunlardan oluşur:
   - Vite + React
@@ -28,10 +32,12 @@ Bu aşama sadece frontend kapsıyor ve tutarlı mock veriyle çalışıyor, back
 - **TypeScript tam strict:** `any`, `as any` ve örtülü `any` yok.
 
 ## Değerlendirilen alternatifler
+
 - **Next.js:** Reddedildi. Backend yokken SSR'ın getirisi az. Açık sayfalar ileride sunucu gerekmeden ön-render edilebilir (`/s/*`).
 - **React Hook Form:** Uygulanabilirdi. Router ve Query ile aynı ekosistemde kalmak, bağımlılıkları ve knip yüzeyini küçük tutmak için reddedildi.
 - **Kendi router, form ya da durum çözümümüz:** Reddedildi, tekerleği yeniden icat etmiyoruz.
 
 ## Sonuçlar
+
 - Yayın maliyeti sıfıra yakın. Açık sayfaların SEO'su ertelendi, ön-render yolu açık.
 - Backend gelince sadece ağ katmanı değişir (ADR-007).
