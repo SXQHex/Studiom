@@ -26,6 +26,7 @@ export const ruleReason = z.enum([
   "attendance_not_open",
   "attendance_closed",
   "reason_required",
+  "already_approved",
   // Session changes
   "in_past",
   "invalid_room",

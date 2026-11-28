@@ -1,5 +1,6 @@
 import { mutationOptions } from "@tanstack/react-query"
 import {
+  attendanceApprove,
   attendanceSet,
   bookingsCancel,
   bookingsCreate,
@@ -34,5 +35,12 @@ export const cancelBookingMutation = mutationOptions({
 export const attendanceMutation = mutationOptions({
   mutationFn: (input: z.input<typeof attendanceSet.request>) =>
     callOperation(attendanceSet, input),
+  onSuccess: (_data, _input, _result, { client }) => client.invalidateQueries(),
+})
+
+/** The manager's sign-off of an ended session (ADR-021). */
+export const approveAttendanceMutation = mutationOptions({
+  mutationFn: (input: z.input<typeof attendanceApprove.request>) =>
+    callOperation(attendanceApprove, input),
   onSuccess: (_data, _input, _result, { client }) => client.invalidateQueries(),
 })

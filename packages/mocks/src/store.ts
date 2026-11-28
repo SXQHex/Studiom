@@ -11,6 +11,7 @@ import {
   organization,
   room,
 } from "@workspace/contracts/organization"
+import { auditEvent } from "@workspace/contracts/audit"
 import { exceptionEvent } from "@workspace/contracts/exception"
 import { binding, lead, person } from "@workspace/contracts/person"
 import { plan } from "@workspace/contracts/plan"
@@ -52,6 +53,7 @@ export async function createDb(dataset: Dataset) {
     sessions: collection(session),
     bookings: collection(booking),
     exceptions: collection(exceptionEvent),
+    audit: collection(auditEvent),
   }
   await Promise.all([
     fill(db.plans, dataset.plans),
@@ -69,6 +71,7 @@ export async function createDb(dataset: Dataset) {
     fill(db.sessions, dataset.sessions),
     fill(db.bookings, dataset.bookings),
     fill(db.exceptions, dataset.exceptions),
+    fill(db.audit, dataset.audit),
   ])
   return db
 }

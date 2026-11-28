@@ -37,6 +37,16 @@ export function createLookups(db: MockDb) {
         return template ? [{ package: pkg, template }] : []
       })
 
+  /** The standing approval of a session's attendance, if there is one. */
+  const approvalOf = (sessionId: string) => {
+    const event = db.audit.findFirst((q) =>
+      q.where({ sessionId, kind: "attendance_approved" })
+    )
+    return event
+      ? { byPersonId: event.actorPersonId, at: event.createdAt }
+      : null
+  }
+
   const planOf = (organizationId: string) => {
     const org = db.organizations.findFirst((q) =>
       q.where({ id: organizationId })
@@ -54,6 +64,7 @@ export function createLookups(db: MockDb) {
     bookingsOfSession,
     seriesOf,
     packagesOf,
+    approvalOf,
     planOf,
   }
 }

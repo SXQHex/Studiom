@@ -43,12 +43,15 @@ export function mayManageSessions(
   return worksAtCenter(bindings, centerId, ["program"])
 }
 
-/** Only a center manager still writes once the session ended (ADR-021). */
-function isCenterManager(
+/**
+ * The center manager binding, if the person holds one: only it writes or approves
+ * attendance once the session ended (ADR-021).
+ */
+export function managerBinding(
   bindings: readonly Binding[],
   centerId: string
-): boolean {
-  return bindings.some(
+): Binding | undefined {
+  return bindings.find(
     (b) =>
       b.scope === "center" &&
       b.centerId === centerId &&
@@ -67,7 +70,7 @@ export function mayTakeAttendance(
   now: Date
 ): boolean {
   if (hasEnded(session, now)) {
-    return isCenterManager(bindings, session.centerId)
+    return managerBinding(bindings, session.centerId) !== undefined
   }
   return (
     teachesSession(session, personId) ||

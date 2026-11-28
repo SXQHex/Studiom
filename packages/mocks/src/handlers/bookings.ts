@@ -1,5 +1,6 @@
 import type { Center } from "@workspace/contracts/organization"
 import {
+  attendanceApprove,
   attendanceSet,
   bookingsCancel,
   bookingsCreate,
@@ -9,7 +10,12 @@ import {
   type Session,
 } from "@workspace/contracts/schedule"
 
-import { hasEnded, mayBookFor, mayTakeAttendance } from "../rules/access"
+import {
+  hasEnded,
+  managerBinding,
+  mayBookFor,
+  mayTakeAttendance,
+} from "../rules/access"
 import {
   bookingEligibility,
   drawCredit,
@@ -275,6 +281,38 @@ export function bookingHandlers(
       })
     ),
 
+    handle(attendanceApprove, ({ sessionId }) =>
+      write(async () => {
+        const actorId = auth.get()
+        const session = lookups.sessionById(sessionId)
+        if (!session) return problem("not_found")
+        const center = lookups.centerOf(session.centerId)
+        if (!center) return problem("internal", "Center missing")
+        const manager =
+          actorId === null
+            ? undefined
+            : managerBinding(lookups.bindingsOfPerson(actorId), center.id)
+        if (actorId === null || !manager) return problem("forbidden")
+        if (session.status === "cancelled") return refuse("session_cancelled")
+        if (!hasEnded(session, now())) return refuse("attendance_not_open")
+        if (lookups.approvalOf(sessionId)) return refuse("already_approved")
+        const at = now().toISOString()
+        await db.audit.create({
+          id: ids("aud"),
+          organizationId: center.organizationId,
+          centerId: center.id,
+          kind: "attendance_approved",
+          actorPersonId: actorId,
+          actorBindingId: manager.id,
+          sessionId,
+          subjectPersonId: null,
+          reason: null,
+          createdAt: at,
+        })
+        return { byPersonId: actorId, at }
+      })
+    ),
+
     handle(attendanceSet, ({ bookingId, status, reason }) =>
       write(async () => {
         const actorId = auth.get()
@@ -305,6 +343,20 @@ export function bookingHandlers(
         }
         if (ended) {
           if (reason === undefined) return refuse("reason_required")
+          const manager = managerBinding(bindings, center.id)
+          if (!manager) return problem("forbidden")
+          await db.audit.create({
+            id: ids("aud"),
+            organizationId: center.organizationId,
+            centerId: center.id,
+            kind: "attendance_changed",
+            actorPersonId: actorId,
+            actorBindingId: manager.id,
+            sessionId: session.id,
+            subjectPersonId: booking.personId,
+            reason,
+            createdAt: now().toISOString(),
+          })
           await db.exceptions.create({
             id: ids("exc"),
             organizationId: center.organizationId,

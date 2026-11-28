@@ -22,6 +22,7 @@ import type {
   Organization,
   Room,
 } from "@workspace/contracts/organization"
+import type { AuditEvent } from "@workspace/contracts/audit"
 import type { ExceptionEvent } from "@workspace/contracts/exception"
 import type { Binding, Lead, Person } from "@workspace/contracts/person"
 import type { Plan } from "@workspace/contracts/plan"
@@ -58,6 +59,7 @@ export interface Dataset {
   bookings: Booking[]
   /** Filled by actions during the session; the seed starts without any. */
   exceptions: ExceptionEvent[]
+  audit: AuditEvent[]
 }
 
 export interface GenerateOptions {
@@ -102,6 +104,7 @@ export function generateDataset({
     sessions: [],
     bookings: [],
     exceptions: [],
+    audit: [],
   }
 
   const counters = new Map<string, number>()

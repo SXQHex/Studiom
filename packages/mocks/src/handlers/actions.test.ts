@@ -5,6 +5,7 @@ import {
   peopleProfile,
 } from "@workspace/contracts/profile"
 import {
+  attendanceApprove,
   attendanceSet,
   bookingsCancel,
   bookingsCreate,
@@ -435,6 +436,44 @@ describe("attendance", () => {
     )
   })
 
+  test("approval and reasoned change are both audited with the binding", async () => {
+    const { session, booking } = await started()
+    const body = { sessionId: session.id }
+    // Earlier tests may have left records on this session.
+    mock.db.audit.deleteMany((q) => q.where(body))
+    mock.signIn("per_mert")
+    await refused(attendanceApprove, body, "attendance_not_open")
+    mock.setNow(new Date(session.endsAt))
+    // Neither the teacher nor program staff may approve.
+    mock.signIn(session.instructorId)
+    expect((await post(attendanceApprove, body)).status).toBe(403)
+    mock.signIn("per_zeynep")
+    expect((await post(attendanceApprove, body)).status).toBe(403)
+    mock.signIn("per_mert")
+    const approval = await ok(attendanceApprove, body)
+    await refused(attendanceApprove, body, "already_approved")
+    await ok(attendanceSet, {
+      bookingId: booking.id,
+      status: "no_show",
+      reason: "Üye gelmedi",
+    })
+    const detail = await ok(sessionsGet, body)
+    expect(detail.approval).toEqual(approval)
+    expect(detail.permissions.approveAttendance).toBe(false)
+
+    const manager = mock.db.bindings.findFirst((q) =>
+      q.where({ personId: "per_mert" }).and((b) => b.scope === "center")
+    )
+    expect(
+      mock.db.audit
+        .findMany((q) => q.where(body))
+        .map((e) => [e.kind, e.actorBindingId, e.subjectPersonId, e.reason])
+    ).toEqual([
+      ["attendance_approved", manager?.id, null, null],
+      ["attendance_changed", manager?.id, booking.personId, "Üye gelmedi"],
+    ])
+  })
+
   test("a member cannot take attendance", async () => {
     const { session, booking } = await started()
     mock.setNow(new Date(session.startsAt))
@@ -463,6 +502,7 @@ describe("session detail", () => {
     expect(teacher.permissions).toEqual({
       manage: false,
       takeAttendance: true,
+      approveAttendance: false,
     })
     const participant = first(teacher.roster ?? [])
     mock.signIn(participant.booking.personId)

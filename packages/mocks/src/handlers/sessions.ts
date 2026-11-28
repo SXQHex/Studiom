@@ -9,6 +9,8 @@ import {
 } from "@workspace/contracts/schedule"
 
 import {
+  hasEnded,
+  managerBinding,
   mayManageSessions,
   maySeeRoster,
   mayTakeAttendance,
@@ -206,11 +208,18 @@ export function sessionHandlers(
                 }),
               }
             : null,
+        approval: lookups.approvalOf(sessionId),
         permissions: {
           manage: mayManageSessions(bindings, center.id),
           takeAttendance:
             actorId !== null &&
             mayTakeAttendance(bindings, session, actorId, now()),
+          approveAttendance:
+            actorId !== null &&
+            session.status !== "cancelled" &&
+            hasEnded(session, now()) &&
+            managerBinding(bindings, center.id) !== undefined &&
+            lookups.approvalOf(sessionId) === null,
         },
       }
     }),

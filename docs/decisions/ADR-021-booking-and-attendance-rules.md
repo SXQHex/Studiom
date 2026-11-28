@@ -18,7 +18,8 @@ ADR-004 seans seçeneklerini ve paketleri tanımlar. Rezervasyon, iptal ve yokla
 - **Rol dengesi:** Her rolün (lider, takipçi) kontenjanı seansta **elle girilir**. Bir rolün kontenjanı seans kapasitesini aşamaz ve o rolde alınmış yer sayısının altına inemez. Toplam kapasite ayrıca geçerlidir. Telafi rol kontenjanına sayılmaz.
 - **Yoklama:** Seans başlangıcından bitişine kadar eğitmen, atanmış asistan ve Program yetkisi olan merkez ekibi işaretler.
   - Seans bittikten sonra eğitmen ve asistan **hiçbir değişiklik yapamaz**.
-  - Sonrasında yalnız merkez yöneticisi, **gerekçe yazarak** değiştirir. Her değişiklik istisna kaydı olur.
+  - Sonrasında yalnız merkez yöneticisi yoklamayı **onaylar** ya da **gerekçe yazarak** değiştirir.
+  - Onay da gerekçeli değişiklik de **denetim kaydına** kişi ve bağ ile yazılır. Gerekçeli değişiklik ayrıca istisna kaydı olur.
 - **Seans düzenleme ve iptal** merkez bağı ister: yönetici ya da Program modülü. Eğitmen yapamaz.
 - **Borç ve hak:** Açık borç rezervasyonu engellemez, uyarı gösterilir. Hakkı biten paketle rezervasyon yapılamaz.
 

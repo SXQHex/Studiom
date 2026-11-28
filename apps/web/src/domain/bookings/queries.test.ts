@@ -6,6 +6,7 @@ import { ApiRequestError } from "@/api/client"
 import { sessionQuery } from "@/domain/sessions/queries"
 
 import {
+  approveAttendanceMutation,
   attendanceMutation,
   bookMutation,
   cancelBookingMutation,
@@ -73,4 +74,23 @@ test("refusals of the other actions reach the screen with their rule", async () 
   await expect(
     join.mutate({ sessionId: session.id, personId: booking.personId })
   ).rejects.toMatchObject({ reason: "not_a_series" })
+})
+
+test("a manager approves an ended session and the screen sees it", async () => {
+  const { session } = seeded()
+  mock.setNow(new Date(session.endsAt))
+  mock.signIn("per_mert")
+  const before = await client.fetchQuery({
+    ...sessionQuery(session.id),
+    staleTime: 0,
+  })
+  expect(before.permissions.approveAttendance).toBe(true)
+  const approve = new MutationObserver(client, approveAttendanceMutation)
+  await approve.mutate({ sessionId: session.id })
+  const after = await client.fetchQuery({
+    ...sessionQuery(session.id),
+    staleTime: 0,
+  })
+  expect(after.approval?.byPersonId).toBe("per_mert")
+  mock.setNow(now)
 })

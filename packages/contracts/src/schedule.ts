@@ -129,6 +129,12 @@ export const rosterEntry = z.object({
 })
 export type RosterEntry = z.infer<typeof rosterEntry>
 
+export const attendanceApproval = z.object({
+  byPersonId: id,
+  at: utcDateTime,
+})
+export type AttendanceApproval = z.infer<typeof attendanceApproval>
+
 export const sessionDetail = z.object({
   session,
   counts: z.object({
@@ -142,9 +148,12 @@ export const sessionDetail = z.object({
   roster: z.array(rosterEntry).nullable(),
   /** The signed-in person as a participant; null when they are not a member here. */
   viewer: z.object({ booking: booking.nullable(), eligibility }).nullable(),
+  /** The manager's sign-off of the attendance; null while there is none. */
+  approval: attendanceApproval.nullable(),
   permissions: z.object({
     manage: z.boolean(),
     takeAttendance: z.boolean(),
+    approveAttendance: z.boolean(),
   }),
 })
 export type SessionDetail = z.infer<typeof sessionDetail>
@@ -213,4 +222,10 @@ export const attendanceSet = defineOperation("attendance_set_v1", {
     reason: z.string().trim().min(1).optional(),
   }),
   response: booking,
+})
+
+/** The center manager signs off an ended session's attendance as it stands. */
+export const attendanceApprove = defineOperation("attendance_approve_v1", {
+  request: z.object({ sessionId: id }),
+  response: attendanceApproval,
 })
