@@ -37,6 +37,7 @@ Bu dosya, depodaki belgelerin tek girişidir. Her bilgi **tek bir yerde** yaşar
 | [016](decisions/ADR-016-merge-and-release-gates.md)        | Birleştirme ve yayın engelleri                    |
 | [017](decisions/ADR-017-use-proven-solutions.md)           | Hazır çözüm önceliği, tekrar icat yok             |
 | [018](decisions/ADR-018-tech-stack.md)                     | Teknoloji yığını                                  |
+| [019](decisions/ADR-019-baseline-ci-run.md)                | Görsel taban commit'inden sonra tek CI koşusu     |
 
 ## Belge kuralları
 
