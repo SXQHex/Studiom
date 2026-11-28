@@ -260,13 +260,23 @@ describe("booking", () => {
     expect(left.status).toBe("cancelled")
   })
 
-  test("role balance gives each role half of the places", async () => {
+  test("each role has its own hand-set number of places", async () => {
     const session = first(upcoming("dis_pro_bachata"))
     emptySession(session)
-    await mock.db.sessions.update((q) => q.where({ id: session.id }), {
-      data(draft) {
-        draft.capacity = 2
+    mock.signIn("per_mert")
+    await refused(
+      sessionsUpdate,
+      {
+        sessionId: session.id,
+        scope: "this",
+        changes: { roleCapacity: { leader: 99, follower: 1 } },
       },
+      "invalid_role_capacity"
+    )
+    await ok(sessionsUpdate, {
+      sessionId: session.id,
+      scope: "this",
+      changes: { roleCapacity: { leader: 1, follower: 3 } },
     })
     const one = await freeMember(session)
     const body = { sessionId: session.id, personId: one.personId }
@@ -316,6 +326,59 @@ describe("booking", () => {
     expect(creditsUsed(member.id)).toBe(before + joined.items.length)
   })
 
+  test("a sold package follows the template version it was sold with", async () => {
+    const session = first(upcoming("dis_pro_reformer"))
+    emptySession(session)
+    const { personId, eligibility } = await freeMember(session)
+    const packageId = first(eligibility.packageIds)
+    // A newer version that no longer covers reformer does not touch the sale.
+    const sold = first(
+      mock.db.packageTemplates.findMany((q) =>
+        q.where({ id: "tpl_pro_reformer10" })
+      )
+    )
+    await mock.db.packageTemplates.create({
+      ...sold,
+      version: 2,
+      disciplineIds: ["dis_pro_salsa"],
+    })
+    await mock.db.packages.update((q) => q.where({ id: packageId }), {
+      data(draft) {
+        draft.templateVersion = 2
+      },
+    })
+    const newer = await ok(sessionsGet, { sessionId: session.id })
+    expect(newer.viewer?.eligibility.packageIds).not.toContain(packageId)
+    await mock.db.packages.update((q) => q.where({ id: packageId }), {
+      data(draft) {
+        draft.templateVersion = 1
+      },
+    })
+    await ok(bookingsCreate, {
+      sessionId: session.id,
+      personId,
+      seat: "R1",
+    })
+  })
+
+  test("a package that ran out is refused as out of credits", async () => {
+    const session = first(upcoming("dis_pro_reformer"))
+    emptySession(session)
+    const { personId } = await freeMember(session)
+    await mock.db.packages.updateMany((q) => q.where({ personId }), {
+      data(draft) {
+        draft.creditsTotal = draft.creditsUsed || 1
+        draft.creditsUsed = draft.creditsTotal
+        draft.status = "used_up"
+      },
+    })
+    await refused(
+      bookingsCreate,
+      { sessionId: session.id, personId, seat: "R1" },
+      "no_credits"
+    )
+  })
+
   test.each(["per_ayse", "per_can", null])(
     "only the member or their center's desk may book, not %s",
     async (stranger) => {
@@ -340,25 +403,32 @@ describe("attendance", () => {
     mock.setNow(new Date(session.startsAt))
     const marked = await ok(attendanceSet, mark)
     expect(marked.attendanceTakenBy).toBe(session.instructorId)
-    await refused(
-      attendanceSet,
-      { ...mark, status: "no_show" },
-      "attendance_not_open"
-    )
+    const absent = await ok(attendanceSet, { ...mark, status: "no_show" })
+    expect(absent.status).toBe("no_show")
     const undone = await ok(attendanceSet, { ...mark, status: "booked" })
     expect(undone.attendanceTakenBy).toBeNull()
   })
 
-  test("marking after the day needs a reason and records an exception", async () => {
+  test("once the session ended only the manager writes, with a reason", async () => {
     const { session, booking } = await started()
-    mock.setNow(new Date(Date.parse(session.startsAt) + 30 * hour))
+    mock.setNow(new Date(session.endsAt))
     const mark = { bookingId: booking.id, status: "no_show" as const }
+    await refused(attendanceSet, mark, "attendance_closed")
+    await refused(
+      attendanceSet,
+      { ...mark, reason: "Liste geç girildi" },
+      "attendance_closed"
+    )
+    const detail = await ok(sessionsGet, { sessionId: session.id })
+    expect(detail.permissions.takeAttendance).toBe(false)
+
+    mock.signIn("per_mert")
     await refused(attendanceSet, mark, "reason_required")
     await ok(attendanceSet, { ...mark, reason: "Liste geç girildi" })
     expect(mock.db.exceptions.all()).toContainEqual(
       expect.objectContaining({
         kind: "retroactive_attendance",
-        actorPersonId: session.instructorId,
+        actorPersonId: "per_mert",
         subjectPersonId: booking.personId,
         reason: "Liste geç girildi",
       })
@@ -379,7 +449,14 @@ describe("attendance", () => {
 
 describe("session detail", () => {
   test("a teacher sees the roster without money, a member only themselves", async () => {
-    const session = first(upcoming("dis_pro_reformer"))
+    // Earlier tests empty some sessions, so take one that still has bookings.
+    const session = first(
+      upcoming("dis_pro_reformer").filter((s) =>
+        mock.db.bookings.findFirst((q) =>
+          q.where({ sessionId: s.id, status: "booked" })
+        )
+      )
+    )
     mock.signIn(session.instructorId)
     const teacher = await ok(sessionsGet, { sessionId: session.id })
     expect(teacher.roster?.length).toBeGreaterThan(0)
@@ -503,6 +580,62 @@ describe("recurrence editing", () => {
     ).toEqual([])
   })
 
+  test("assistants need a teaching binding at the center", async () => {
+    const session = first(upcoming("dis_pro_reformer"))
+    await refused(
+      sessionsUpdate,
+      {
+        sessionId: session.id,
+        scope: "this",
+        changes: { assistantIds: ["per_ayse"] },
+      },
+      "invalid_assistant"
+    )
+  })
+
+  test("a teacher cannot be in two centers at once", async () => {
+    // Emre teaches in Beşiktaş; give them a Çankaya session at the same time.
+    const later = (centerId: string) =>
+      first(
+        mock.db.sessions.findMany(
+          (q) =>
+            q.where({
+              centerId,
+              disciplineId: "dis_biz_salsa",
+              status: "scheduled",
+              startsAt: (startsAt) => startsAt > "2026-12-02",
+            }),
+          { orderBy: { startsAt: "asc" } }
+        )
+      )
+    const here = later("ctr_biz_besiktas")
+    const there = later("ctr_biz_cankaya")
+    await mock.db.bindings.create({
+      id: "bnd_test_emre",
+      personId: here.instructorId,
+      status: "active",
+      createdAt: now.toISOString(),
+      scope: "instructor",
+      organizationId: "org_business",
+      centerId: "ctr_biz_cankaya",
+      role: "instructor",
+    })
+    mock.signIn("per_kerem")
+    await refused(
+      sessionsUpdate,
+      {
+        sessionId: there.id,
+        scope: "this",
+        changes: {
+          date: sessionDay(here.startsAt, "Europe/Istanbul"),
+          startTime: "19:45",
+          instructorId: here.instructorId,
+        },
+      },
+      "instructor_busy"
+    )
+  })
+
   test("an instructor cannot edit the schedule", async () => {
     const session = first(upcoming("dis_pro_reformer"))
     mock.signIn(session.instructorId)
@@ -549,6 +682,46 @@ describe("people", () => {
     // The organization looks on, read-only (ADR-003).
     mock.signIn("per_ozan")
     expect((await ok(peopleProfile, body)).readOnly).toBe(true)
+  })
+
+  test("Sales at one center shows no money of another", async () => {
+    const pkg = first(
+      mock.db.packages.findMany((q) =>
+        q.where({ centerId: "ctr_biz_besiktas" })
+      )
+    )
+    // A second record of the same member at Çankaya, and a debt there.
+    await mock.db.packages.create({
+      ...pkg,
+      id: "pkg_test_cankaya",
+      centerId: "ctr_biz_cankaya",
+    })
+    // Nil sells in Beşiktaş and only handles people in Çankaya.
+    await mock.db.bindings.create({
+      id: "bnd_test_nil",
+      personId: "per_nil",
+      status: "active",
+      createdAt: now.toISOString(),
+      scope: "center",
+      organizationId: "org_business",
+      centerId: "ctr_biz_cankaya",
+      role: "staff",
+      modules: ["people"],
+    })
+    mock.signIn("per_nil")
+    const seen = await ok(peopleProfile, {
+      organizationId: "org_business",
+      personId: pkg.personId,
+    })
+    const price = (centerId: string) =>
+      seen.packages.find((p) => p.centerId === centerId)?.price.amountMinor
+    expect(price("ctr_biz_besiktas")).toBe(pkg.price.amountMinor)
+    expect(price("ctr_biz_cankaya")).toBe(0)
+    const money = [
+      ...(seen.finance?.payments ?? []),
+      ...(seen.finance?.debts ?? []),
+    ]
+    expect(money.every((m) => m.centerId === "ctr_biz_besiktas")).toBe(true)
   })
 
   test("an invitation creates an invited member that the list can filter", async () => {

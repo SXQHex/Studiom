@@ -10,6 +10,7 @@ export const ruleReason = z.enum([
   "not_a_series",
   "not_a_member",
   "no_package",
+  "no_credits",
   "package_frozen",
   "not_enough_credits",
   "full",
@@ -23,6 +24,7 @@ export const ruleReason = z.enum([
   "not_cancellable",
   // Attendance
   "attendance_not_open",
+  "attendance_closed",
   "reason_required",
   // Session changes
   "in_past",
@@ -32,6 +34,8 @@ export const ruleReason = z.enum([
   "instructor_busy",
   "over_room_limit",
   "capacity_below_booked",
+  "invalid_role_capacity",
+  "invalid_assistant",
   // People
   "already_member",
   "plan_limit",

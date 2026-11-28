@@ -43,11 +43,6 @@ export function countPlaces(bookings: readonly Booking[]) {
   }
 }
 
-/** With role balance, one role may take at most half of the places. */
-function placesPerRole(capacity: number): number {
-  return Math.ceil(capacity / 2)
-}
-
 /** Seat labels of a session with seat selection: one per place. */
 function isSeat(seat: string, capacity: number): boolean {
   const match = /^R([1-9]\d*)$/.exec(seat)
@@ -120,8 +115,12 @@ function packageProblem(facts: BookingFacts): RuleReason {
   const usable = covering.some(
     (p) => p.package.status === "active" && creditsLeft(p.package) > 0
   )
-  return usable && facts.targets.length > 1
-    ? "not_enough_credits"
+  if (usable) {
+    return facts.targets.length > 1 ? "not_enough_credits" : "no_package"
+  }
+  // A covering package that ran out is told apart from having none (ADR-021).
+  return covering.some((p) => creditsLeft(p.package) <= 0)
+    ? "no_credits"
     : "no_package"
 }
 
@@ -134,10 +133,10 @@ function placeProblem(
   const { session, bookings } = target
   const counts = countPlaces(bookings)
   if (counts.booked >= session.capacity) return "full"
-  if (session.options.roleBalance) {
-    const limit = placesPerRole(session.capacity)
-    const leadersFull = counts.leaders >= limit
-    const followersFull = counts.followers >= limit
+  const quota = session.options.roleCapacity
+  if (quota !== null) {
+    const leadersFull = counts.leaders >= quota.leader
+    const followersFull = counts.followers >= quota.follower
     if (
       (role === "leader" && leadersFull) ||
       (role === "follower" && followersFull) ||
@@ -212,7 +211,9 @@ export function missingChoice(
   role: DanceRole | undefined,
   seat: string | undefined
 ): RuleReason | null {
-  if (session.options.roleBalance && role === undefined) return "role_required"
+  if (session.options.roleCapacity !== null && role === undefined) {
+    return "role_required"
+  }
   if (session.options.seatSelection && seat === undefined) {
     return "seat_required"
   }

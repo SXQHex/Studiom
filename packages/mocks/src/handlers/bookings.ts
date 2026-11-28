@@ -9,14 +9,13 @@ import {
   type Session,
 } from "@workspace/contracts/schedule"
 
-import { mayBookFor, mayTakeAttendance } from "../rules/access"
+import { hasEnded, mayBookFor, mayTakeAttendance } from "../rules/access"
 import {
   bookingEligibility,
   drawCredit,
   isFreeCancellation,
   missingChoice,
   returnCredit,
-  sessionDay,
 } from "../rules/booking"
 import { isUpcoming, sessionsInScope } from "../rules/schedule"
 import type { Lookups } from "./lookups"
@@ -191,7 +190,7 @@ export function bookingHandlers(
             personId: input.personId,
             packageId,
             status: input.waitlist ? "waitlisted" : "booked",
-            role: session.options.roleBalance ? (input.role ?? null) : null,
+            role: session.options.roleCapacity ? (input.role ?? null) : null,
             seat:
               session.options.seatSelection && !input.waitlist
                 ? (input.seat ?? null)
@@ -228,7 +227,7 @@ export function bookingHandlers(
             personId: input.personId,
             packageId,
             status: "booked" as const,
-            role: target.options.roleBalance ? (input.role ?? null) : null,
+            role: target.options.roleCapacity ? (input.role ?? null) : null,
             seat: target.options.seatSelection ? (input.seat ?? null) : null,
             isMakeup: false,
             attendanceTakenBy: null,
@@ -254,7 +253,10 @@ export function bookingHandlers(
           q.where({ id: booking.packageId ?? "" })
         )
         const template = db.packageTemplates.findFirst((q) =>
-          q.where({ id: pkg?.templateId ?? "" })
+          q.where({
+            id: pkg?.templateId ?? "",
+            version: pkg?.templateVersion ?? 0,
+          })
         )
         const free = isFreeCancellation(
           session.startsAt,
@@ -281,15 +283,14 @@ export function bookingHandlers(
         const session = lookups.sessionById(booking.sessionId)
         const center = session && lookups.centerOf(session.centerId)
         if (!session || !center) return problem("internal", "Session missing")
-        if (
-          actorId === null ||
-          !mayTakeAttendance(
-            lookups.bindingsOfPerson(actorId),
-            session,
-            actorId
-          )
-        ) {
-          return problem("forbidden")
+        if (actorId === null) return problem("forbidden")
+        const bindings = lookups.bindingsOfPerson(actorId)
+        const ended = hasEnded(session, now())
+        if (!mayTakeAttendance(bindings, session, actorId, now())) {
+          // Whoever could mark it during the session learns why they no longer can.
+          const closed =
+            ended && mayTakeAttendance(bindings, session, actorId, new Date(0))
+          return closed ? refuse("attendance_closed") : problem("forbidden")
         }
         if (session.status === "cancelled") return refuse("session_cancelled")
         if (
@@ -299,15 +300,10 @@ export function bookingHandlers(
         ) {
           return refuse("attendance_not_open")
         }
-        // Presence can be marked from the start; absence only once the session ended.
-        const opensAt = status === "no_show" ? session.endsAt : session.startsAt
-        if (now().getTime() < Date.parse(opensAt)) {
+        if (now().getTime() < Date.parse(session.startsAt)) {
           return refuse("attendance_not_open")
         }
-        const late =
-          sessionDay(now().toISOString(), center.timeZone) >
-          sessionDay(session.startsAt, center.timeZone)
-        if (late) {
+        if (ended) {
           if (reason === undefined) return refuse("reason_required")
           await db.exceptions.create({
             id: ids("exc"),

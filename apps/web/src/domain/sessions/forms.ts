@@ -1,5 +1,9 @@
 import { calendarDate, localTime } from "@workspace/contracts/primitives"
-import { editScope, sessionChanges } from "@workspace/contracts/schedule"
+import {
+  editScope,
+  roleCapacity,
+  sessionChanges,
+} from "@workspace/contracts/schedule"
 import { z } from "zod"
 
 /** The fields of the session edit form, as the inputs hold them. */
@@ -11,6 +15,8 @@ export const sessionEditForm = z.object({
   roomId: z.string().min(1),
   instructorId: z.string().min(1),
   capacity: z.number().int().positive(),
+  /** Only for sessions with role balance. */
+  roleCapacity: roleCapacity.optional(),
 })
 export type SessionEditForm = z.infer<typeof sessionEditForm>
 
@@ -21,7 +27,9 @@ export function sessionEditChanges(
 ) {
   const changed = Object.fromEntries(
     Object.entries(current).filter(
-      ([key, value]) => key !== "scope" && value !== Reflect.get(initial, key)
+      ([key, value]) =>
+        key !== "scope" &&
+        JSON.stringify(value) !== JSON.stringify(Reflect.get(initial, key))
     )
   )
   const result = sessionChanges.safeParse(changed)

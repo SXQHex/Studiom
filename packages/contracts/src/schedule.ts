@@ -5,6 +5,12 @@ import { enrollment, sessionLevel } from "./organization"
 import { calendarDate, id, localTime, utcDateTime } from "./primitives"
 import { ruleReason } from "./rules"
 
+export const roleCapacity = z.object({
+  leader: z.number().int().nonnegative(),
+  follower: z.number().int().nonnegative(),
+})
+export type RoleCapacity = z.infer<typeof roleCapacity>
+
 /** The single scheduling concept; recurrence is a property of a session (ADR-004). */
 export const session = z.object({
   id,
@@ -19,7 +25,8 @@ export const session = z.object({
   level: sessionLevel,
   options: z.object({
     enrollment,
-    roleBalance: z.boolean(),
+    /** Places per dance role, entered by hand; null without role balance. */
+    roleCapacity: roleCapacity.nullable(),
     seatSelection: z.boolean(),
     levelPrerequisite: sessionLevel.nullable(),
   }),
@@ -92,6 +99,8 @@ export const sessionChanges = z
     assistantIds: z.array(id),
     capacity: z.number().int().positive(),
     level: sessionLevel,
+    /** Only for sessions with role balance. */
+    roleCapacity,
   })
   .partial()
   .refine((changes) => Object.keys(changes).length > 0, {
@@ -200,7 +209,7 @@ export const attendanceSet = defineOperation("attendance_set_v1", {
     bookingId: id,
     /** `booked` takes a mark back. */
     status: z.enum(["attended", "no_show", "booked"]),
-    /** Required after the session's day: an exception on record (ADR-003). */
+    /** Required once the session ended: an exception on record (ADR-021). */
     reason: z.string().trim().min(1).optional(),
   }),
   response: booking,

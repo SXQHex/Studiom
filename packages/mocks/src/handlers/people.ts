@@ -30,7 +30,10 @@ export function peopleHandlers(
       .findMany((q) => q.where({ organizationId }))
       .map((center) => center.id)
 
-  /** Which centers' records of a person the viewer may see, and whether money too. */
+  /**
+   * Which centers' records of a person the viewer may see, and for which of them
+   * money too: Sales at one center says nothing about another (ADR-003).
+   */
   const profileAccess = (
     viewerId: string,
     organizationId: string,
@@ -39,7 +42,7 @@ export function peopleHandlers(
   ) => {
     const all = centersOf(organizationId)
     if (viewerId === personId) {
-      return { centers: all, money: true, readOnly: false }
+      return { centers: all, money: all, readOnly: false }
     }
     const bindings = lookups.bindingsOfPerson(viewerId)
     // A center sees a member who belongs to it, and only its own records.
@@ -51,12 +54,12 @@ export function peopleHandlers(
     if (own.length > 0) {
       return {
         centers: own,
-        money: own.some((id) => worksAtCenter(bindings, id, ["sales"])),
+        money: own.filter((id) => worksAtCenter(bindings, id, ["sales"])),
         readOnly: false,
       }
     }
     return overseesOrganization(bindings, organizationId)
-      ? { centers: all, money: true, readOnly: true }
+      ? { centers: all, money: all, readOnly: true }
       : null
   }
 
@@ -106,6 +109,9 @@ export function peopleHandlers(
       const visible = new Set(access.centers)
       const inView = (record: { centerId: string }) =>
         visible.has(record.centerId)
+      const paid = new Set(access.money)
+      const moneyInView = (record: { centerId: string }) =>
+        paid.has(record.centerId)
       const bookings = db.bookings
         .findMany((q) => q.where({ personId }))
         .flatMap((booking) => {
@@ -126,23 +132,24 @@ export function peopleHandlers(
           .filter(inView)
           // A price is money: hidden together with payments and debts.
           .map((p) =>
-            access.money
+            moneyInView(p)
               ? p
               : Object.assign({}, p, {
                   price: { currency: p.price.currency, amountMinor: 0 },
                 })
           ),
         bookings,
-        finance: access.money
-          ? {
-              payments: db.payments
-                .findMany((q) => q.where({ organizationId, personId }))
-                .filter(inView),
-              debts: db.debts
-                .findMany((q) => q.where({ organizationId, personId }))
-                .filter(inView),
-            }
-          : null,
+        finance:
+          paid.size > 0
+            ? {
+                payments: db.payments
+                  .findMany((q) => q.where({ organizationId, personId }))
+                  .filter(moneyInView),
+                debts: db.debts
+                  .findMany((q) => q.where({ organizationId, personId }))
+                  .filter(moneyInView),
+              }
+            : null,
         readOnly: access.readOnly,
       }
     }),

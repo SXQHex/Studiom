@@ -5,6 +5,7 @@ import {
   sessionsUpdate,
   type Booking,
   type Session,
+  type SessionChanges,
 } from "@workspace/contracts/schedule"
 
 import {
@@ -16,6 +17,7 @@ import { countPlaces, isActive, returnCredit } from "../rules/booking"
 import {
   applyChanges,
   clashProblem,
+  roleProblem,
   roomProblem,
   scopeProblem,
   sessionsInScope,
@@ -113,38 +115,56 @@ export function sessionHandlers(
     )
   }
 
+  /** Whether the person has an active teaching binding at the center. */
+  const teachesAt = (
+    personId: string,
+    centerId: string,
+    roles: readonly ("instructor" | "assistant")[]
+  ) =>
+    lookups
+      .bindingsOfPerson(personId)
+      .some(
+        (b) =>
+          b.scope === "instructor" &&
+          b.centerId === centerId &&
+          roles.includes(b.role)
+      )
+
+  const teacherProblem = (session: Session, centerId: string) => {
+    if (!teachesAt(session.instructorId, centerId, ["instructor"])) {
+      return "invalid_instructor"
+    }
+    const assistantsFit = session.assistantIds.every((id) =>
+      teachesAt(id, centerId, ["instructor", "assistant"])
+    )
+    return assistantsFit ? null : "invalid_assistant"
+  }
+
   /** Why the new versions cannot be saved, if one of them cannot. */
   const changeProblem = (
     next: readonly Session[],
     center: Center,
-    moved: boolean,
-    peopleChanged: boolean
+    changes: SessionChanges
   ) => {
+    const peopleChanged =
+      changes.instructorId !== undefined || changes.assistantIds !== undefined
+    const moved =
+      changes.date !== undefined ||
+      changes.startTime !== undefined ||
+      changes.durationMinutes !== undefined ||
+      changes.roomId !== undefined
     const changing = new Set(next.map((s) => s.id))
-    const others = db.sessions
-      .findMany((q) => q.where({ centerId: center.id }))
-      .filter((s) => !changing.has(s.id))
+    const others = db.sessions.all().filter((s) => !changing.has(s.id))
     for (const session of next) {
       if (Date.parse(session.startsAt) <= +now()) return "in_past"
       const room = db.rooms.findFirst((q) => q.where({ id: session.roomId }))
-      const booked = countPlaces(lookups.bookingsOfSession(session.id)).booked
-      const roomIssue = roomProblem(session, room, booked)
-      if (roomIssue) return roomIssue
-      if (peopleChanged) {
-        const teaches = lookups
-          .bindingsOfPerson(session.instructorId)
-          .some(
-            (b) =>
-              b.scope === "instructor" &&
-              b.centerId === center.id &&
-              b.role === "instructor"
-          )
-        if (!teaches) return "invalid_instructor"
-      }
-      if (moved || peopleChanged) {
-        const clash = clashProblem(session, others)
-        if (clash) return clash
-      }
+      const counts = countPlaces(lookups.bookingsOfSession(session.id))
+      const issue =
+        roomProblem(session, room, counts.booked) ??
+        roleProblem(session, counts) ??
+        (peopleChanged ? teacherProblem(session, center.id) : null) ??
+        (moved || peopleChanged ? clashProblem(session, others) : null)
+      if (issue) return issue
     }
     return null
   }
@@ -189,7 +209,8 @@ export function sessionHandlers(
         permissions: {
           manage: mayManageSessions(bindings, center.id),
           takeAttendance:
-            actorId !== null && mayTakeAttendance(bindings, session, actorId),
+            actorId !== null &&
+            mayTakeAttendance(bindings, session, actorId, now()),
         },
       }
     }),
@@ -214,16 +235,14 @@ export function sessionHandlers(
             { seriesId }
           )
         )
-        const refusal = changeProblem(
-          next,
-          center,
-          changes.date !== undefined ||
-            changes.startTime !== undefined ||
-            changes.durationMinutes !== undefined ||
-            changes.roomId !== undefined,
-          changes.instructorId !== undefined ||
-            changes.assistantIds !== undefined
-        )
+        // Role places cannot be added to a session without role balance.
+        if (
+          changes.roleCapacity !== undefined &&
+          targets.some((t) => t.options.roleCapacity === null)
+        ) {
+          return refuse("invalid_role_capacity")
+        }
+        const refusal = changeProblem(next, center, changes)
         if (refusal) return refuse(refusal)
         await saveSessions(next)
         return { items: next }

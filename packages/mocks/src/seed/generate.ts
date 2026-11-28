@@ -545,7 +545,9 @@ export function generateDataset({
           level: slot.level,
           options: {
             enrollment: discipline.enrollment,
-            roleBalance: discipline.roleBalance,
+            roleCapacity: discipline.roleBalance
+              ? halves(room.reformers ?? room.capacity)
+              : null,
             seatSelection: discipline.seatSelection,
             levelPrerequisite:
               slot.level === "advanced" ? "intermediate" : null,
@@ -657,7 +659,7 @@ export function generateDataset({
           personId: pkg.personId,
           packageId: pkg.id,
           status,
-          role: session.options.roleBalance
+          role: session.options.roleCapacity
             ? index % 2 === 0
               ? "leader"
               : "follower"
@@ -754,6 +756,11 @@ function slug(text: string) {
     .normalize("NFKD")
     .replace(/\p{M}/gu, "")
     .replace(/[^a-z0-9]/g, "")
+}
+
+/** The seed splits the places between the two roles; managers change them by hand. */
+function halves(capacity: number) {
+  return { leader: Math.ceil(capacity / 2), follower: Math.floor(capacity / 2) }
 }
 
 /** ISO weekday of a calendar date, 1 = Monday … 7 = Sunday. */

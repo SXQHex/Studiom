@@ -83,6 +83,10 @@ export function applyChanges(
     assistantIds: changes.assistantIds ?? target.assistantIds,
     capacity: changes.capacity ?? target.capacity,
     level: changes.level ?? target.level,
+    options:
+      changes.roleCapacity === undefined
+        ? target.options
+        : { ...target.options, roleCapacity: changes.roleCapacity },
   }
 }
 
@@ -106,7 +110,22 @@ export function roomProblem(
   return null
 }
 
-/** A room or a teacher cannot be in two sessions at the same time. */
+/** Each role's places fit the session and cover those already booked. */
+export function roleProblem(
+  next: Session,
+  booked: { leaders: number; followers: number }
+): RuleReason | null {
+  const quota = next.options.roleCapacity
+  if (quota === null) return null
+  const fits = (places: number, taken: number) =>
+    places <= next.capacity && places >= taken
+  return fits(quota.leader, booked.leaders) &&
+    fits(quota.follower, booked.followers)
+    ? null
+    : "invalid_role_capacity"
+}
+
+/** A room or a teacher, at any center, cannot be in two sessions at once. */
 export function clashProblem(
   next: Session,
   others: readonly Session[]

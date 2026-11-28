@@ -31,7 +31,8 @@ export function createLookups(db: MockDb) {
       .findMany((q) => q.where({ personId, organizationId }))
       .flatMap((pkg) => {
         const template = db.packageTemplates.findFirst((q) =>
-          q.where({ id: pkg.templateId })
+          // Template changes apply to new sales only, so read the version sold.
+          q.where({ id: pkg.templateId, version: pkg.templateVersion })
         )
         return template ? [{ package: pkg, template }] : []
       })

@@ -43,11 +43,32 @@ export function mayManageSessions(
   return worksAtCenter(bindings, centerId, ["program"])
 }
 
+/** Only a center manager still writes once the session ended (ADR-021). */
+function isCenterManager(
+  bindings: readonly Binding[],
+  centerId: string
+): boolean {
+  return bindings.some(
+    (b) =>
+      b.scope === "center" &&
+      b.centerId === centerId &&
+      b.role === "center_manager"
+  )
+}
+
+export function hasEnded(session: Session, now: Date): boolean {
+  return now.getTime() >= Date.parse(session.endsAt)
+}
+
 export function mayTakeAttendance(
   bindings: readonly Binding[],
   session: Session,
-  personId: string
+  personId: string,
+  now: Date
 ): boolean {
+  if (hasEnded(session, now)) {
+    return isCenterManager(bindings, session.centerId)
+  }
   return (
     teachesSession(session, personId) ||
     worksAtCenter(bindings, session.centerId, ["program"])
