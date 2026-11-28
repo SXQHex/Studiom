@@ -29,12 +29,13 @@ export async function callOperation<
   op: Operation<Request, Response>,
   input: z.input<Request>
 ): Promise<z.output<Response>> {
-  const response = await fetch(new URL(op.path, origin), {
+  const response = await fetch(new URL(op.path, origin).href, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(op.request.parse(input)),
   })
-  const body: unknown = await response.json()
+  // A failed response may carry no JSON at all; it still becomes an ApiRequestError.
+  const body: unknown = await response.json().catch(() => null)
   if (!response.ok) {
     const error = apiError.safeParse(body)
     throw new ApiRequestError(

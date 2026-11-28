@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test"
+import { sessionsList } from "@workspace/contracts/schedule"
 
 /** Opens a page and waits until the app rendered, which happens after the worker started. */
 async function open(page: Page, url: string) {
@@ -7,20 +8,18 @@ async function open(page: Page, url: string) {
 }
 
 /** Calls one mock operation from inside the page, the way the app's fetch does. */
-async function call(page: Page, operation: string, body: object = {}) {
+async function call(page: Page, operation: string, input: object = {}) {
   return page.evaluate(
-    async ({ operation, body }) => {
-      const response = await fetch(`/functions/v1/api/${operation}`, {
+    async (request) => {
+      const response = await fetch(`/functions/v1/api/${request.operation}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify(request.input),
       })
-      return {
-        status: response.status,
-        body: (await response.json()) as unknown,
-      }
+      const body: unknown = await response.json()
+      return { status: response.status, body }
     },
-    { operation, body }
+    { operation, input }
   )
 }
 
@@ -48,7 +47,7 @@ test("today's Pro schedule is built around now in the center's time zone", async
     to,
   })
   expect(result.status).toBe(200)
-  const { items } = result.body as { items: { startsAt: string }[] }
+  const { items } = sessionsList.response.parse(result.body)
   expect(items.length).toBeGreaterThan(0)
 })
 

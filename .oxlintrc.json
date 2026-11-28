@@ -28,20 +28,7 @@
       }
     ],
     "import/no-cycle": "error",
-    "react/react-in-jsx-scope": "off",
-    "better-tailwindcss/enforce-logical-properties": [
-      "error",
-      {
-        "ignore": [
-          "(^|:)-?(scroll-)?[pm][tby]-",
-          "(^|:)-?(top|bottom)-",
-          "(^|:)border-[tb](-|$)",
-          "(^|:)rounded-[tb](-|$)",
-          "(^|:)(min-|max-)?[hw]-",
-          "(^|:)size-"
-        ]
-      }
-    ]
+    "react/react-in-jsx-scope": "off"
   },
   "ignorePatterns": [
     "**/dist/**",
@@ -51,12 +38,5 @@
     "apps/web/src/routeTree.gen.ts",
     "apps/web/public/mockServiceWorker.js",
     "apps/web/src/types/**"
-  ],
-  "jsPlugins": ["eslint-plugin-better-tailwindcss"],
-  "settings": {
-    "better-tailwindcss": {
-      "cwd": "packages/ui",
-      "entryPoint": "src/styles/globals.css"
-    }
-  }
+  ]
 }
