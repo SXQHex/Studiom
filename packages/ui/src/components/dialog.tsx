@@ -85,7 +85,7 @@ export function Dialog({ isDismissable = true, ...props }: DialogProps) {
       isDismissable={isDismissable}
       className={cn(overlay, "grid place-items-center p-4")}
     >
-      <Modal className="w-full max-w-lg rounded-xl border bg-background shadow-lg data-[entering]:animate-in data-[entering]:zoom-in-95">
+      <Modal className="max-h-[calc(100dvh-2rem)] w-full max-w-lg overflow-auto rounded-xl border bg-background shadow-lg data-[entering]:animate-in data-[entering]:zoom-in-95">
         <Surface {...props} />
       </Modal>
     </ModalOverlay>
