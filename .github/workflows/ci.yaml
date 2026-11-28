@@ -44,6 +44,8 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: read
+      # paths-filter lists the files of a pull request through the API.
+      pull-requests: read
     outputs:
       playwright: ${{ steps.versions.outputs.playwright }}
       screenshots_changed: ${{ steps.screenshots.outputs.changed }}
@@ -53,22 +55,19 @@ jobs:
           # Full history to compare the screenshot baselines with the base branch.
           fetch-depth: 0
           persist-credentials: false
+      # Pull requests and branch runs only: on the default branch there is nothing to approve.
+      # Any change under the filter, or a failing detection, asks for approval.
       - name: Detect Screenshot Changes
         id: screenshots
-        env:
-          BASE: ${{ github.base_ref || github.event.repository.default_branch }}
-        run: |
-          set -euo pipefail
-          # Any difference, or a failing comparison, asks for approval.
-          if git diff --quiet "origin/$BASE...HEAD" -- apps/web/e2e/__screenshots__; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            {
-              echo "### Screenshot changes awaiting approval"
-              git diff --name-status "origin/$BASE...HEAD" -- apps/web/e2e/__screenshots__
-            } >> "$GITHUB_STEP_SUMMARY"
-          fi
+        if: >-
+          github.event_name == 'pull_request' ||
+          (github.event_name == 'workflow_dispatch' &&
+          github.ref_name != github.event.repository.default_branch)
+        uses: dorny/paths-filter@v4.0.3
+        with:
+          filters: |
+            changed:
+              - 'apps/web/e2e/__screenshots__/**'
       - uses: pnpm/action-setup@v6.1.1
       - uses: actions/setup-node@v7.1.0
         with:
@@ -82,7 +81,7 @@ jobs:
           echo "playwright=$version" >> "$GITHUB_OUTPUT"
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
-      - name: Typecheck, Lint, Format, Knip, Boundaries
+      - name: Typecheck, Lint, Format, Knip, Boundaries, Translations
         run: pnpm check
       - name: Build With Bundle Budget
         run: pnpm build
@@ -162,21 +161,10 @@ jobs:
     timeout-minutes: 5
     permissions: {}
     steps:
+      # Visual Approval may be skipped only when no screenshot changed.
       - name: Require Every Job
-        env:
-          WORKFLOWS: ${{ needs.workflows.result }}
-          CHECK: ${{ needs.check.result }}
-          E2E: ${{ needs.e2e.result }}
-          CHANGED: ${{ needs.check.outputs.screenshots_changed }}
-          APPROVAL: ${{ needs.visual-approval.result }}
-        run: |
-          set -euo pipefail
-          echo "workflows=$WORKFLOWS check=$CHECK e2e=$E2E screenshots_changed=$CHANGED approval=$APPROVAL"
-          test "$WORKFLOWS" = success
-          test "$CHECK" = success
-          test "$E2E" = success
-          if [ "$CHANGED" = "true" ]; then
-            test "$APPROVAL" = success
-          else
-            test "$APPROVAL" = skipped
-          fi
+        uses: re-actors/alls-green@v1.3.0
+        with:
+          jobs: ${{ toJSON(needs) }}
+          allowed-skips: >-
+            ${{ needs.check.outputs.screenshots_changed != 'true' && 'visual-approval' || '' }}

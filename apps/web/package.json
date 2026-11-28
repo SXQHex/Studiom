@@ -1,29 +1,53 @@
 {
-  "name": "@studiom/web",
-  "version": "0.0.0",
-  "private": true,
+  "name": "web",
+  "version": "0.0.1",
   "type": "module",
+  "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/check-bundle.ts",
-    "preview": "vite preview",
+    "build": "tsc -b && vite build",
     "typecheck": "tsc -b",
+    "preview": "vite preview",
     "e2e": "playwright test",
     "e2e:visual": "playwright test --config playwright.visual.config.ts",
-    "e2e:a11y": "playwright test --config playwright.a11y.config.ts"
+    "e2e:a11y": "playwright test --config playwright.a11y.config.ts",
+    "mocks:worker": "msw init public --save",
+    "deploy": "node ../../scripts/deploy-guard.ts && wrangler deploy",
+    "deploy:preview": "wrangler versions upload"
   },
   "dependencies": {
+    "@tanstack/react-query": "5.108.4",
+    "@tanstack/react-router": "1.170.46",
+    "@workspace/contracts": "workspace:*",
+    "@workspace/mocks": "workspace:*",
+    "@workspace/ui": "workspace:*",
+    "i18next": "27.2.10",
+    "i18next-browser-languagedetector": "8.3.1",
+    "msw": "catalog:",
+    "next-themes": "0.4.6",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-aria-components": "catalog:",
+    "react-dom": "catalog:",
+    "react-i18next": "18.0.3"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.1",
+    "@cloudflare/vite-plugin": "1.70.2",
+    "@playwright/test": "1.65.1",
+    "@tailwindcss/vite": "4.3.5",
+    "@tanstack/router-plugin": "1.169.0",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@vitejs/plugin-react": "catalog:",
+    "@vitejs/plugin-react": "6.3.0",
+    "i18next-cli": "1.95.4",
     "typescript": "catalog:",
-    "vite": "catalog:",
-    "@playwright/test": "1.65.1",
-    "@axe-core/playwright": "4.14.1",
-    "@types/node": "catalog:"
+    "vite": "8.4.0",
+    "wrangler": "4.168.0"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

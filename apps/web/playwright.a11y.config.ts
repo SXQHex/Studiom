@@ -1,6 +1,6 @@
-import { defineConfig } from "@playwright/test";
-import { baseConfig } from "./e2e/support/base.config";
-import { desktopChromium } from "./e2e/support/profiles";
+import { defineConfig } from "@playwright/test"
+import { baseConfig } from "./e2e/support/base.config"
+import { desktopChromium } from "./e2e/support/profiles"
 
 /** Accessibility suite: axe with WCAG 2.2 AA tags in dark and light themes (ADR-009, ADR-013). */
 export default defineConfig({
@@ -17,4 +17,4 @@ export default defineConfig({
         },
       ]
     : [],
-});
+})

@@ -14,11 +14,13 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 
 ## Faz 1: Temel
 
+**Temel kurulum yenilendi (2026-11-28, [ADR-018](../docs/decisions/ADR-018-tech-stack.md) sırası).** T01–T05 aşağıdaki ölçütlerle yeni iskelet üzerinde yeniden sağlandı. Kullanılmayan bağımlılık knip'i kırdığı için şu paketler ilk kullanıldıkları görevde resmî komutla eklenir: Vitest (T09), `@msw/data` ve Faker (T08), Geist (T06), TanStack Form (ilk form), FullCalendar (ilk takvim görevi).
+
 ### T01: Monorepo iskeleti; taslağın referans klasörüne taşınması
 
 - [x] pnpm workspaces + Turborepo; `apps/web`. `packages/contracts`, `packages/ui` ve `packages/mocks` boş yer tutucu bırakılmaz, ilk kullanıldıkları görevde açılır (T10, T06, T08). `.nvmrc` ve kök komutları: `dev`, `build`, `check`, `e2e` (T05'te eklendi).
 - [x] Taslak `docs/reference/prototype-v2/` altına taşınır, lint, format ve knip dışında tutulur.
-- [x] `pnpm build` boş bir Vite + React uygulaması üretir. Cloudflare `assets.directory` → `apps/web/dist`.
+- [x] `pnpm build` boş bir Vite + React uygulaması üretir. Cloudflare yapılandırması `apps/web/wrangler.jsonc` dosyasındadır.
 
 **Bağımlılık:** yok · **Boyut:** M
 
@@ -54,9 +56,9 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 
 ### T06: `packages/ui` temeli, tokenlar ve keşif çalışması
 
-- [ ] `tokens.css` taşınır: açık, koyu, yüksek kontrast ve `--now`. Tailwind v4'te sadece mantıksal yardımcılar kullanılır. Geist kendi sunucumuzdan `woff2` alt kümesi olarak sunulur.
-- [ ] İlkel bileşenler react-aria-components üzerinde shadcn tarzında yazılır: Button, Badge, Card, Input, Select, ToggleButtonGroup (segment), Dialog/Sheet, Table, Toast, Tooltip.
-- [ ] Keşif çalışması (ADR-017: önce hazır, yaygın bir takvim çözümü aranır; elle yazma onaya bağlıdır): haftalık takvim ön denemesi (sürükleme, boyutlandırma, Shift+ok). Risk erken doğrulanır.
+- [ ] `tokens.css` taşınır: açık, koyu, yüksek kontrast ve `--now`. Tailwind v4'te sadece mantıksal yardımcılar kullanılır. Yazı tipi Geist'tir (`@fontsource-variable/geist`).
+- [ ] İlkel bileşenler `shadcn add` ile eklenir (React Aria tabanı): Button, Badge, Card, Input, Select, ToggleButtonGroup (segment), Dialog/Sheet, Table, Sonner, Tooltip.
+- [ ] Takvim ön denemesi: FullCalendar'ın shadcn kaydı ve salon başına gün sütunu ([ADR-018](../docs/decisions/ADR-018-tech-stack.md), "Bilinen sınırlar"). React Aria uyumu ve çok salonda performans doğrulanır.
 
 **Bağımlılık:** T02 · **Boyut:** M (gerekirse bölünür)
 
@@ -68,14 +70,15 @@ Bu dosya sadece etkin işleri taşır. Biten fazlar tek satıra iner (bkz. [`doc
 
 ### T08: Mock çekirdeği
 
-- [ ] `@mswjs/data` doğrulanır. `packages/contracts` şemalarını kabul eden genel ve tipli bir depo kurulur (varlık şemaları T10'da eklenir): seed'li faker, "şimdi"ye göre seed, yenilemede sıfırlama.
+- [ ] MSW çalışanı kuruludur (`packages/mocks`). `@msw/data` eklenir ve doğrulanır. `packages/contracts` şemalarını kabul eden genel ve tipli bir depo kurulur (varlık şemaları T10'da eklenir): seed'li faker, "şimdi"ye göre seed, yenilemede sıfırlama.
 - [ ] Geliştirmede ve Playwright'ta MSW çalışanı. `?scenario=empty|error|slow|forbidden` ara katmanı.
 
 **Bağımlılık:** T01 · **Boyut:** M
 
 ### T09: i18n temeli
 
-- [ ] i18next + react-i18next. Tipli kaynaklar; bilinmeyen anahtar `tsc`'yi kırar. Tembel ad alanları. i18next-cli ile anahtar çıkarma ve eksik anahtar kapısı. tr ve en.
+- [x] i18next + react-i18next, tr ve en. Tipli kaynaklar; bilinmeyen anahtar `tsc`'yi kırar. i18next-cli ile anahtar çıkarma ve eksik anahtar kapısı.
+- [ ] Tembel ad alanları.
 - [ ] `dir` ve `lang` i18n'den gelir. react-aria `I18nProvider` kurulur. `formatSessionTime(utc, tz)` yardımcısı ve birim testleri yazılır (İstanbul ve Berlin yaz saati geçişi).
 - [ ] RTL sınıf denetim betiği: `ml-/mr-/left-/right-` yasak.
 

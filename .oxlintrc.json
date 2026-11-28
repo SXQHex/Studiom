@@ -30,5 +30,13 @@
     "import/no-cycle": "error",
     "react/react-in-jsx-scope": "off"
   },
-  "ignorePatterns": ["**/dist/**", "**/coverage/**", "docs/reference/prototype-v2/**", ".agents/**"]
+  "ignorePatterns": [
+    "**/dist/**",
+    "**/coverage/**",
+    "docs/reference/prototype-v2/**",
+    ".agents/**",
+    "apps/web/src/routeTree.gen.ts",
+    "apps/web/public/mockServiceWorker.js",
+    "apps/web/src/types/**"
+  ]
 }

@@ -1,36 +1,41 @@
 {
   "name": "studiom",
+  "version": "0.0.1",
   "private": true,
-  "type": "module",
-  "packageManager": "pnpm@12.23.0",
-  "engines": {
-    "node": ">=26.13.1 <27"
-  },
   "scripts": {
-    "dev": "turbo run dev --filter=@studiom/web",
-    "build": "turbo run build",
-    "check": "turbo run typecheck && pnpm typecheck:scripts && pnpm lint && pnpm format:check && pnpm knip && pnpm deps",
+    "build": "turbo build && size-limit",
+    "dev": "turbo dev",
     "lint": "oxlint --type-aware .",
     "format": "oxfmt .",
+    "typecheck": "turbo typecheck",
     "format:check": "oxfmt --check .",
+    "check": "turbo run typecheck && pnpm typecheck:root && pnpm lint && pnpm format:check && pnpm knip && pnpm deps && pnpm i18n:check",
     "knip": "knip",
-    "deps": "depcruise --config .dependency-cruiser.json .",
-    "e2e": "pnpm --filter @studiom/web e2e",
-    "e2e:visual": "pnpm --filter @studiom/web e2e:visual",
-    "e2e:a11y": "pnpm --filter @studiom/web e2e:a11y",
-    "deploy": "node scripts/deploy-guard.ts && wrangler deploy",
-    "deploy:preview": "wrangler versions upload",
-    "typecheck:scripts": "tsc -p tsconfig.json"
+    "deps": "depcruise --config .dependency-cruiser.json apps packages",
+    "size": "size-limit",
+    "e2e": "pnpm --filter web e2e",
+    "e2e:visual": "pnpm --filter web e2e:visual",
+    "e2e:a11y": "pnpm --filter web e2e:a11y",
+    "i18n:check": "pnpm --filter web exec i18next-cli extract --ci && pnpm --filter web exec i18next-cli status",
+    "typecheck:root": "tsc -p tsconfig.json",
+    "deploy": "pnpm --filter web run deploy",
+    "deploy:preview": "pnpm --filter web run deploy:preview"
   },
   "devDependencies": {
+    "@size-limit/file": "14.3.0",
     "@types/node": "catalog:",
     "dependency-cruiser": "18.9.0",
-    "knip": "6.49.0",
+    "knip": "6.48.0",
     "oxfmt": "0.80.0",
     "oxlint": "1.95.0",
     "oxlint-tsgolint": "7.0.2009",
+    "size-limit": "14.3.0",
     "turbo": "2.11.13",
-    "typescript": "catalog:",
-    "wrangler": "4.166.0"
-  }
+    "typescript": "catalog:"
+  },
+  "packageManager": "pnpm@12.23.0+sha512.02da94ffaf133f46074322afe552f90d40b5f71ae259aefbccdacc5085b1d617e98d65e0131f5748b9b67445978ee5055d7d59a473f1eef0d504854fefcd5975",
+  "engines": {
+    "node": ">=26.13.1 <27"
+  },
+  "type": "module"
 }
