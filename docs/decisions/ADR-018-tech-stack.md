@@ -34,29 +34,29 @@ Her adım ayrı commit'tir; araçlar kendi resmî komutuyla eklenir.
 6. TanStack Router, Query, Form ve Zod.
 7. i18next paketleri ve `i18next-cli init`.
 8. `msw init`, mock veri katmanı.
-9. react-big-calendar ve `luxon`.
+9. FullCalendar'ın shadcn kaydı.
 10. `@cloudflare/vite-plugin` ve wrangler; mevcut CI, dal kuralı ve yayın korumaları yeni yapıya bağlanır.
 
 ## Uygulama
 
-| İş                          | Seçim (sürüm)                                                                                         | İndirme       | Resmî kurulum                                                            | Alternatif                                       |
-| --------------------------- | ----------------------------------------------------------------------------------------------------- | ------------- | ------------------------------------------------------------------------ | ------------------------------------------------ |
-| Monorepo                    | pnpm 12.23.0, Turborepo 2.11.13                                                                       | 46 Mn (turbo) | iskeletle gelir                                                          | Nx                                               |
-| Derleme                     | Vite 8.4.0, React 19.3.1, TypeScript 7.0.2                                                            | 275 Mn (vite) | iskeletle gelir                                                          | Next.js (ADR-005'te elendi)                      |
-| Bileşenler                  | shadcn 4.23.1 (React Aria), react-aria-components 1.22.1                                              | 8 Mn (RAC)    | `shadcn add <ad> -c apps/web`                                            | Radix ya da Base UI tabanı                       |
-| Stil ve ikon                | Tailwind 4.3.5, lucide-react 1.82.0, Geist (`@fontsource-variable/geist`)                             | 179 Mn        | iskelet; `pnpm add`                                                      | –                                                |
-| Tema                        | next-themes 0.4.6 (shadcn Sonner ile gelir)                                                           | 33 Mn         | `pnpm add next-themes`                                                   | shadcn belgesindeki ThemeProvider kopyası        |
-| Bildirim, boş ve yükleniyor | shadcn `sonner`, `empty`, `skeleton`                                                                  | –             | `shadcn add`                                                             | –                                                |
-| Yönlendirme                 | TanStack Router 1.170.46                                                                              | 28 Mn         | `pnpm add @tanstack/react-router`, `pnpm add -D @tanstack/router-plugin` | React Router                                     |
-| Sunucu durumu               | TanStack Query 5.108.4                                                                                | 87 Mn         | `pnpm add @tanstack/react-query`                                         | SWR                                              |
-| Form ve şema                | TanStack Form 1.33.6, Zod 4.6.7, shadcn `field`                                                       | 6 Mn / 450 Mn | `pnpm add @tanstack/react-form zod`                                      | React Hook Form                                  |
-| Tablo                       | shadcn `table` (React Aria); gerektiğinde TanStack Table 9.3.1                                        | 36 Mn         | `shadcn add table`                                                       | AG Grid                                          |
-| Haftalık takvim             | **react-big-calendar 1.20.0** (MIT), `luxon` yerelleştiricisi                                         | 1,5 Mn        | `pnpm add react-big-calendar luxon`                                      | FullCalendar (kaynak sütunu ücretli), Syncfusion |
-| Sürükle bırak               | React Aria içindeki DnD                                                                               | –             | ek paket yok                                                             | dnd-kit                                          |
-| Grafik                      | shadcn `chart` (Recharts 3.11.2)                                                                      | 66 Mn         | `shadcn add chart`                                                       | ECharts                                          |
-| Tarih                       | `@internationalized/date`, `Intl`; takvim için `luxon`                                                | 25 Mn         | bileşenlerle gelir                                                       | date-fns                                         |
-| i18n                        | i18next 27.2.10, react-i18next 18.0.3, i18next-cli 1.95.7, dil algılama ve tembel yükleme eklentileri | 36 Mn         | `pnpm add i18next react-i18next`, `i18next-cli init`                     | Lingui, Paraglide                                |
-| Mock                        | MSW 3.0.8, `@msw/data` 1.1.9, Faker 10.6.0                                                            | 34 Mn (msw)   | `msw init public --save`                                                 | Mirage                                           |
+| İş                          | Seçim (sürüm)                                                                                         | İndirme       | Resmî kurulum                                                            | Alternatif                                |
+| --------------------------- | ----------------------------------------------------------------------------------------------------- | ------------- | ------------------------------------------------------------------------ | ----------------------------------------- |
+| Monorepo                    | pnpm 12.23.0, Turborepo 2.11.13                                                                       | 46 Mn (turbo) | iskeletle gelir                                                          | Nx                                        |
+| Derleme                     | Vite 8.4.0, React 19.3.1, TypeScript 7.0.2                                                            | 275 Mn (vite) | iskeletle gelir                                                          | Next.js (ADR-005'te elendi)               |
+| Bileşenler                  | shadcn 4.23.1 (React Aria), react-aria-components 1.22.1                                              | 8 Mn (RAC)    | `shadcn add <ad> -c apps/web`                                            | Radix ya da Base UI tabanı                |
+| Stil ve ikon                | Tailwind 4.3.5, lucide-react 1.82.0, Geist (`@fontsource-variable/geist`)                             | 179 Mn        | iskelet; `pnpm add`                                                      | –                                         |
+| Tema                        | next-themes 0.4.6 (shadcn Sonner ile gelir)                                                           | 33 Mn         | `pnpm add next-themes`                                                   | shadcn belgesindeki ThemeProvider kopyası |
+| Bildirim, boş ve yükleniyor | shadcn `sonner`, `empty`, `skeleton`                                                                  | –             | `shadcn add`                                                             | –                                         |
+| Yönlendirme                 | TanStack Router 1.170.46                                                                              | 28 Mn         | `pnpm add @tanstack/react-router`, `pnpm add -D @tanstack/router-plugin` | React Router                              |
+| Sunucu durumu               | TanStack Query 5.108.4                                                                                | 87 Mn         | `pnpm add @tanstack/react-query`                                         | SWR                                       |
+| Form ve şema                | TanStack Form 1.33.6, Zod 4.6.7, shadcn `field`                                                       | 6 Mn / 450 Mn | `pnpm add @tanstack/react-form zod`                                      | React Hook Form                           |
+| Tablo                       | shadcn `table` (React Aria); gerektiğinde TanStack Table 9.3.1                                        | 36 Mn         | `shadcn add table`                                                       | AG Grid                                   |
+| Haftalık takvim             | **FullCalendar 7.1.5** (MIT, ücretsiz sürüm)                                                          | 2,8 Mn        | `shadcn add @fullcalendar/monarch-event-calendar` (resmî kayıt)          | react-big-calendar, Syncfusion            |
+| Sürükle bırak               | React Aria içindeki DnD                                                                               | –             | ek paket yok                                                             | dnd-kit                                   |
+| Grafik                      | shadcn `chart` (Recharts 3.11.2)                                                                      | 66 Mn         | `shadcn add chart`                                                       | ECharts                                   |
+| Tarih                       | `@internationalized/date`, `Intl`; FullCalendar için `temporal-polyfill`                              | 25 Mn         | bileşenlerle gelir                                                       | date-fns                                  |
+| i18n                        | i18next 27.2.10, react-i18next 18.0.3, i18next-cli 1.95.7, dil algılama ve tembel yükleme eklentileri | 36 Mn         | `pnpm add i18next react-i18next`, `i18next-cli init`                     | Lingui, Paraglide                         |
+| Mock                        | MSW 3.0.8, `@msw/data` 1.1.9, Faker 10.6.0                                                            | 34 Mn (msw)   | `msw init public --save`                                                 | Mirage                                    |
 
 ## Kalite, test ve yayın
 
@@ -92,9 +92,14 @@ Veri üretimi: Faker (24,9 Mn, tohumlanabilir). `zod-schema-faker` (90 bin) şem
 
 ## Bilinen sınırlar
 
-- **Takvim seçimi:** Pro ve Business'ta seansı salonlar arasında sürüklemek gerekli (depo sahibi, 2026-11-28). react-big-calendar bunu ücretsiz verir. 2026-11-28 denemesi (React 19, Chromium ve WebKit): gün ve hafta görünümünde salon sütunları, salonlar arası taşıma, boyutlandırma, sürükleyerek oluşturma ve `Europe/Berlin` dilimi çalıştı. React'in üstüne yaklaşık 74 KB JS + 3 KB CSS.
-- **react-big-calendar'ın bedelleri:** shadcn teması yok, görünüm CSS ile uyarlanır; sürükle bırak eklentisi Vite'ta varsayılan içe aktarma için küçük bir uyum satırı ister; kütüphane eski JSX dönüşümü uyarısı verir; saat dilimi `luxon`'un genel ayarıyla seçilir; son sürüm Haziran 2026. Klavyeyle taşıma yoktur, erişilebilir yol seans düzenleme formudur; taslaktaki Shift+ok taşıma yapılmaz.
-- Elenenler: FullCalendar (salon sütunu ücretli eklentide), Syncfusion (yaklaşık 428 KB JS + 205 KB CSS, resmî Tailwind 4 teması yok).
+- **Takvim düzeni** (depo sahibi onayı, 2026-11-28). Pro ve Business'ta seans salonlar arasında sürüklenebilmeli.
+  - Gün görünümü: salon başına bir `timeGridDay` takvimi yan yana; taşıma FullCalendar'ın takvimler arası sürüklemesiyle (`eventLeave`, `eventReceive`). Ek sürükle bırak paketi yok.
+  - Hafta görünümü ve telefon: tek takvim, salon ve eğitmen çipleri.
+  - Tekrar düzenleme ("yalnız bu / bu ve sonrakiler / tümü") shadcn diyaloğuyla; kural uygulamanın iş mantığıdır.
+  - Sütunları dizen ve taşımayı tutarlı kaydeden ince bağlama katmanı elle yazılır (ADR-017: kütüphanenin doğru kullanımı).
+  - 2026-11-28 denemesi (React 19, Chromium ve WebKit): salonlar arası taşıma, boyutlandırma, sürükleyerek oluşturma, `Europe/Berlin` dilimi ve Türkçe yerel ayar çalıştı. React'in üstüne yaklaşık 79 KB JS + 4 KB CSS.
+- **Takvimin sınırları:** klavyeyle taşıma yok ([açık talep](https://github.com/fullcalendar/fullcalendar/issues/2535)); erişilebilir yol seans düzenleme formudur, taslaktaki Shift+ok taşıma yapılmaz. Yatay zaman çizelgesi ve salon ile eğitmenin iç içe gruplanması yoktur. İlk sütun dışındaki saat eksenleri CSS ile gizlenir; çok salonda performans ölçülür. shadcn kaydının React Aria tabanıyla uyumu kurulumda doğrulanır, uymazsa FullCalendar'ın kendi teması kullanılır.
+- Elenenler: react-big-calendar (kaynak sütunu ücretsiz; ama Vite uyum satırı, eski JSX uyarısı, shadcn teması yok), Syncfusion (yaklaşık 428 KB JS + 205 KB CSS, resmî Tailwind 4 teması yok).
 - **`@mswjs/data` kullanımdan kalktı;** yerini `@msw/data` aldı ([ADR-007](ADR-007-mock-layer.md)'deki ad bununla güncellenir). Kullanımı daha düşüktür.
 - **TypeScript 7** iskeletin sürümünden yenidir. Uyumsuz araç çıkarsa ADR-012'deki istisna yolu işler.
 - Ek durum kütüphanesi (Redux, Zustand) yok; sunucu durumu Query'de, adres durumu Router'dadır.
