@@ -21,6 +21,8 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: read
+    outputs:
+      playwright: ${{ steps.versions.outputs.playwright }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -30,6 +32,12 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: pnpm
+      - name: Read Playwright Version
+        id: versions
+        run: |
+          set -euo pipefail
+          version="$(node -p "require('./apps/web/package.json').devDependencies['@playwright/test']")"
+          echo "playwright=$version" >> "$GITHUB_OUTPUT"
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
       - name: Typecheck, Lint, Format, Knip, Boundaries
@@ -45,7 +53,12 @@ jobs:
     permissions:
       contents: read
     # Official Playwright image: same browsers and fonts everywhere, so visual baselines are stable.
-    container: mcr.microsoft.com/playwright:v1.65.1-noble
+    # The image tag follows the @playwright/test version, so a version bump needs no second edit.
+    container: mcr.microsoft.com/playwright:v${{ needs.check.outputs.playwright }}-noble
+    # Container jobs default to sh, which has no `pipefail`.
+    defaults:
+      run:
+        shell: bash
     env:
       CI: "true"
       FULL_MATRIX: ${{ github.event_name != 'pull_request' }}
