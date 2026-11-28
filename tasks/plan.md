@@ -53,6 +53,7 @@ Tüm kararlar ADR'lerde tutulur. Dizin [`docs/README.md`](../docs/README.md) iç
 - Koyu, açık ve yüksek kontrast temalar çalışır. Tüm uygulama klavyeyle kullanılabilir. Uygulama RTL'e hazırdır.
 - e2e takımı elle tetiklenebilen tüm sayfa ve eylem senaryolarını dört profilde kapsar.
 - visual, a11y ve smoke takımları ADR-009'daki gibi geçer.
+- Her sayfa WCAG 2.2 AA'yı karşılar ve `modern-web-guidance` kapanış kontrolünden geçer (ADR-013).
 - oxlint, oxfmt, knip, dependency-cruiser, `tsc` strict, i18next-cli, RTL sınıf denetimi ve boyut bütçesi temizdir.
 
 ## Fazlar ve görev dizini

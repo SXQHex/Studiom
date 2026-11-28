@@ -12,6 +12,7 @@ Bu dosya, depodaki belgelerin tek girişidir. Her bilgi **tek bir yerde** yaşar
 | Mimari ve ürün kararları                                     | [`docs/decisions/`](decisions/) (ADR)                           | Bir karar, gerekçesi ve alternatifleri |
 | Taslak ekran → yeni yer eşlemesi                             | [`docs/reference/prototype-map.md`](reference/prototype-map.md) | Taslaktan neyin nereye gittiği         |
 | Taslağın kendisi                                             | `docs/reference/prototype-v2/`                                  | Görsel ve metin referansı, salt okunur |
+| Ajan becerileri ve sayfa kapanış kontrolü                    | [`.agents/skills/README.md`](../.agents/skills/README.md)       | Hangi beceri ne zaman kullanılır       |
 
 ## ADR dizini
 
@@ -29,6 +30,7 @@ Bu dosya, depodaki belgelerin tek girişidir. Her bilgi **tek bir yerde** yaşar
 | [010](decisions/ADR-010-plan-capabilities-as-data.md)      | Veri olarak plan yetenekleri                      |
 | [011](decisions/ADR-011-preview-and-hosting-cloudflare.md) | Önizleme ve yayın için Cloudflare                 |
 | [012](decisions/ADR-012-version-policy.md)                 | Sürüm politikası                                  |
+| [013](decisions/ADR-013-page-closing-check-wcag22.md)      | Sayfa kapanış kontrolü ve WCAG 2.2 AA             |
 
 ## Belge kuralları
 
