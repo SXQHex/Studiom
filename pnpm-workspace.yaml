@@ -9,3 +9,9 @@ allowBuilds:
 # Exact versions (ADR-012).
 saveExact: true
 savePrefix: ""
+
+# dependency-cruiser cannot read TypeScript 7.0 sources (supported from 7.1, ADR-012).
+packageExtensions:
+  dependency-cruiser:
+    dependencies:
+      typescript: 6.0.3
